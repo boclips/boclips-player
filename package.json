@@ -1,8 +1,8 @@
 {
   "name": "boclips-player",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "A framework agnostic player for serving boclips videos",
-  "main": "src/index.js",
+  "main": "dist/boclips-player.js",
   "scripts": {
     "test": "jest",
     "build": "webpack",
@@ -15,13 +15,20 @@
     "type": "git",
     "url": "git+https://github.com/boclips/boclips-player.git"
   },
-  "author": "Boclips",
+  "author": "Boclips <engineering@boclips.com>",
+  "contributors": [
+    "Antony O'Neill <antony@boclips.com>"
+  ],
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/boclips/boclips-player/issues"
   },
   "homepage": "https://github.com/boclips/boclips-player#readme",
+  "dependencies": {
+    "plyr": "^3.5.4"
+  },
   "devDependencies": {
+    "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
     "chai": "^4.2.0",
     "css-loader": "^2.1.1",
@@ -30,7 +37,6 @@
     "less": "^3.9.0",
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.6.0",
-    "plyr": "^3.5.4",
     "prettier": "^1.17.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.0",
