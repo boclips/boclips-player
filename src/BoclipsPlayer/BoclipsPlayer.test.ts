@@ -1,4 +1,4 @@
-import { MockProvider } from '../Provider/MockProvider';
+import { MockProvider } from '../test-support/MockProvider';
 import { ProviderConstructor } from '../Provider/Provider';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
