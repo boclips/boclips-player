@@ -1,4 +1,5 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 
 const distPath = path.resolve(__dirname, 'dist');
@@ -22,8 +23,8 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
+        test: /\.(ts|tsx)$/,
         use: {
           loader: 'ts-loader',
           options: {
@@ -31,9 +32,28 @@ module.exports = {
           },
         },
       },
+      {
+        test: /\.(less|css)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'less-loader',
+            options: {
+              javascriptEnabled: true,
+            },
+          },
+        ],
+      },
     ]
   },
   plugins: [
-    new HtmlWebpackPlugin({template: path.resolve(__dirname, 'index.html')})
+    new HtmlWebpackPlugin({template: path.resolve(__dirname, 'index.html')}),
+    new MiniCssExtractPlugin({
+      // Options similar to the same options in webpackOptions.output
+      // both options are optional
+      chunkFilename: '[id].css',
+      filename: '[name].css',
+    }),
   ]
 };

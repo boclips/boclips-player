@@ -6,6 +6,7 @@
   "scripts": {
     "test": "jest",
     "build": "webpack",
+    "compile": "tsc -p . --noEmit",
     "demo": "./node_modules/.bin/webpack-dev-server --config demo/webpack.config.js",
     "lint": "tslint -c tslint.json -p .",
     "lint:fix": "npm run lint -- --fix"
@@ -23,8 +24,13 @@
   "devDependencies": {
     "@types/jest": "^24.0.12",
     "chai": "^4.2.0",
+    "css-loader": "^2.1.1",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.8.0",
+    "less": "^3.9.0",
+    "less-loader": "^5.0.0",
+    "mini-css-extract-plugin": "^0.6.0",
+    "plyr": "^3.5.4",
     "prettier": "^1.17.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.0",

@@ -1,13 +1,12 @@
 <html>
   <head>
     <title>Boclips Player Demo</title>
-    <script src="boclips-player.js"></script>
   </head>
   <body>
     <div id="container"></div>
     <script>
       var container = document.querySelector('#container');
-      BoclipsPlayer.Factory.initialise(container);
+      BoclipsPlayer.Factory.get(container);
     </script>
   </body>
 </html>

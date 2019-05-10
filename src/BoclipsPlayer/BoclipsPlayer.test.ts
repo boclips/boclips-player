@@ -1,16 +1,18 @@
-import { MockPlayerLibrary } from '../Player/MockPlayerLibrary';
-import { PlayerLibrary } from '../Player/Player';
+import { MockProvider } from '../Provider/MockProvider';
+import { ProviderConstructor } from '../Provider/Provider';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 describe('BoclipsPlayer', () => {
-  let playerLibrary: PlayerLibrary;
+  const providerConstructor = MockProvider;
   let element: HTMLElement;
   let player: BoclipsPlayer;
 
   beforeEach(() => {
-    playerLibrary = MockPlayerLibrary.mock();
     element = document.createElement('div');
-    player = new BoclipsPlayer(playerLibrary, element);
+    player = new BoclipsPlayer(
+      providerConstructor as ProviderConstructor,
+      element,
+    );
   });
 
   it('Constructs a new player when passed an element', () => {
@@ -21,9 +23,11 @@ describe('BoclipsPlayer', () => {
     expect(player.getContainer()).toEqual(element);
   });
 
-  it('Will insert a video element into the container', () => {
-    player.initialise();
+  it('Will return the provider', () => {
+    expect(player.getProvider().play).toBeTruthy();
+  });
 
+  it('Will insert a video element into the container', () => {
     expect(element.children.length).toEqual(1);
     const child = element.children.item(0);
     expect(child.tagName).toEqual('VIDEO');
@@ -31,11 +35,7 @@ describe('BoclipsPlayer', () => {
   });
 
   it('Will initialise the video element with the player', () => {
-    player.initialise();
-
-    expect(playerLibrary.initialise).toBeCalledTimes(1);
-    expect(playerLibrary.initialise).toHaveBeenCalledWith(
-      element.children.item(0),
-    );
+    expect(providerConstructor).toBeCalledTimes(1);
+    expect(providerConstructor).toHaveBeenCalledWith(element.children.item(0));
   });
 });
