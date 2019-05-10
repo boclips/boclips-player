@@ -1,6 +1,7 @@
 {
   "extends": [
-    "tslint:recommended"
+    "tslint:recommended",
+    "tslint-config-prettier"
   ],
   "linterOptions": {
     "exclude": [
@@ -8,6 +9,7 @@
       "dist/**/*.ts"
     ]
   },
+  "rulesDirectory": ["tslint-plugin-prettier"],
   "rules": {
     "interface-name": false,
     "no-empty-interface": false,
@@ -16,6 +18,7 @@
     "object-literal-sort-keys": false,
     "member-ordering": false,
     "max-classes-per-file": false,
+    "prettier": [ true, ".prettierrc" ],
     "no-empty": false
   }
 }
