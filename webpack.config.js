@@ -4,8 +4,11 @@ module.exports = {
   mode: 'development',
   entry: './src/index.ts',
   output: {
-    filename: 'main.ts',
+    filename: 'boclips-player.js',
     path: path.resolve(__dirname, 'dist')
+  },
+  resolve: {
+    extensions: ['.ts']
   },
   module: {
     rules: [

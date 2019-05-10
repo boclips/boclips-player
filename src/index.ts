@@ -1,3 +1,1 @@
-const message = 'Hello';
-
-console.log(message);
+export { BoclipsPlayer } from './BoclipsPlayer/BoclipsPlayer';

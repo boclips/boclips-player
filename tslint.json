@@ -6,7 +6,7 @@
   "linterOptions": {
     "exclude": [
       "node_modules/**/*.ts",
-      "dist/**/*.ts"
+      "dist"
     ]
   },
   "rulesDirectory": ["tslint-plugin-prettier"],
