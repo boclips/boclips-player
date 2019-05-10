@@ -1,5 +1,5 @@
-import { MockProvider } from '../test-support/MockProvider';
 import { ProviderConstructor } from '../Provider/Provider';
+import { MockProvider } from '../test-support/MockProvider';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 describe('BoclipsPlayer', () => {
