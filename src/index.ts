@@ -1,1 +1,4 @@
-export { BoclipsPlayer } from './BoclipsPlayer/BoclipsPlayer';
+// noinspection JSUnusedGlobalSymbols
+export {
+  BoclipsPlayerFactory as Factory,
+} from './BoclipsPlayerFactory/BoclipsPlayerFactory';
