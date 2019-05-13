@@ -1,5 +1,7 @@
 import { ProviderConstructor } from '../Provider/Provider';
+import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockProvider } from '../test-support/MockProvider';
+import { videoPlaybackSample } from '../test-support/video-service-responses';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 describe('BoclipsPlayer', () => {
@@ -78,5 +80,37 @@ describe('BoclipsPlayer', () => {
       // tslint:disable-next-line: no-unused-expression
       new BoclipsPlayer(null, container);
     }).toThrow(Error);
+  });
+
+  it('Will retrieve details from the Playback endpoint', () => {
+    MockFetchVerify.post(
+      '/v1/videos/177/playback',
+      undefined,
+      201,
+      JSON.stringify(videoPlaybackSample),
+    );
+
+    return player.configure('/v1/videos/177/playback').then(() => {
+      expect(player.getPlayback().streamUrl).toEqual(
+        'https://cdn.kaltura.com/stream/147.mpd',
+      );
+    });
+  });
+
+  it('Will play the streamUrl in the playback object', () => {
+    const uri = '/v1/videos/177/playback';
+
+    MockFetchVerify.post(
+      uri,
+      undefined,
+      201,
+      JSON.stringify(videoPlaybackSample),
+    );
+
+    return player.configure(uri).then(() => {
+      expect(player.getProvider().source.sources[0].src).toContain(
+        'https://cdn.kaltura.com/stream/147.mpd',
+      );
+    });
   });
 });

@@ -1,4 +1,7 @@
 import { Provider, ProviderConstructor } from '../Provider/Provider';
+import { Playback } from '../utils/convertPlaybackResource';
+import convertPlaybackToSources from '../utils/convertPlaybackToSources';
+import retrievePlayback from '../utils/retrievePlayback';
 
 interface BoclipsPlayerInstance {
   getContainer: () => HTMLElement;
@@ -7,9 +10,10 @@ interface BoclipsPlayerInstance {
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
   private readonly container: HTMLElement;
-  private video: HTMLVideoElement;
-  private provider: Provider;
+  private readonly video: HTMLVideoElement;
+  private readonly provider: Provider;
   private readonly providerConstructor: ProviderConstructor;
+  private playback: Playback;
 
   constructor(
     providerConstructor: ProviderConstructor,
@@ -38,9 +42,18 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.provider = new this.providerConstructor(this.video);
   }
 
-  public getContainer = () => {
-    return this.container;
-  };
+  public getContainer = () => this.container;
 
   public getProvider = () => this.provider;
+
+  public getPlayback = (): Playback => this.playback;
+
+  public configure = async (uri: string) => {
+    return retrievePlayback(uri).then(this.applyPlayback);
+  };
+
+  private applyPlayback = (playback: Playback) => {
+    this.provider.source = convertPlaybackToSources(playback);
+    this.playback = playback;
+  };
 }
