@@ -1,7 +1,7 @@
 {
   "name": "boclips-player",
   "version": "0.1.0",
-  "description": "A framework agnostic player for serving boclips videos",
+  "description": "A framework agnostic player for serving Boclips videos",
   "main": "dist/boclips-player.js",
   "scripts": {
     "test": "jest",
@@ -9,7 +9,8 @@
     "compile": "tsc -p . --noEmit",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "lint": "tslint -c tslint.json -p .",
-    "lint:fix": "npm run lint -- --fix"
+    "lint:fix": "npm run lint -- --fix",
+    "prepublishOnly": "npm run lint && npm run test && npm run build"
   },
   "repository": {
     "type": "git",
@@ -27,6 +28,10 @@
   "dependencies": {
     "plyr": "^3.5.4"
   },
+  "files": [
+    "dist"
+  ],
+  "module": "src/index.ts",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
