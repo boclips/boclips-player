@@ -1,0 +1,18 @@
+---
+platform: linux
+
+image_resource:
+  type: docker-image
+  source:
+    repository: cypress/base
+    tag: '10'
+
+inputs:
+- name: source
+
+run:
+  path: source/pipeline/build.sh
+
+caches:
+  - path: ../../../root/.cache
+  - path: ../../../root/.npm

@@ -1,0 +1,63 @@
+---
+jobs:
+- name: build
+  plan:
+  - get: once-per-weekday
+    trigger: true
+  - get: source
+    trigger: true
+  - task: build
+    file: source/pipeline/build.yml
+
+- name: publish
+  plan:
+  - get: source
+    passed: [build]
+  - put: version
+    params:
+      bump: minor
+  - task: publish
+    file: source/pipeline/publish.yml
+  - put: npm-registry
+    params:
+      username: {{npm-username}}
+      password: {{npm-password}}
+      email: engineering@boclips.com
+      path: dist
+
+resources:
+- name: source
+  type: git
+  source:
+    branch: master
+    private_key: {{boclips-player-repo-key}}
+    uri: git@github.com:boclips/boclips-player.git
+
+- name: version
+  type: semver
+  source:
+    initial_version: "0.1.0"
+    driver: git
+    uri: git@github.com:boclips/versions.git
+    branch: master
+    file: boclips-player
+    private_key: {{versions-repo-key}}
+
+- name: npm-registry
+  type: npm-resource
+  source:
+    package_name: boclips-player
+
+- name: once-per-weekday
+  type: time
+  source:
+    start: 09:30 AM
+    stop: 12:30 PM
+    days: [Monday, Tuesday, Wednesday, Thursday, Friday]
+    location: Europe/London
+
+resource_types:
+- name: npm-resource
+  type: docker-image
+  source:
+    repository: idahobean/npm-resource
