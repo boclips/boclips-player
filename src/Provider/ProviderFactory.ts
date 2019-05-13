@@ -1,10 +1,9 @@
 import { ProviderConstructor } from './Provider';
 
-import { default as PlyrProvider } from 'plyr';
-import 'plyr/dist/plyr.css';
+import PlyrWrapper from './PlyrWrapper';
 
 export class ProviderFactory {
   public static get(): ProviderConstructor {
-    return PlyrProvider;
+    return PlyrWrapper;
   }
 }

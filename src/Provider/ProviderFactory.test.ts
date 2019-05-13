@@ -1,8 +1,8 @@
 import { ProviderFactory } from './ProviderFactory';
 
-import Plyr from 'plyr';
+import PlyrWrapper from './PlyrWrapper';
 
 it('Returns a Plyr', () => {
   const provider = ProviderFactory.get();
-  expect(provider).toEqual(Plyr);
+  expect(provider).toEqual(PlyrWrapper);
 });
