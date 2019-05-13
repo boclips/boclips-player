@@ -15,8 +15,18 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     providerConstructor: ProviderConstructor,
     container: HTMLElement,
   ) {
+    if (!providerConstructor) {
+      throw Error(
+        `IllegalArgument: Expected a valid ProviderConstructor. Given ${providerConstructor}`,
+      );
+    }
+    if (false === (container instanceof Node && document.contains(container))) {
+      throw Error(
+        `IllegalArgument: Container element ${container} must be a node within the document body.`,
+      );
+    }
+
     this.providerConstructor = providerConstructor;
-    // TODO: Validate the arguments.
 
     this.container = container;
 
