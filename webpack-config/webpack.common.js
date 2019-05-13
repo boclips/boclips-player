@@ -1,16 +1,13 @@
-const path = require('path');
+const CleanWebpackPlugin = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const path = require('path');
 
 const srcPath = path.resolve(__dirname, '../src');
 const distPath = path.resolve(__dirname, '../dist');
 
 module.exports = {
-  mode: 'development',
   entry: {
     'boclips-player': path.resolve(srcPath, 'index.ts'),
-  },
-  devServer: {
-    contentBase: distPath,
   },
   output: {
     filename: '[name].js',
@@ -50,6 +47,7 @@ module.exports = {
     ],
   },
   plugins: [
+    new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
       filename: '[name].css',

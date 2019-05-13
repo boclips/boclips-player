@@ -1,2 +1,1 @@
-const common = require('./webpack-config/webpack.common.js');
-module.exports = common;
+module.exports = require('./webpack-config/webpack.prod.js');
