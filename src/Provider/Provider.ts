@@ -9,6 +9,7 @@ export interface Source {
     size?: number;
     provider: 'html5' | 'youtube';
   }>;
+  poster: string;
 }
 
 export interface Provider {

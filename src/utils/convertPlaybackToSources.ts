@@ -9,6 +9,7 @@ const convertPlaybackToSources = (playback: Playback): Source => ({
       provider: 'html5',
     },
   ],
+  poster: playback.thumbnailUrl,
 });
 
 export default convertPlaybackToSources;

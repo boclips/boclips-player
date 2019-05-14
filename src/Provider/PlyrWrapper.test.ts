@@ -9,6 +9,7 @@ it("returns it's source object", () => {
   provider.source = {
     type: 'video',
     title: 'A test video',
+    poster: '/path/to/poster.jpg',
     sources: [
       {
         src: '/path/to/movie.mp4',

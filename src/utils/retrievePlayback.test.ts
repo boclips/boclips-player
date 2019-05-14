@@ -15,6 +15,7 @@ it('will make a request to the backend for the playback', () => {
   return retrievePlayback('/v1/videos/177/playback').then(playback =>
     expect(playback).toEqual({
       streamUrl: sourcePlayback.streamUrl,
+      thumbnailUrl: sourcePlayback.thumbnailUrl,
     }),
   );
 });
