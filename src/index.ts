@@ -1,4 +1,2 @@
 // noinspection JSUnusedGlobalSymbols
-export {
-  BoclipsPlayerFactory as Factory,
-} from './BoclipsPlayerFactory/BoclipsPlayerFactory';
+export { get } from './BoclipsPlayerFactory/BoclipsPlayerFactory';

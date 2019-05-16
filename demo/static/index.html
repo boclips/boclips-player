@@ -6,8 +6,8 @@
     <div id="container"></div>
     <script>
       const container = document.querySelector('#container');
-      const player = BoclipsPlayer.Factory.get(container);
-      player.configure('path/to/video');
+      const player = BoclipsPlayer.get(container);
+      player.loadVideo('path/to/video');
     </script>
   </body>
 </html>

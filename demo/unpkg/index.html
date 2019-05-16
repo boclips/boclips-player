@@ -8,8 +8,8 @@
 <div id="container"></div>
 <script type="text/javascript">
     const container = document.querySelector('#container');
-    const player = BoclipsPlayer.Factory.get(container);
-    player.configure('https://teachers.staging-boclips.com/v1/videos/5c542abf5438cdbcb56df0bf');
+    const player = BoclipsPlayer.get(container);
+    player.loadVideo('path/to/video');
 </script>
 </body>
 </html>

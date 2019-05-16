@@ -93,7 +93,7 @@ describe('BoclipsPlayer', () => {
     //     JSON.stringify(videoPlaybackSample),
     // );
 
-    return player.configure(uri).then(() => {
+    return player.loadVideo(uri).then(() => {
       expect(player.getPlayback().streamUrl).toEqual(
         'https://cdn.kaltura.com/stream/147.mpd',
       );
@@ -112,7 +112,7 @@ describe('BoclipsPlayer', () => {
     //     JSON.stringify(videoPlaybackSample),
     // );
 
-    return player.configure(uri).then(() => {
+    return player.loadVideo(uri).then(() => {
       expect(player.getProvider().source.sources[0].src).toContain(
         'https://cdn.kaltura.com/stream/147.mpd',
       );
