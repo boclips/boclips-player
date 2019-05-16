@@ -9,10 +9,9 @@ interface BoclipsPlayerInstance {
 }
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
-  private readonly container: HTMLElement;
-  private readonly video: HTMLVideoElement;
-  private readonly provider: Provider;
   private readonly providerConstructor: ProviderConstructor;
+  private readonly container: HTMLElement;
+  private readonly provider: Provider;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private playback: Playback;
@@ -36,12 +35,12 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container = container;
     this.options = options;
 
-    this.video = document.createElement('video');
-    this.video.setAttribute('data-qa', 'boclips-player');
+    const video = document.createElement('video');
+    video.setAttribute('data-qa', 'boclips-player');
 
-    this.container.appendChild(this.video);
+    this.container.appendChild(video);
 
-    this.provider = new this.providerConstructor(this.video);
+    this.provider = new this.providerConstructor(video);
   }
 
   public loadVideo = async (videoUri: string) => {
