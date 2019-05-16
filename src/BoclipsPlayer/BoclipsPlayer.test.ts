@@ -8,6 +8,16 @@ import {
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
+jest.mock('../Analytics/EventTracker', () => {
+  return {
+    EventTracker: jest.fn().mockImplementation(() => {
+      return {
+        configure: jest.fn(),
+      };
+    }),
+  };
+});
+
 describe('BoclipsPlayer', () => {
   const providerConstructor = MockProvider;
   let container: HTMLElement;
@@ -120,6 +130,30 @@ describe('BoclipsPlayer', () => {
       expect(player.getProvider().source.sources[0].src).toContain(
         'youtube-playback-id',
       );
+    });
+  });
+
+  it('Will install event tracking when a video is loaded', () => {
+    const uri = '/v1/videos/177';
+
+    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
+
+    return player.loadVideo(uri).then(() => {
+      const eventTracker = player.getEventTracker();
+
+      expect(eventTracker.configure).toHaveBeenCalled();
+    });
+  });
+
+  it('Will configure the event tracking into the provider when a video is loaded', () => {
+    const uri = '/v1/videos/177';
+
+    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
+
+    return player.loadVideo(uri).then(() => {
+      const provider = player.getProvider();
+
+      expect(provider.installEventTracker).toHaveBeenCalled();
     });
   });
 });

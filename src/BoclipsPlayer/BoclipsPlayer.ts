@@ -1,3 +1,5 @@
+import uuid from 'uuid/v1';
+import { EventTracker } from '../Analytics/EventTracker';
 import { Provider, ProviderConstructor } from '../Provider/Provider';
 import { Video } from '../types/Video';
 import convertPlaybackToSources from '../utils/convertPlaybackToSources';
@@ -15,6 +17,8 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
+  private eventTracker: EventTracker;
+  private playerId: string = uuid();
 
   constructor(
     providerConstructor: ProviderConstructor,
@@ -41,18 +45,24 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container.appendChild(video);
 
     this.provider = new this.providerConstructor(video);
+
+    this.eventTracker = new EventTracker(this.playerId);
   }
 
   public loadVideo = async (videoUri: string) => {
     return retrieveVideo(videoUri).then((video: Video) => {
       this.video = video;
+      this.eventTracker.configure(video);
       this.provider.source = convertPlaybackToSources(video.playback);
+      this.provider.installEventTracker(this.eventTracker);
     });
   };
 
   public getContainer = () => this.container;
 
   public getProvider = () => this.provider;
+
+  public getEventTracker = () => this.eventTracker;
 
   public getVideo = (): Video => this.video;
 
