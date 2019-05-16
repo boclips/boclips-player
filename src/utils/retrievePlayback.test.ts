@@ -9,18 +9,11 @@ it('will make a request to the backend for a stream playback', () => {
   const playbackResource = streamVideoPlaybackSample;
 
   MockFetchVerify.get(
-    '/v1/videos/177/playback',
+    '/v1/videos/177',
     JSON.stringify({ playback: playbackResource }),
   );
 
-  // MockFetchVerify.post(
-  //   '/v1/videos/177/playback',
-  //   undefined,
-  //   201,
-  //   JSON.stringify(sourcePlayback),
-  // );
-
-  return retrievePlayback('/v1/videos/177/playback').then(playback =>
+  return retrievePlayback('/v1/videos/177').then(playback =>
     expect(playback).toEqual({
       duration: playbackResource.duration,
       streamUrl: playbackResource.streamUrl,
@@ -34,18 +27,11 @@ it('will make a request to the backend for a youtube playback', () => {
   const playbackResponse = youtubeVideoPlaybackSample;
 
   MockFetchVerify.get(
-    '/v1/videos/177/playback',
+    '/v1/videos/177',
     JSON.stringify({ playback: playbackResponse }),
   );
 
-  // MockFetchVerify.post(
-  //   '/v1/videos/177/playback',
-  //   undefined,
-  //   201,
-  //   JSON.stringify(sourcePlayback),
-  // );
-
-  return retrievePlayback('/v1/videos/177/playback').then(playback =>
+  return retrievePlayback('/v1/videos/177').then(playback =>
     expect(playback).toEqual({
       duration: playbackResponse.duration,
       id: playbackResponse.id,
