@@ -33,12 +33,12 @@ describe('When a new source is set', () => {
 
     it('attaches a new hls.js if supported when source is changed', () => {
       expect(Hls).toHaveBeenCalled();
-      const hlsMockInstance = Hls.mock.results[0].value;
+      const hlsMockInstance = Hls.mock.instances[0];
       expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
     });
 
     it('loads source once media is attached', () => {
-      const hlsMockInstance = Hls.mock.results[0].value;
+      const hlsMockInstance = Hls.mock.instances[0];
       const [event, callback] = hlsMockInstance.on.mock.calls[0];
 
       expect(event).toEqual(Hls.Events.MEDIA_ATTACHED);
@@ -50,7 +50,6 @@ describe('When a new source is set', () => {
   describe('When Hls is not supported', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(false);
-
       wrapper.source = SourceFactory.sample();
     });
 
