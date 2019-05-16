@@ -10,7 +10,9 @@ export default class PlyrWrapper implements Provider {
   private hls = null;
 
   constructor(element: HTMLElement) {
-    this.plyr = new Plyr(element, { debug: true });
+    this.plyr = new Plyr(element, {
+      debug: process.env.NODE_ENV !== 'production',
+    });
 
     this.plyr.on('play', () => {
       if (this.hls) {
@@ -23,7 +25,9 @@ export default class PlyrWrapper implements Provider {
     this.plyr.source = newSources;
 
     if (Hls.isSupported()) {
-      this.hls = new Hls({ debug: true });
+      this.hls = new Hls({
+        debug: process.env.NODE_ENV !== 'production',
+      });
       this.hls.attachMedia(this.plyr.media);
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         this.hls.loadSource(newSources.sources[0].src);
