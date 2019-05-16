@@ -29,7 +29,8 @@
   "dependencies": {
     "axios": "^0.18.0",
     "hls.js": "^0.12.4",
-    "plyr": "^3.5.4"
+    "plyr": "^3.5.4",
+    "urijs": "^1.19.1"
   },
   "files": [
     "dist"

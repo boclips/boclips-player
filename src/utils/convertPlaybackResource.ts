@@ -1,19 +1,28 @@
-export interface Playback {
-  type: 'YOUTUBE' | 'STREAM';
-  // If type is STREAM
-  streamUrl?: string;
-  // If type is YOUTUBE
-  id?: string;
-  thumbnailUrl: string;
-  duration: string;
-}
+import { Link } from '../types/Link';
+import { StreamPlayback, YoutubePlayback } from '../types/Playback';
 
-const convertPlaybackResource = (data: any): Playback => ({
-  type: data.playback.type,
-  streamUrl: data.playback.streamUrl,
-  id: data.playback.id,
-  thumbnailUrl: data.playback.thumbnailUrl,
-  duration: data.playback.duration,
-});
+const convertPlaybackResource = (
+  rawPlayback,
+): StreamPlayback | YoutubePlayback => {
+  if (!['STREAM', 'YOUTUBE'].includes(rawPlayback.type)) {
+    throw new Error(`Playback type ${rawPlayback.type} not supported`);
+  }
+
+  const playback = {
+    type: rawPlayback.type,
+    id: rawPlayback.id,
+    thumbnailUrl: rawPlayback.thumbnailUrl,
+    duration: rawPlayback.duration,
+    links: {
+      createPlaybackEvent: new Link(rawPlayback._links.createPlaybackEvent),
+    },
+  };
+
+  if (rawPlayback.type === 'STREAM') {
+    (playback as StreamPlayback).streamUrl = rawPlayback.streamUrl;
+  }
+
+  return playback;
+};
 
 export default convertPlaybackResource;

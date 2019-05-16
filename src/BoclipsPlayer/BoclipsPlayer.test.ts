@@ -1,7 +1,11 @@
 import { ProviderConstructor } from '../Provider/Provider';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockProvider } from '../test-support/MockProvider';
-import { streamVideoPlaybackSample } from '../test-support/video-service-responses';
+import {
+  streamVideoSample,
+  youtubeVideoSample,
+} from '../test-support/video-service-responses';
+import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 describe('BoclipsPlayer', () => {
@@ -84,27 +88,37 @@ describe('BoclipsPlayer', () => {
 
   it('Will retrieve details from the Playback endpoint', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify({ playback: streamVideoPlaybackSample }),
-    );
+    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      expect(player.getPlayback().streamUrl).toEqual('kaltura/stream.mp4');
+      const playback = player.getVideo().playback;
+      expect(isStreamPlayback(playback)).toBeTruthy();
+      expect((playback as StreamPlayback).streamUrl).toEqual(
+        'kaltura/stream.mp4',
+      );
     });
   });
 
   it('Will play the streamUrl in the playback object', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify({ playback: streamVideoPlaybackSample }),
-    );
+    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
 
     return player.loadVideo(uri).then(() => {
       expect(player.getProvider().source.sources[0].src).toContain(
         'kaltura/stream.mp4',
+      );
+    });
+  });
+
+  it('Will play the youtube id in the playback object', () => {
+    const uri = '/v1/videos/177';
+
+    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
+
+    return player.loadVideo(uri).then(() => {
+      expect(player.getProvider().source.sources[0].src).toContain(
+        'youtube-playback-id',
       );
     });
   });

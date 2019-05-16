@@ -1,12 +1,12 @@
 import { Source } from '../Provider/Provider';
-import { Playback } from './convertPlaybackResource';
+import { isStreamPlayback, Playback } from '../types/Playback';
 
 const convertPlaybackToSources = (playback: Playback): Source => ({
   type: 'video',
   sources: [
     {
-      src: playback.type === 'STREAM' ? playback.streamUrl : playback.id,
-      provider: playback.type === 'STREAM' ? 'html5' : 'youtube',
+      src: isStreamPlayback(playback) ? playback.streamUrl : playback.id,
+      provider: isStreamPlayback(playback) ? 'html5' : 'youtube',
     },
   ],
   poster: playback.thumbnailUrl,
