@@ -27,6 +27,8 @@
   },
   "homepage": "https://github.com/boclips/boclips-player#readme",
   "dependencies": {
+    "axios": "^0.18.0",
+    "hls.js": "^0.12.4",
     "plyr": "^3.5.4"
   },
   "files": [
@@ -37,12 +39,10 @@
     "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
     "audit-ci": "^1.7.0",
-    "axios": "^0.18.0",
     "axios-mock-adapter": "^1.16.0",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^2.0.2",
     "css-loader": "^2.1.1",
-    "hls.js": "^0.12.4",
     "html-webpack-plugin": "^3.2.0",
     "jest": "^24.8.0",
     "less": "^3.9.0",
