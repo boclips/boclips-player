@@ -15,7 +15,7 @@ beforeEach(() => {
   Plyr.mockClear();
 
   element = document.createElement('video');
-  element.setAttribute('data-plyr-provider', 'html5');
+  element.setAttribute('data-plyr-wrapper', 'html5');
   wrapper = new PlyrWrapper(element);
 });
 

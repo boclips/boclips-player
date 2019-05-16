@@ -1,7 +1,7 @@
-import { Provider, Source } from '../Provider/Provider';
+import { Source, Wrapper } from '../Wrapper/Wrapper';
 
-export const MockProvider = jest.fn<Provider, any>(
-  (): Provider => {
+export const MockWrapper = jest.fn<Wrapper, any>(
+  (): Wrapper => {
     return {
       play: jest.fn(),
       source: (jest.fn<Source, any>() as any) as Source,

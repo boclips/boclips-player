@@ -1,12 +1,12 @@
 import Plyr from 'plyr';
 
 import 'plyr/dist/plyr.css';
-import { Provider, Source } from './Provider';
+import { Source, Wrapper } from './Wrapper';
 
 import Hls from 'hls.js';
 import { EventTracker } from '../Analytics/EventTracker';
 
-export default class PlyrWrapper implements Provider {
+export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
   private hls = null;
 

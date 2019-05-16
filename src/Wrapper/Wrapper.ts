@@ -1,6 +1,6 @@
 import { EventTracker } from '../Analytics/EventTracker';
 
-export type ProviderConstructor = new (video: HTMLVideoElement) => Provider;
+export type WrapperConstructor = new (video: HTMLVideoElement) => Wrapper;
 
 export interface Source {
   type: 'audio' | 'video';
@@ -14,7 +14,7 @@ export interface Source {
   poster: string;
 }
 
-export interface Provider {
+export interface Wrapper {
   source: Source;
   play: () => Promise<void>;
   pause: () => void;

@@ -1,6 +1,6 @@
-import { Source } from '../Provider/Provider';
 import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
+import { Source } from '../Wrapper/Wrapper';
 
 export class SourceFactory {
   public static sample = (): Source => ({

@@ -1,5 +1,5 @@
-import { Source } from '../Provider/Provider';
 import { isStreamPlayback, Playback } from '../types/Playback';
+import { Source } from '../Wrapper/Wrapper';
 
 const convertPlaybackToSources = (playback: Playback): Source => ({
   type: 'video',

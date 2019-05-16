@@ -1,10 +1,10 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { ProviderFactory } from '../Provider/ProviderFactory';
+import { WrapperFactory } from '../Wrapper/WrapperFactory';
 
 export const get = (
   container: HTMLElement,
   options: BoclipsPlayerOptions = {},
 ): BoclipsPlayer => {
-  const Provider = ProviderFactory.get();
-  return new BoclipsPlayer(Provider, container, options);
+  const Wrapper = WrapperFactory.get();
+  return new BoclipsPlayer(Wrapper, container, options);
 };

@@ -1,11 +1,11 @@
-import { ProviderConstructor } from '../Provider/Provider';
 import MockFetchVerify from '../test-support/MockFetchVerify';
-import { MockProvider } from '../test-support/MockProvider';
+import { MockWrapper } from '../test-support/MockWrapper';
 import {
   streamVideoSample,
   youtubeVideoSample,
 } from '../test-support/video-service-responses';
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
+import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 jest.mock('../Analytics/EventTracker', () => {
@@ -19,7 +19,7 @@ jest.mock('../Analytics/EventTracker', () => {
 });
 
 describe('BoclipsPlayer', () => {
-  const providerConstructor = MockProvider;
+  const wrapperConstructor = MockWrapper;
   let container: HTMLElement;
   let player: BoclipsPlayer;
 
@@ -27,7 +27,7 @@ describe('BoclipsPlayer', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
     player = new BoclipsPlayer(
-      providerConstructor as ProviderConstructor,
+      wrapperConstructor as WrapperConstructor,
       container,
     );
   });
@@ -40,8 +40,8 @@ describe('BoclipsPlayer', () => {
     expect(player.getContainer()).toEqual(container);
   });
 
-  it('Will return the provider', () => {
-    expect(player.getProvider().play).toBeTruthy();
+  it('Will return the wrapper', () => {
+    expect(player.getWrapper().play).toBeTruthy();
   });
 
   it('Will insert a video element into the container', () => {
@@ -52,10 +52,8 @@ describe('BoclipsPlayer', () => {
   });
 
   it('Will initialise the video element with the player', () => {
-    expect(providerConstructor).toBeCalledTimes(1);
-    expect(providerConstructor).toHaveBeenCalledWith(
-      container.children.item(0),
-    );
+    expect(wrapperConstructor).toBeCalledTimes(1);
+    expect(wrapperConstructor).toHaveBeenCalledWith(container.children.item(0));
   });
 
   const illegalContainers: Array<{
@@ -84,12 +82,12 @@ describe('BoclipsPlayer', () => {
     it('Will throw an exception if the container ' + message, () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new BoclipsPlayer(providerConstructor, illegalContainer);
+        new BoclipsPlayer(wrapperConstructor, illegalContainer);
       }).toThrow(Error);
     });
   });
 
-  it('Will throw an exception if the providerConstructor is null', () => {
+  it('Will throw an exception if the wrapperConstructor is null', () => {
     expect(() => {
       // tslint:disable-next-line: no-unused-expression
       new BoclipsPlayer(null, container);
@@ -115,7 +113,7 @@ describe('BoclipsPlayer', () => {
     MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      expect(player.getProvider().source.sources[0].src).toContain(
+      expect(player.getWrapper().source.sources[0].src).toContain(
         'kaltura/stream.mp4',
       );
     });
@@ -127,7 +125,7 @@ describe('BoclipsPlayer', () => {
     MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      expect(player.getProvider().source.sources[0].src).toContain(
+      expect(player.getWrapper().source.sources[0].src).toContain(
         'youtube-playback-id',
       );
     });
@@ -145,15 +143,15 @@ describe('BoclipsPlayer', () => {
     });
   });
 
-  it('Will configure the event tracking into the provider when a video is loaded', () => {
+  it('Will configure the event tracking into the wrapper when a video is loaded', () => {
     const uri = '/v1/videos/177';
 
     MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      const provider = player.getProvider();
+      const wrapper = player.getWrapper();
 
-      expect(provider.installEventTracker).toHaveBeenCalled();
+      expect(wrapper.installEventTracker).toHaveBeenCalled();
     });
   });
 });

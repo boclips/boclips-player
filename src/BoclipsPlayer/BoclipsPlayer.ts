@@ -1,9 +1,9 @@
 import uuid from 'uuid/v1';
 import { EventTracker } from '../Analytics/EventTracker';
-import { Provider, ProviderConstructor } from '../Provider/Provider';
 import { Video } from '../types/Video';
 import convertPlaybackToSources from '../utils/convertPlaybackToSources';
 import retrieveVideo from '../utils/retrieveVideo';
+import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 
 interface BoclipsPlayerInstance {
   play: () => Promise<any>;
@@ -11,9 +11,9 @@ interface BoclipsPlayerInstance {
 }
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
-  private readonly providerConstructor: ProviderConstructor;
+  private readonly wrapperConstructor: WrapperConstructor;
   private readonly container: HTMLElement;
-  private readonly provider: Provider;
+  private readonly wrapper: Wrapper;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
@@ -21,13 +21,13 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   private playerId: string = uuid();
 
   constructor(
-    providerConstructor: ProviderConstructor,
+    wrapperConstructor: WrapperConstructor,
     container: HTMLElement,
     options: BoclipsPlayerOptions = {},
   ) {
-    if (!providerConstructor) {
+    if (!wrapperConstructor) {
       throw Error(
-        `IllegalArgument: Expected a valid ProviderConstructor. Given ${providerConstructor}`,
+        `IllegalArgument: Expected a valid WrapperConstructor. Given ${wrapperConstructor}`,
       );
     }
     if (false === (container instanceof Node && document.contains(container))) {
@@ -35,7 +35,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
         `IllegalArgument: Container element ${container} must be a node within the document body.`,
       );
     }
-    this.providerConstructor = providerConstructor;
+    this.wrapperConstructor = wrapperConstructor;
     this.container = container;
     this.options = options;
 
@@ -44,7 +44,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     this.container.appendChild(video);
 
-    this.provider = new this.providerConstructor(video);
+    this.wrapper = new this.wrapperConstructor(video);
 
     this.eventTracker = new EventTracker(this.playerId);
   }
@@ -53,24 +53,24 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     return retrieveVideo(videoUri).then((video: Video) => {
       this.video = video;
       this.eventTracker.configure(video);
-      this.provider.source = convertPlaybackToSources(video.playback);
-      this.provider.installEventTracker(this.eventTracker);
+      this.wrapper.source = convertPlaybackToSources(video.playback);
+      this.wrapper.installEventTracker(this.eventTracker);
     });
   };
 
   public getContainer = () => this.container;
 
-  public getProvider = () => this.provider;
+  public getWrapper = () => this.wrapper;
 
   public getEventTracker = () => this.eventTracker;
 
   public getVideo = (): Video => this.video;
 
   public play = (): Promise<void> => {
-    return this.provider.play();
+    return this.wrapper.play();
   };
 
   public pause = (): void => {
-    this.provider.pause();
+    this.wrapper.pause();
   };
 }
