@@ -83,14 +83,17 @@ describe('BoclipsPlayer', () => {
   });
 
   it('Will retrieve details from the Playback endpoint', () => {
-    MockFetchVerify.post(
-      '/v1/videos/177/playback',
-      undefined,
-      201,
-      JSON.stringify(videoPlaybackSample),
-    );
+    const uri = '/v1/videos/177/playback';
+    MockFetchVerify.get(uri, JSON.stringify({ playback: videoPlaybackSample }));
 
-    return player.configure('/v1/videos/177/playback').then(() => {
+    // MockFetchVerify.post(
+    //     uri,
+    //     undefined,
+    //     201,
+    //     JSON.stringify(videoPlaybackSample),
+    // );
+
+    return player.configure(uri).then(() => {
       expect(player.getPlayback().streamUrl).toEqual(
         'https://cdn.kaltura.com/stream/147.mpd',
       );
@@ -100,12 +103,14 @@ describe('BoclipsPlayer', () => {
   it('Will play the streamUrl in the playback object', () => {
     const uri = '/v1/videos/177/playback';
 
-    MockFetchVerify.post(
-      uri,
-      undefined,
-      201,
-      JSON.stringify(videoPlaybackSample),
-    );
+    MockFetchVerify.get(uri, JSON.stringify({ playback: videoPlaybackSample }));
+
+    // MockFetchVerify.post(
+    //     uri,
+    //     undefined,
+    //     201,
+    //     JSON.stringify(videoPlaybackSample),
+    // );
 
     return player.configure(uri).then(() => {
       expect(player.getProvider().source.sources[0].src).toContain(

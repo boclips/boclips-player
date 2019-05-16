@@ -4,8 +4,8 @@ export interface Playback {
 }
 
 const convertPlaybackResource = (data: any): Playback => ({
-  streamUrl: data.streamUrl,
-  thumbnailUrl: data.thumbnailUrl,
+  streamUrl: data.playback.streamUrl,
+  thumbnailUrl: data.playback.thumbnailUrl,
 });
 
 export default convertPlaybackResource;
