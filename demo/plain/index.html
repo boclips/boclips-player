@@ -1,0 +1,15 @@
+<html>
+<head>
+    <title>Plain Demo</title>
+    <script src="https://unpkg.com/boclips-player/dist/boclips-player.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="https://unpkg.com/boclips-player/dist/boclips-player.css" type="text/css"/>
+</head>
+<body>
+<div id="container"></div>
+<script type="text/javascript">
+    const container = document.querySelector('#container');
+    const player = BoclipsPlayer.Factory.get(container);
+    player.configure('https://teachers.staging-boclips.com/v1/videos/5c542abf5438cdbcb56df0bf');
+</script>
+</body>
+</html>
