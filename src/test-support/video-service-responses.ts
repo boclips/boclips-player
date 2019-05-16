@@ -1,7 +1,13 @@
-export const videoPlaybackSample = Object.freeze({
-  id: 123,
+export const streamVideoPlaybackSample = Object.freeze({
   type: 'STREAM',
-  thumbnailUrl: 'https://cdn.kaltura.com/thumbs/177.jpg',
-  streamUrl: 'https://cdn.kaltura.com/stream/147.mpd',
+  thumbnailUrl: 'kaltura/poster.jpg',
+  streamUrl: 'kaltura/stream.mp4',
   duration: 'PT1M2S',
+});
+
+export const youtubeVideoPlaybackSample = Object.freeze({
+  id: 123,
+  type: 'YOUTUBE',
+  thumbnailUrl: 'youtube/poster.jpg',
+  duration: 'PT1M3S',
 });

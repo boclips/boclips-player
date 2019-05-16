@@ -1,7 +1,7 @@
 import { ProviderConstructor } from '../Provider/Provider';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockProvider } from '../test-support/MockProvider';
-import { videoPlaybackSample } from '../test-support/video-service-responses';
+import { streamVideoPlaybackSample } from '../test-support/video-service-responses';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
 describe('BoclipsPlayer', () => {
@@ -84,7 +84,10 @@ describe('BoclipsPlayer', () => {
 
   it('Will retrieve details from the Playback endpoint', () => {
     const uri = '/v1/videos/177/playback';
-    MockFetchVerify.get(uri, JSON.stringify({ playback: videoPlaybackSample }));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify({ playback: streamVideoPlaybackSample }),
+    );
 
     // MockFetchVerify.post(
     //     uri,
@@ -94,16 +97,17 @@ describe('BoclipsPlayer', () => {
     // );
 
     return player.loadVideo(uri).then(() => {
-      expect(player.getPlayback().streamUrl).toEqual(
-        'https://cdn.kaltura.com/stream/147.mpd',
-      );
+      expect(player.getPlayback().streamUrl).toEqual('kaltura/stream.mp4');
     });
   });
 
   it('Will play the streamUrl in the playback object', () => {
     const uri = '/v1/videos/177/playback';
 
-    MockFetchVerify.get(uri, JSON.stringify({ playback: videoPlaybackSample }));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify({ playback: streamVideoPlaybackSample }),
+    );
 
     // MockFetchVerify.post(
     //     uri,
@@ -114,7 +118,7 @@ describe('BoclipsPlayer', () => {
 
     return player.loadVideo(uri).then(() => {
       expect(player.getProvider().source.sources[0].src).toContain(
-        'https://cdn.kaltura.com/stream/147.mpd',
+        'kaltura/stream.mp4',
       );
     });
   });

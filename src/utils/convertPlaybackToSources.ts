@@ -5,8 +5,8 @@ const convertPlaybackToSources = (playback: Playback): Source => ({
   type: 'video',
   sources: [
     {
-      src: playback.streamUrl,
-      provider: 'html5',
+      src: playback.type === 'STREAM' ? playback.streamUrl : playback.id,
+      provider: playback.type === 'STREAM' ? 'html5' : 'youtube',
     },
   ],
   poster: playback.thumbnailUrl,
