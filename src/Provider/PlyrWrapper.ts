@@ -35,7 +35,11 @@ export default class PlyrWrapper implements Provider {
     return this.plyr.source;
   }
 
-  public play = () => {
-    this.plyr.play();
+  public play = (): Promise<void> => {
+    return this.plyr.play();
+  };
+
+  public pause = (): void => {
+    this.plyr.pause();
   };
 }

@@ -59,3 +59,19 @@ describe('When a new source is set', () => {
     });
   });
 });
+
+it('Will play', () => {
+  wrapper.source = SourceFactory.sample();
+
+  wrapper.play();
+  const plyrInstance = Plyr.mock.instances[0];
+  expect(plyrInstance.play).toHaveBeenCalled();
+});
+
+it('Will pause', () => {
+  wrapper.source = SourceFactory.sample();
+
+  wrapper.play();
+  const plyrInstance = Plyr.mock.instances[0];
+  expect(plyrInstance.play).toHaveBeenCalled();
+});

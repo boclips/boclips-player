@@ -36,22 +36,22 @@ In order to configure the player to play a video you must have a Video URI point
 
 #### In the Browser
 
-When this library is loaded via a script tag on a webpage it places a factory method on the window.
+When this library is loaded via a script tag on a web page it places a factory method on the window.
 
 ```typescript
 interface BoclipsPlayerFactory {
     get: (container: HTMLElement, options: BoclipsPlayerOptions) => BoclipsPlayer;   
 }
-```
 
-```typescript
 interface BoclipsPlayerOptions {
     // There are currently no supported options.
 }
+
+interface BoclipsPlayer {
+    play: () => Promise<void>;
+    pause: () => void;
+}
 ```
-
-
-
 
 
 

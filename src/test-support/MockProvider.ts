@@ -5,6 +5,7 @@ export const MockProvider = jest.fn<Provider, any>(
     return {
       play: jest.fn(),
       source: (jest.fn<Source, any>() as any) as Source,
+      pause: jest.fn(),
     };
   },
 );

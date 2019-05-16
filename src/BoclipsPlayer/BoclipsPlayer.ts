@@ -4,8 +4,8 @@ import convertPlaybackToSources from '../utils/convertPlaybackToSources';
 import retrievePlayback from '../utils/retrievePlayback';
 
 interface BoclipsPlayerInstance {
-  getContainer: () => HTMLElement;
-  getProvider: () => Provider;
+  play: () => Promise<any>;
+  pause: () => void;
 }
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
@@ -58,4 +58,12 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   public getProvider = () => this.provider;
 
   public getPlayback = (): Playback => this.playback;
+
+  public play = (): Promise<void> => {
+    return this.provider.play();
+  };
+
+  public pause = (): void => {
+    this.provider.pause();
+  };
 }

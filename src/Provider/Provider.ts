@@ -14,5 +14,6 @@ export interface Source {
 
 export interface Provider {
   source: Source;
-  play: () => void;
+  play: () => Promise<void>;
+  pause: () => void;
 }
