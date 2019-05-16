@@ -1,3 +1,5 @@
+import { EventTracker } from '../Analytics/EventTracker';
+
 export type ProviderConstructor = new (video: HTMLVideoElement) => Provider;
 
 export interface Source {
@@ -16,4 +18,5 @@ export interface Provider {
   source: Source;
   play: () => Promise<void>;
   pause: () => void;
+  installEventTracker: (eventTracker: EventTracker) => void;
 }

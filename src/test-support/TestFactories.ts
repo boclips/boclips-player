@@ -1,6 +1,6 @@
 import { Source } from '../Provider/Provider';
 import { Link } from '../types/Link';
-import { StreamPlayback, YoutubePlayback } from '../types/Playback';
+import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
 
 export class SourceFactory {
   public static sample = (): Source => ({
@@ -40,5 +40,14 @@ export class PlaybackFactory {
         href: 'create/playback/event',
       }),
     },
+  });
+}
+
+export class VideoFactory {
+  public static sample = (
+    playback: Playback = PlaybackFactory.streamSample(),
+  ) => ({
+    id: 'video-id',
+    playback,
   });
 }

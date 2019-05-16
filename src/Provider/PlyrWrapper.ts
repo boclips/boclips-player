@@ -4,6 +4,7 @@ import 'plyr/dist/plyr.css';
 import { Provider, Source } from './Provider';
 
 import Hls from 'hls.js';
+import { EventTracker } from '../Analytics/EventTracker';
 
 export default class PlyrWrapper implements Provider {
   private readonly plyr;
@@ -45,5 +46,14 @@ export default class PlyrWrapper implements Provider {
 
   public pause = (): void => {
     this.plyr.pause();
+  };
+
+  public installEventTracker = (eventTracker: EventTracker) => {
+    this.plyr.on('playing', event => {
+      eventTracker.handlePlay(event.detail.plyr.currentTime);
+    });
+    this.plyr.on('pause', event => {
+      eventTracker.handlePause(event.detail.plyr.currentTime);
+    });
   };
 }

@@ -1,7 +1,11 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
+import { EventTracker } from '../Analytics/EventTracker';
 import { SourceFactory } from '../test-support/TestFactories';
 import PlyrWrapper from './PlyrWrapper';
+import Mock = jest.Mock;
+
+jest.mock('../Analytics/EventTracker');
 
 let element = null;
 let wrapper = null;
@@ -73,4 +77,60 @@ it('Will pause', () => {
   wrapper.play();
   const plyrInstance = Plyr.mock.instances[0];
   expect(plyrInstance.play).toHaveBeenCalled();
+});
+
+describe('When installing an Event Tracker', () => {
+  let mockTracker;
+  let plyrInstance;
+
+  beforeEach(() => {
+    (EventTracker as Mock).mockImplementation(() => {
+      return {
+        handlePlay: jest.fn(),
+        handlePause: jest.fn(),
+      };
+    });
+
+    mockTracker = new EventTracker('testing-123');
+    plyrInstance = Plyr.mock.instances[0];
+    plyrInstance.on.mockClear();
+  });
+
+  it('will add an on playing event listener that delegates to the EventTracker', () => {
+    wrapper.installEventTracker(mockTracker);
+
+    const calls = plyrInstance.on.mock.calls.filter(
+      ([name]) => name === 'playing',
+    );
+    expect(calls).toHaveLength(1);
+
+    const callback = calls[0][1];
+
+    plyrInstance.currentTime = 10;
+    callback({
+      detail: {
+        plyr: plyrInstance,
+      },
+    });
+    expect(mockTracker.handlePlay).toHaveBeenCalledWith(10);
+  });
+
+  it('will add an on pause event listener that delegates to the EventTracker', () => {
+    wrapper.installEventTracker(mockTracker);
+
+    const calls = plyrInstance.on.mock.calls.filter(
+      ([name]) => name === 'pause',
+    );
+
+    expect(calls).toHaveLength(1);
+    const callback = calls[0][1];
+
+    plyrInstance.currentTime = 15;
+    callback({
+      detail: {
+        plyr: plyrInstance,
+      },
+    });
+    expect(mockTracker.handlePause).toHaveBeenCalledWith(15);
+  });
 });
