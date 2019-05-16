@@ -12,7 +12,7 @@ In order to render the Boclips Player on your page you should load the Javascrip
 
 Boclips Player is hosted in the unpkg.com CDN
 
-In order to configure the player to play a video you must have a Video URI pointing to our API.
+In order to load a video you must have a Video URI pointing to our API.
 
 ```html
 <html>
@@ -26,7 +26,7 @@ In order to configure the player to play a video you must have a Video URI point
 <script type="text/javascript">
     const container = document.querySelector('#container');
     const player = BoclipsPlayer.get(container);
-    player.configure('https://path.to.our/video/endpoint');
+    player.loadVideo('https://path.to.our/video/endpoint');
 </script>
 </body>
 </html>
