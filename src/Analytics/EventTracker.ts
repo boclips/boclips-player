@@ -29,13 +29,15 @@ export class EventTracker {
       return;
     }
 
-    axios.post(this.endpoints.createPlaybackEvent.getOriginalLink(), {
-      playerId: this.playerId,
-      videoId: this.video.id,
-      videoDurationSeconds: toSeconds(parse(this.video.playback.duration)),
-      segmentStartSeconds: this.segmentPlaybackStartTime,
-      segmentEndSeconds: currentTime,
-    });
+    if (this.endpoints.createPlaybackEvent) {
+      axios.post(this.endpoints.createPlaybackEvent.getOriginalLink(), {
+        playerId: this.playerId,
+        videoId: this.video.id,
+        videoDurationSeconds: toSeconds(parse(this.video.playback.duration)),
+        segmentStartSeconds: this.segmentPlaybackStartTime,
+        segmentEndSeconds: currentTime,
+      });
+    }
 
     this.segmentPlaybackStartTime = -1;
   };

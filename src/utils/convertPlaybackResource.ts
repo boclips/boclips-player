@@ -1,5 +1,5 @@
 import { Link } from '../types/Link';
-import { StreamPlayback, YoutubePlayback } from '../types/Playback';
+import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
 
 const convertPlaybackResource = (
   rawPlayback,
@@ -8,15 +8,18 @@ const convertPlaybackResource = (
     throw new Error(`Playback type ${rawPlayback.type} not supported`);
   }
 
-  const playback = {
+  const playback: Playback = {
     type: rawPlayback.type,
     id: rawPlayback.id,
     thumbnailUrl: rawPlayback.thumbnailUrl,
     duration: rawPlayback.duration,
-    links: {
-      createPlaybackEvent: new Link(rawPlayback._links.createPlaybackEvent),
-    },
+    links: {},
   };
+  if (rawPlayback._links) {
+    playback.links.createPlaybackEvent = new Link(
+      rawPlayback._links.createPlaybackEvent,
+    );
+  }
 
   if (rawPlayback.type === 'STREAM') {
     (playback as StreamPlayback).streamUrl = rawPlayback.streamUrl;
