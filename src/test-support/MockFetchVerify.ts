@@ -50,4 +50,8 @@ export default class MockFetchVerify {
   public static clear() {
     axiosMock.reset();
   }
+
+  public static getHistory() {
+    return axiosMock.history;
+  }
 }
