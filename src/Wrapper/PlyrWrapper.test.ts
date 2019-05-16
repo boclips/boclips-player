@@ -7,20 +7,25 @@ import Mock = jest.Mock;
 
 jest.mock('../Analytics/EventTracker');
 
-let element = null;
+let container = null;
 let wrapper = null;
 
 beforeEach(() => {
   Hls.mockClear();
   Plyr.mockClear();
 
-  element = document.createElement('video');
-  element.setAttribute('data-plyr-wrapper', 'html5');
-  wrapper = new PlyrWrapper(element);
+  container = document.createElement('video');
+  container.setAttribute('data-plyr-wrapper', 'html5');
+  wrapper = new PlyrWrapper(container);
 });
 
-it('Constructs a Plyr given an element', () => {
-  expect(Plyr).toHaveBeenCalledWith(element, expect.anything());
+it('Constructs a Plyr given an element a video element within container', () => {
+  expect(container.children.length).toEqual(1);
+  const video = container.children.item(0);
+  expect(video.tagName).toEqual('VIDEO');
+  expect(video.getAttribute('data-qa')).toEqual('boclips-player');
+
+  expect(Plyr).toHaveBeenCalledWith(video, expect.anything());
 });
 
 describe('When a new source is set', () => {

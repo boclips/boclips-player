@@ -10,8 +10,14 @@ export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
   private hls = null;
 
-  constructor(element: HTMLElement) {
-    this.plyr = new Plyr(element, {
+  // @ts-ignore
+  constructor(private readonly container: HTMLElement) {
+    const video = document.createElement('video');
+    video.setAttribute('data-qa', 'boclips-player');
+
+    container.appendChild(video);
+
+    this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
     });
 

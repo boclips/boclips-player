@@ -1,6 +1,6 @@
 import { EventTracker } from '../Analytics/EventTracker';
 
-export type WrapperConstructor = new (video: HTMLVideoElement) => Wrapper;
+export type WrapperConstructor = new (container: HTMLElement) => Wrapper;
 
 export interface Source {
   type: 'audio' | 'video';

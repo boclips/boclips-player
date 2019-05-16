@@ -39,12 +39,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container = container;
     this.options = options;
 
-    const video = document.createElement('video');
-    video.setAttribute('data-qa', 'boclips-player');
-
-    this.container.appendChild(video);
-
-    this.wrapper = new this.wrapperConstructor(video);
+    this.wrapper = new this.wrapperConstructor(container);
 
     this.eventTracker = new EventTracker(this.playerId);
   }

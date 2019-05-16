@@ -44,16 +44,9 @@ describe('BoclipsPlayer', () => {
     expect(player.getWrapper().play).toBeTruthy();
   });
 
-  it('Will insert a video element into the container', () => {
-    expect(container.children.length).toEqual(1);
-    const child = container.children.item(0);
-    expect(child.tagName).toEqual('VIDEO');
-    expect(child.getAttribute('data-qa')).toEqual('boclips-player');
-  });
-
-  it('Will initialise the video element with the player', () => {
+  it('Will initialise the wrapper with the container', () => {
     expect(wrapperConstructor).toBeCalledTimes(1);
-    expect(wrapperConstructor).toHaveBeenCalledWith(container.children.item(0));
+    expect(wrapperConstructor).toHaveBeenCalledWith(container);
   });
 
   const illegalContainers: Array<{
