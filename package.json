@@ -4,6 +4,7 @@
   "description": "A framework agnostic player for serving Boclips videos",
   "main": "dist/boclips-player.js",
   "scripts": {
+    "audit": "audit-ci -m",
     "test": "jest",
     "build": "webpack",
     "compile": "tsc -p . --noEmit",
@@ -35,6 +36,7 @@
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
+    "audit-ci": "^1.7.0",
     "axios": "^0.18.0",
     "axios-mock-adapter": "^1.16.0",
     "chai": "^4.2.0",

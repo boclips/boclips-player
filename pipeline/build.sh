@@ -6,8 +6,8 @@ app=source
 (
 cd ${app}
 
-npm audit --audit-level moderate
 npm ci
+npm run audit
 npm run compile
 npm run test
 )
