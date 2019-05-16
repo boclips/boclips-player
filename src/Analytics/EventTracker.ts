@@ -1,11 +1,12 @@
 import axios from 'axios';
+import { parse, toSeconds } from 'iso8601-duration';
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
 
 export class EventTracker {
   private readonly playerId: string;
   private endpoints: { createPlaybackEvent?: Link } = {};
-  private videoId: string;
+  private video: Video;
   private segmentPlaybackStartTime: number = -1;
 
   constructor(playerId: string) {
@@ -13,7 +14,7 @@ export class EventTracker {
   }
 
   public configure = (video: Video) => {
-    this.videoId = video.id;
+    this.video = video;
     this.endpoints = {
       createPlaybackEvent: video.playback.links.createPlaybackEvent,
     };
@@ -30,7 +31,8 @@ export class EventTracker {
 
     axios.post(this.endpoints.createPlaybackEvent.getOriginalLink(), {
       playerId: this.playerId,
-      videoId: this.videoId,
+      videoId: this.video.id,
+      videoDurationSeconds: toSeconds(parse(this.video.playback.duration)),
       segmentStartSeconds: this.segmentPlaybackStartTime,
       segmentEndSeconds: currentTime,
     });

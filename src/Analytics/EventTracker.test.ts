@@ -31,6 +31,7 @@ it('can handle pause events once a play event has been handled', async done => {
     expect(actual).toEqual({
       segmentStartSeconds: 5,
       segmentEndSeconds: 20,
+      videoDurationSeconds: 60,
       videoId: video.id,
       playerId: '321',
     });

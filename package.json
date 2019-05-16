@@ -29,8 +29,10 @@
   "dependencies": {
     "axios": "^0.18.0",
     "hls.js": "^0.12.4",
+    "iso8601-duration": "^1.2.0",
     "plyr": "^3.5.4",
-    "urijs": "^1.19.1"
+    "urijs": "^1.19.1",
+    "uuid": "^3.3.2"
   },
   "files": [
     "dist"
