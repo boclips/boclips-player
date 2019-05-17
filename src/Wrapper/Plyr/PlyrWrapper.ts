@@ -11,6 +11,16 @@ import convertPlaybackToSource from './utils/convertPlaybackToSource';
 export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
   private hls = null;
+  public static DEFAULT_CONTROLS = [
+    'play-large',
+    'play',
+    'progress',
+    'current-time',
+    'mute',
+    'volume',
+    'captions',
+    'fullscreen',
+  ];
 
   // @ts-ignore
   constructor(
@@ -25,6 +35,7 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
+      controls: PlyrWrapper.DEFAULT_CONTROLS,
     });
 
     addResizeListener(container, this.handleResizeEvent);

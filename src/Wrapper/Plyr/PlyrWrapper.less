@@ -1,17 +1,34 @@
 @import '../../../node_modules/plyr/dist/plyr.css';
+@import '../../styles/colours.less';
 
-.plyr .plyr__captions {
-  font-size: inherit;
-  padding: 0.5em;
+.plyr {
 
-  .plyr__caption {
-    padding: 0.2em;
-    line-height: 190%;
+  .plyr__captions {
+    font-size: inherit;
+    padding: 0.5em;
+
+    .plyr__caption {
+      padding: 0.2em;
+      line-height: 190%;
+    }
   }
-}
 
-.plyr--fullscreen {
-  .plyr .plyr__captions {
-    font-size: 4.4vh;
+  .plyr--full-ui input[type=range] {
+    color: @cta-blue;
+  }
+
+  .plyr--video .plyr__control {
+    .plyr__tab-focus,
+    &:hover,
+    &[aria-expanded=true] {
+      background: @mid-blue;
+      color: #fff;
+    }
+  }
+
+  .plyr--fullscreen & {
+    .plyr__captions {
+      font-size: 4.4vh;
+    }
   }
 }
