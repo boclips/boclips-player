@@ -38,9 +38,9 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container = container;
     this.options = options;
 
-    this.wrapper = new this.wrapperConstructor(container);
-
     this.eventTracker = new EventTracker(this.playerId);
+
+    this.wrapper = new this.wrapperConstructor(container, this.eventTracker);
   }
 
   public loadVideo = async (videoUri: string) => {
@@ -48,7 +48,6 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
       this.video = video;
       this.eventTracker.configure(video);
       this.wrapper.configureWithVideo(video);
-      this.wrapper.installEventTracker(this.eventTracker);
     });
   };
 

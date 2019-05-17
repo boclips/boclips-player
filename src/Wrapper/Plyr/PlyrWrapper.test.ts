@@ -7,13 +7,14 @@ import { VideoFactory } from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
-jest.mock('../Analytics/EventTracker');
+jest.mock('../../Analytics/EventTracker');
 jest.mock('resize-detector');
 
 const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
 let wrapper: Wrapper = null;
+let tracker: EventTracker = null;
 
 beforeEach(() => {
   Hls.mockClear();
@@ -21,7 +22,8 @@ beforeEach(() => {
 
   container = document.createElement('video');
   container.setAttribute('data-plyr-wrapper', 'html5');
-  wrapper = new PlyrWrapper(container);
+  tracker = new EventTracker('player123');
+  wrapper = new PlyrWrapper(container, tracker);
 });
 
 it('Constructs a Plyr given an element a video element within container', () => {
@@ -95,59 +97,36 @@ it('Will pause', () => {
   expect(plyrInstance.play).toHaveBeenCalled();
 });
 
-describe('When installing an Event Tracker', () => {
-  let mockTracker;
+describe('Event Tracking', () => {
   let plyrInstance;
 
   beforeEach(() => {
-    mocked(EventTracker).mockImplementation(() => {
-      return ({
-        handlePlay: jest.fn(),
-        handlePause: jest.fn(),
-      } as unknown) as EventTracker;
-    });
-
-    mockTracker = new EventTracker('testing-123');
     plyrInstance = Plyr.mock.instances[0];
     plyrInstance.on.mockClear();
   });
 
   it('will add an on playing event listener that delegates to the EventTracker', () => {
-    wrapper.installEventTracker(mockTracker);
-
-    const calls = plyrInstance.on.mock.calls.filter(
-      ([name]) => name === 'playing',
-    );
-    expect(calls).toHaveLength(1);
-
-    const callback = calls[0][1];
-
-    plyrInstance.currentTime = 10;
-    callback({
+    plyrInstance.__callEventCallback('playing', {
       detail: {
-        plyr: plyrInstance,
+        plyr: {
+          currentTime: 10,
+        },
       },
     });
-    expect(mockTracker.handlePlay).toHaveBeenCalledWith(10);
+
+    expect(tracker.handlePlay).toHaveBeenCalledWith(10);
   });
 
   it('will add an on pause event listener that delegates to the EventTracker', () => {
-    wrapper.installEventTracker(mockTracker);
-
-    const calls = plyrInstance.on.mock.calls.filter(
-      ([name]) => name === 'pause',
-    );
-
-    expect(calls).toHaveLength(1);
-    const callback = calls[0][1];
-
-    plyrInstance.currentTime = 15;
-    callback({
+    plyrInstance.__callEventCallback('pause', {
       detail: {
-        plyr: plyrInstance,
+        plyr: {
+          currentTime: 15,
+        },
       },
     });
-    expect(mockTracker.handlePause).toHaveBeenCalledWith(15);
+
+    expect(tracker.handlePause).toHaveBeenCalledWith(15);
   });
 });
 

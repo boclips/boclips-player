@@ -4,7 +4,6 @@ export const MockWrapper = jest.fn<Wrapper, any>(
   (): Wrapper => {
     return {
       configureWithVideo: jest.fn(),
-      installEventTracker: jest.fn(),
       play: jest.fn(),
       pause: jest.fn(),
     };

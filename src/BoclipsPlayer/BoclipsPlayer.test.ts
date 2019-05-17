@@ -1,4 +1,5 @@
 import { mocked } from 'ts-jest/utils';
+import { EventTracker } from '../Analytics/EventTracker';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
 import {
@@ -10,15 +11,7 @@ import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
-jest.mock('../Analytics/EventTracker', () => {
-  return {
-    EventTracker: jest.fn().mockImplementation(() => {
-      return {
-        configure: jest.fn(),
-      };
-    }),
-  };
-});
+jest.mock('../Analytics/EventTracker');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
@@ -48,7 +41,14 @@ describe('BoclipsPlayer', () => {
 
   it('Will initialise the wrapper with the container', () => {
     expect(wrapperConstructor).toBeCalledTimes(1);
-    expect(wrapperConstructor).toHaveBeenCalledWith(container);
+    expect(wrapperConstructor).toHaveBeenCalledWith(
+      container,
+      expect.anything(),
+    );
+  });
+
+  it('Will initialise the event tracker with a player id', () => {
+    expect(EventTracker).toBeCalledTimes(1);
   });
 
   const illegalContainers: Array<{
@@ -125,18 +125,6 @@ describe('BoclipsPlayer', () => {
       const eventTracker = player.getEventTracker();
 
       expect(eventTracker.configure).toHaveBeenCalled();
-    });
-  });
-
-  it('Will configure the event tracking into the wrapper when a video is loaded', () => {
-    const uri = '/v1/videos/177';
-
-    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
-
-    return player.loadVideo(uri).then(() => {
-      const wrapper = player.getWrapper();
-
-      expect(wrapper.installEventTracker).toHaveBeenCalled();
     });
   });
 });

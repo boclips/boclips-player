@@ -13,20 +13,28 @@ export default class PlyrWrapper implements Wrapper {
   private hls = null;
 
   // @ts-ignore
-  constructor(private readonly container: HTMLElement) {
+  constructor(
+    private readonly container: HTMLElement,
+    private readonly eventTracker: EventTracker,
+  ) {
     const video = document.createElement('video');
-
     video.setAttribute('data-qa', 'boclips-player');
 
     container.appendChild(video);
-
-    addResizeListener(container, this.handleResizeEvent);
 
     this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
     });
 
+    addResizeListener(container, this.handleResizeEvent);
+
+    this.installPlyrEventListeners();
+
+    this.installEventTracker();
+  }
+
+  private installPlyrEventListeners() {
     this.plyr.on('play', () => {
       if (this.hls) {
         this.hls.startLoad();
@@ -80,13 +88,13 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.pause();
   };
 
-  public installEventTracker = (eventTracker: EventTracker) => {
+  private installEventTracker = () => {
     this.plyr.on('playing', event => {
-      eventTracker.handlePlay(event.detail.plyr.currentTime);
+      this.eventTracker.handlePlay(event.detail.plyr.currentTime);
     });
 
     this.plyr.on('pause', event => {
-      eventTracker.handlePause(event.detail.plyr.currentTime);
+      this.eventTracker.handlePause(event.detail.plyr.currentTime);
     });
   };
 }
