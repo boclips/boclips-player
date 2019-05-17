@@ -22,7 +22,7 @@
   "contributors": [
     "Antony O'Neill <antony@boclips.com>"
   ],
-  "license": "ISC",
+  "license": "BSD-3-Clause",
   "bugs": {
     "url": "https://github.com/boclips/boclips-player/issues"
   },
