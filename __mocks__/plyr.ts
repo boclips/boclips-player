@@ -15,7 +15,12 @@ function on(event, callback) {
   callbacksMap[event].push(callback);
 }
 
+const media = {
+  addEventListener: jest.fn(),
+};
+
 Plyr.prototype.on = on;
 Plyr.prototype.__callEventCallback = __callEventCallback;
+Plyr.prototype.media = media;
 
 module.exports = Plyr;

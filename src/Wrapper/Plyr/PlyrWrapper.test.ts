@@ -20,8 +20,7 @@ beforeEach(() => {
   Hls.mockClear();
   Plyr.mockClear();
 
-  container = document.createElement('video');
-  container.setAttribute('data-plyr-wrapper', 'html5');
+  container = document.createElement('div');
   tracker = new EventTracker('player123');
   wrapper = new PlyrWrapper(container, tracker);
 });
@@ -77,6 +76,20 @@ describe('When a new video is configured', () => {
 
     it('does not instantiate a Hls', () => {
       expect(Hls).not.toHaveBeenCalled();
+    });
+
+    it('adds an loadedmetadata listener to the video which then plays', () => {
+      const plyrInstance = Plyr.mock.instances[0];
+      expect(plyrInstance.media.addEventListener).toHaveBeenCalledWith(
+        'loadedmetadata',
+        expect.anything(),
+      );
+
+      const callback = plyrInstance.media.addEventListener.mock.calls[0][1];
+
+      callback();
+
+      expect(plyrInstance.play).toHaveBeenCalled();
     });
   });
 });

@@ -75,6 +75,11 @@ export default class PlyrWrapper implements Wrapper {
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         this.hls.loadSource(source.sources[0].src);
       });
+    } else {
+      this.plyr.media.addEventListener('loadedmetadata', () => {
+        // noinspection JSIgnoredPromiseFromCall
+        this.play();
+      });
     }
   };
 
