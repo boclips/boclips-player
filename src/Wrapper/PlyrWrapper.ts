@@ -1,9 +1,9 @@
 import Plyr from 'plyr';
-
-import 'plyr/dist/plyr.css';
+import './PlyrWrapper.less';
 import { Source, Wrapper } from './Wrapper';
 
 import Hls from 'hls.js';
+import { addListener as addResizeListener } from 'resize-detector';
 import { EventTracker } from '../Analytics/EventTracker';
 
 export default class PlyrWrapper implements Wrapper {
@@ -13,18 +13,30 @@ export default class PlyrWrapper implements Wrapper {
   // @ts-ignore
   constructor(private readonly container: HTMLElement) {
     const video = document.createElement('video');
+
     video.setAttribute('data-qa', 'boclips-player');
 
     container.appendChild(video);
 
+    addResizeListener(container, this.handleResizeEvent);
+
     this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
+      captions: { active: false, language: 'en', update: true },
     });
 
     this.plyr.on('play', () => {
       if (this.hls) {
         this.hls.startLoad();
       }
+    });
+
+    this.plyr.on('enterfullscreen', () => {
+      this.handleEnterFullscreen();
+    });
+
+    this.plyr.on('exitfullscreen', () => {
+      this.handleExitFullscreen();
     });
   }
 
@@ -46,6 +58,20 @@ export default class PlyrWrapper implements Wrapper {
     return this.plyr.source;
   }
 
+  private handleResizeEvent = () => {
+    const height = this.container.clientHeight;
+    const fontSize = Math.max(0.04 * height, 12);
+    this.container.style.fontSize = fontSize + 'px';
+  };
+
+  private handleEnterFullscreen = () => {
+    this.container.classList.add('plyr--fullscreen');
+  };
+
+  private handleExitFullscreen = () => {
+    this.container.classList.remove('plyr--fullscreen');
+  };
+
   public play = (): Promise<void> => {
     return this.plyr.play();
   };
@@ -58,6 +84,7 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.on('playing', event => {
       eventTracker.handlePlay(event.detail.plyr.currentTime);
     });
+
     this.plyr.on('pause', event => {
       eventTracker.handlePause(event.detail.plyr.currentTime);
     });

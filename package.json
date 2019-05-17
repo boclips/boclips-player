@@ -31,6 +31,7 @@
     "hls.js": "^0.12.4",
     "iso8601-duration": "^1.2.0",
     "plyr": "^3.5.4",
+    "resize-detector": "^0.2.0",
     "urijs": "^1.19.1",
     "uuid": "^3.3.2"
   },

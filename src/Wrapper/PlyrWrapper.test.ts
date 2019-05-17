@@ -1,14 +1,16 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
+import Mock = jest.Mock;
+import { addListener } from 'resize-detector';
 import { EventTracker } from '../Analytics/EventTracker';
 import { SourceFactory } from '../test-support/TestFactories';
 import PlyrWrapper from './PlyrWrapper';
-import Mock = jest.Mock;
 
 jest.mock('../Analytics/EventTracker');
+jest.mock('resize-detector');
 
-let container = null;
-let wrapper = null;
+let container: HTMLElement = null;
+let wrapper: PlyrWrapper = null;
 
 beforeEach(() => {
   Hls.mockClear();
@@ -25,7 +27,12 @@ it('Constructs a Plyr given an element a video element within container', () => 
   expect(video.tagName).toEqual('VIDEO');
   expect(video.getAttribute('data-qa')).toEqual('boclips-player');
 
-  expect(Plyr).toHaveBeenCalledWith(video, expect.anything());
+  expect(Plyr).toHaveBeenCalledWith(
+    video,
+    expect.objectContaining({
+      captions: expect.objectContaining({ update: true }),
+    }),
+  );
 });
 
 describe('When a new source is set', () => {
@@ -137,5 +144,53 @@ describe('When installing an Event Tracker', () => {
       },
     });
     expect(mockTracker.handlePause).toHaveBeenCalledWith(15);
+  });
+});
+
+describe('is listening for container resizes', () => {
+  it('adds a resize detector', () => {
+    expect(addListener).toHaveBeenCalledWith(container, expect.anything());
+  });
+
+  it('sets the fontsize to be 4% of the height', () => {
+    const callback = (addListener as Mock).mock.calls[0][1];
+
+    // @ts-ignore
+    container.__jsdomMockClientHeight = 10;
+    callback();
+
+    expect(container.style.fontSize).toEqual(12 + 'px');
+
+    // @ts-ignore
+    container.__jsdomMockClientHeight = 700;
+    callback();
+
+    expect(container.style.fontSize).toEqual(700 * 0.04 + 'px');
+
+    // @ts-ignore
+    container.__jsdomMockClientHeight = 1200;
+    callback();
+
+    expect(container.style.fontSize).toEqual(1200 * 0.04 + 'px');
+  });
+});
+
+describe('is listening for plyr events', () => {
+  let plyrInstance;
+
+  beforeEach(() => {
+    plyrInstance = Plyr.mock.instances[0];
+  });
+
+  it('adds a --fullscreen class to the container on enterfullscreen', () => {
+    expect(container.classList).not.toContain('plyr--fullscreen');
+    plyrInstance.__callEventCallback('enterfullscreen');
+    expect(container.classList).toContain('plyr--fullscreen');
+  });
+
+  it('removes a --fullscreen class to the container on exitfullscreen', () => {
+    container.classList.add('plyr--fullscreen');
+    plyrInstance.__callEventCallback('exitfullscreen');
+    expect(container.classList).not.toContain('plyr--fullscreen');
   });
 });
