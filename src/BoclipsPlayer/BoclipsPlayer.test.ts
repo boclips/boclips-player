@@ -1,3 +1,4 @@
+import { mocked } from 'ts-jest/utils';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
 import {
@@ -5,6 +6,7 @@ import {
   youtubeVideoSample,
 } from '../test-support/video-service-responses';
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
+import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
@@ -100,27 +102,17 @@ describe('BoclipsPlayer', () => {
     });
   });
 
-  it('Will play the streamUrl in the playback object', () => {
+  it('Will configure the wrapper with the video', () => {
     const uri = '/v1/videos/177';
 
     MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      expect(player.getWrapper().source.sources[0].src).toContain(
-        'kaltura/stream.mp4',
-      );
-    });
-  });
-
-  it('Will play the youtube id in the playback object', () => {
-    const uri = '/v1/videos/177';
-
-    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
-
-    return player.loadVideo(uri).then(() => {
-      expect(player.getWrapper().source.sources[0].src).toContain(
-        'youtube-playback-id',
-      );
+      const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+      expect(calls).toHaveLength(1);
+      const video = calls[0][0] as Video;
+      expect(video).toBeTruthy();
+      expect(video.id).toEqual(streamVideoSample.id);
     });
   });
 

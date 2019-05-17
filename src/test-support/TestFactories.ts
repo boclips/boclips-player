@@ -1,20 +1,5 @@
 import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
-import { Source } from '../Wrapper/Wrapper';
-
-export class SourceFactory {
-  public static sample = (): Source => ({
-    poster: '/path/to/poster.jpg',
-    title: 'new title',
-    type: 'video',
-    sources: [
-      {
-        provider: 'html5',
-        src: '/path/to/video.mp4',
-      },
-    ],
-  });
-}
 
 export class PlaybackFactory {
   public static streamSample = (): StreamPlayback => ({

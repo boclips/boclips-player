@@ -1,22 +1,11 @@
 import { EventTracker } from '../Analytics/EventTracker';
+import { Video } from '../types/Video';
 
 export type WrapperConstructor = new (container: HTMLElement) => Wrapper;
 
-export interface Source {
-  type: 'audio' | 'video';
-  title?: string;
-  sources: Array<{
-    src: string;
-    type?: string;
-    size?: number;
-    provider: 'html5' | 'youtube';
-  }>;
-  poster: string;
-}
-
 export interface Wrapper {
-  source: Source;
   play: () => Promise<void>;
   pause: () => void;
+  configureWithVideo: (video: Video) => void;
   installEventTracker: (eventTracker: EventTracker) => void;
 }

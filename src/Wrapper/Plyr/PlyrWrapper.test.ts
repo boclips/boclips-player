@@ -1,16 +1,19 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
-import Mock = jest.Mock;
 import { addListener } from 'resize-detector';
-import { EventTracker } from '../Analytics/EventTracker';
-import { SourceFactory } from '../test-support/TestFactories';
+import { mocked } from 'ts-jest/utils';
+import { EventTracker } from '../../Analytics/EventTracker';
+import { VideoFactory } from '../../test-support/TestFactories';
+import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../Analytics/EventTracker');
 jest.mock('resize-detector');
 
+const video = VideoFactory.sample();
+
 let container: HTMLElement = null;
-let wrapper: PlyrWrapper = null;
+let wrapper: Wrapper = null;
 
 beforeEach(() => {
   Hls.mockClear();
@@ -23,24 +26,25 @@ beforeEach(() => {
 
 it('Constructs a Plyr given an element a video element within container', () => {
   expect(container.children.length).toEqual(1);
-  const video = container.children.item(0);
-  expect(video.tagName).toEqual('VIDEO');
-  expect(video.getAttribute('data-qa')).toEqual('boclips-player');
+
+  const videoElement = container.children.item(0);
+  expect(videoElement.tagName).toEqual('VIDEO');
+  expect(videoElement.getAttribute('data-qa')).toEqual('boclips-player');
 
   expect(Plyr).toHaveBeenCalledWith(
-    video,
+    videoElement,
     expect.objectContaining({
       captions: expect.objectContaining({ update: true }),
     }),
   );
 });
 
-describe('When a new source is set', () => {
+describe('When a new video is configured', () => {
   describe('When Hls is supported', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(true);
 
-      wrapper.source = SourceFactory.sample();
+      wrapper.configureWithVideo(video);
     });
 
     it('instantiates a Hls', () => {
@@ -66,7 +70,7 @@ describe('When a new source is set', () => {
   describe('When Hls is not supported', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(false);
-      wrapper.source = SourceFactory.sample();
+      wrapper.configureWithVideo(video);
     });
 
     it('does not instantiate a Hls', () => {
@@ -76,7 +80,7 @@ describe('When a new source is set', () => {
 });
 
 it('Will play', () => {
-  wrapper.source = SourceFactory.sample();
+  wrapper.configureWithVideo(video);
 
   wrapper.play();
   const plyrInstance = Plyr.mock.instances[0];
@@ -84,7 +88,7 @@ it('Will play', () => {
 });
 
 it('Will pause', () => {
-  wrapper.source = SourceFactory.sample();
+  wrapper.configureWithVideo(video);
 
   wrapper.play();
   const plyrInstance = Plyr.mock.instances[0];
@@ -96,11 +100,11 @@ describe('When installing an Event Tracker', () => {
   let plyrInstance;
 
   beforeEach(() => {
-    (EventTracker as Mock).mockImplementation(() => {
-      return {
+    mocked(EventTracker).mockImplementation(() => {
+      return ({
         handlePlay: jest.fn(),
         handlePause: jest.fn(),
-      };
+      } as unknown) as EventTracker;
     });
 
     mockTracker = new EventTracker('testing-123');
@@ -153,7 +157,7 @@ describe('is listening for container resizes', () => {
   });
 
   it('sets the fontsize to be 4% of the height', () => {
-    const callback = (addListener as Mock).mock.calls[0][1];
+    const callback = mocked(addListener).mock.calls[0][1];
 
     // @ts-ignore
     container.__jsdomMockClientHeight = 10;

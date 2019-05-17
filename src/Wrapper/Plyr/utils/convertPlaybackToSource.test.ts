@@ -1,10 +1,10 @@
-import { PlaybackFactory } from '../test-support/TestFactories';
-import convertPlaybackToSources from './convertPlaybackToSources';
+import { PlaybackFactory } from '../../../test-support/TestFactories';
+import convertPlaybackToSource from './convertPlaybackToSource';
 
 it('can convert a stream playback to a html5 video source', () => {
   const streamPlayback = PlaybackFactory.streamSample();
 
-  const source = convertPlaybackToSources(streamPlayback);
+  const source = convertPlaybackToSource(streamPlayback);
 
   expect(source.type).toEqual('video');
   expect(source.poster).toEqual(streamPlayback.thumbnailUrl);
@@ -16,7 +16,7 @@ it('can convert a stream playback to a html5 video source', () => {
 it('can convert a youtube playback to a youtube video source', () => {
   const youtubePlayback = PlaybackFactory.youtubeSample();
 
-  const source = convertPlaybackToSources(youtubePlayback);
+  const source = convertPlaybackToSource(youtubePlayback);
 
   expect(source.type).toEqual('video');
   expect(source.poster).toEqual(youtubePlayback.thumbnailUrl);

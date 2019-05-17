@@ -1,7 +1,7 @@
-import { isStreamPlayback, Playback } from '../types/Playback';
-import { Source } from '../Wrapper/Wrapper';
+import { isStreamPlayback, Playback } from '../../../types/Playback';
+import { Source } from '../types';
 
-const convertPlaybackToSources = (playback: Playback): Source => ({
+const convertPlaybackToSource = (playback: Playback): Source => ({
   type: 'video',
   sources: [
     {
@@ -12,4 +12,4 @@ const convertPlaybackToSources = (playback: Playback): Source => ({
   poster: playback.thumbnailUrl,
 });
 
-export default convertPlaybackToSources;
+export default convertPlaybackToSource;

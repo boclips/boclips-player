@@ -1,10 +1,12 @@
 import Plyr from 'plyr';
+import { Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
-import { Source, Wrapper } from './Wrapper';
 
 import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
-import { EventTracker } from '../Analytics/EventTracker';
+import { EventTracker } from '../../Analytics/EventTracker';
+import { Video } from '../../types/Video';
+import convertPlaybackToSource from './utils/convertPlaybackToSource';
 
 export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
@@ -40,8 +42,10 @@ export default class PlyrWrapper implements Wrapper {
     });
   }
 
-  set source(newSources: Source) {
-    this.plyr.source = newSources;
+  public configureWithVideo = (video: Video) => {
+    const source = convertPlaybackToSource(video.playback);
+
+    this.plyr.source = source;
 
     if (Hls.isSupported()) {
       this.hls = new Hls({
@@ -49,14 +53,10 @@ export default class PlyrWrapper implements Wrapper {
       });
       this.hls.attachMedia(this.plyr.media);
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        this.hls.loadSource(newSources.sources[0].src);
+        this.hls.loadSource(source.sources[0].src);
       });
     }
-  }
-
-  get source(): Source {
-    return this.plyr.source;
-  }
+  };
 
   private handleResizeEvent = () => {
     const height = this.container.clientHeight;

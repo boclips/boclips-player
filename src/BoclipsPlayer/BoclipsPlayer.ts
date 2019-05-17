@@ -1,7 +1,6 @@
 import uuid from 'uuid/v1';
 import { EventTracker } from '../Analytics/EventTracker';
 import { Video } from '../types/Video';
-import convertPlaybackToSources from '../utils/convertPlaybackToSources';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 
@@ -12,12 +11,12 @@ interface BoclipsPlayerInstance {
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
   private readonly wrapperConstructor: WrapperConstructor;
-  private readonly container: HTMLElement;
   private readonly wrapper: Wrapper;
+  private readonly container: HTMLElement;
+  private readonly eventTracker: EventTracker;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
-  private eventTracker: EventTracker;
   private playerId: string = uuid();
 
   constructor(
@@ -48,7 +47,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     return retrieveVideo(videoUri).then((video: Video) => {
       this.video = video;
       this.eventTracker.configure(video);
-      this.wrapper.source = convertPlaybackToSources(video.playback);
+      this.wrapper.configureWithVideo(video);
       this.wrapper.installEventTracker(this.eventTracker);
     });
   };
@@ -61,11 +60,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
   public getVideo = (): Video => this.video;
 
-  public play = (): Promise<void> => {
-    return this.wrapper.play();
-  };
+  public play = (): Promise<void> => this.wrapper.play();
 
-  public pause = (): void => {
-    this.wrapper.pause();
-  };
+  public pause = (): void => this.wrapper.pause();
 }
