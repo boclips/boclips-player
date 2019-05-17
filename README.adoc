@@ -1,4 +1,14 @@
-== Boclips Player
+= Boclips Player
+Boclips Engineering;
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc: left
+:toclevels: 4
+:sectlinks:
+
+[[boclips-player]]
+= Overview
 
 image:https://concourse.devboclips.net/api/v1/teams/main/pipelines/boclips-player/jobs/build/badge[concourse]
 https://www.npmjs.com/package/boclips-player[image:https://badge.fury.io/js/boclips-player.svg[npm
@@ -13,7 +23,8 @@ It will be integrated into other apps used by our API partners. We want
 to provide these partners with a complete player solution that allows us
 to gain insights to how our consumers watch our videos.
 
-=== Usage
+[[usage]]
+== Usage
 
 In order to render the Boclips Player on your page you should load the
 Javascript and CSS assets in the `head` section.
@@ -41,9 +52,11 @@ In order to load a video you must have a Video URI pointing to our API.
 </html>
 ----
 
-==== JavaScript API
+[[javascript-api]]
+=== JavaScript API
 
-===== In the Browser
+[[browser]]
+==== In the Browser
 
 When this library is loaded via a script tag on a web page it places a
 factory method on the window.
@@ -64,16 +77,19 @@ interface BoclipsPlayer {
 }
 ----
 
-=== Development
+[[development]]
+== Development
 
 This project is written exclusively in TypeScript. TDD is an absolute
 must for this business critical library.
 
-==== Running the demo
+[[running-demo]]
+=== Running the demo
 
 _TBC_
 
-==== Developing locally
+[[developing-locally]]
+=== Developing locally
 
 ....
 git clone git@github.com:boclips/boclips-player.git
@@ -91,10 +107,12 @@ npm run test
 npm run build
 ....
 
-=== Contributing
+[[contributing]]
+== Contributing
 
 _TBC_
 
-=== License
+[[license]]
+== License
 
 _TBC_
