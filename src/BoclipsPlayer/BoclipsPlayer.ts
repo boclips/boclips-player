@@ -41,6 +41,12 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.eventTracker = new EventTracker(this.playerId);
 
     this.wrapper = new this.wrapperConstructor(container, this.eventTracker);
+
+    const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
+    if (videoUriAttribute) {
+      // noinspection JSIgnoredPromiseFromCall
+      this.loadVideo(videoUriAttribute);
+    }
   }
 
   public loadVideo = async (videoUri: string) => {

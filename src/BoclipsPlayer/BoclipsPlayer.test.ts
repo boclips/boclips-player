@@ -1,5 +1,6 @@
 import { mocked } from 'ts-jest/utils';
 import { EventTracker } from '../Analytics/EventTracker';
+import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
 import {
@@ -49,6 +50,26 @@ describe('BoclipsPlayer', () => {
 
   it('Will initialise the event tracker with a player id', () => {
     expect(EventTracker).toBeCalledTimes(1);
+  });
+
+  it('Will auto load the video based on data attribute on container', () => {
+    const uri = '/v1/videos/177';
+
+    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+
+    const autoContainer = document.createElement('div');
+    autoContainer.setAttribute('data-boplayer-video-uri', uri);
+    document.body.appendChild(autoContainer);
+
+    const autoPlayer = new BoclipsPlayer(wrapperConstructor, autoContainer);
+
+    return eventually(() => {
+      const playback = autoPlayer.getVideo().playback;
+      expect(isStreamPlayback(playback)).toBeTruthy();
+      expect((playback as StreamPlayback).streamUrl).toEqual(
+        'kaltura/stream.mp4',
+      );
+    });
   });
 
   const illegalContainers: Array<{

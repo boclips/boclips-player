@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>Boclips Player Demo</title>
+    <style>
+      body {
+        margin: 0;
+      }
+      [data-boclips-player-container] {
+        display: inline-block;
+        width: 500px;
+        margin: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/1"></div>
+    <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/2"></div>
+    <script>
+      BoclipsPlayer.scan();
+    </script>
+  </body>
+</html>
