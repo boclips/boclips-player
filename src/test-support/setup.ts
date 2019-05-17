@@ -7,4 +7,7 @@ beforeEach(() => {
   (axios.interceptors.request as any).use(AxiosLogger.requestLogger);
 
   MockFetchVerify.clear();
+
+  // Can you believe JEST doesn't automatically clean up?
+  document.body.innerHTML = '';
 });

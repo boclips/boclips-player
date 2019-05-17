@@ -1,2 +1,6 @@
 // noinspection JSUnusedGlobalSymbols
-export { get } from './BoclipsPlayerFactory/BoclipsPlayerFactory';
+export {
+  get,
+  getSeveral,
+  scan,
+} from './BoclipsPlayerFactory/BoclipsPlayerFactory';
