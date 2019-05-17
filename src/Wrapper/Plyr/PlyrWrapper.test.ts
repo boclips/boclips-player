@@ -141,6 +141,20 @@ describe('Event Tracking', () => {
 
     expect(tracker.handlePause).toHaveBeenCalledWith(15);
   });
+
+  it('will call on pause when the navigation is about to change', () => {
+    const callbacks = (window as any).__callbacks.beforeunload;
+
+    expect(callbacks).toHaveLength(1);
+
+    plyrInstance.currentTime = 25;
+
+    const callback = callbacks[0];
+
+    callback();
+
+    expect(tracker.handlePause).toHaveBeenCalledWith(25);
+  });
 });
 
 describe('is listening for container resizes', () => {

@@ -15,6 +15,20 @@ Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
   },
 });
 
+Object.defineProperty(window, 'addEventListener', {
+  configurable: true,
+  value(event, callback) {
+    if (!this.callbacks) {
+      // noinspection JSUnusedGlobalSymbols
+      this.__callbacks = {};
+    }
+    if (!this.__callbacks[event]) {
+      this.__callbacks[event] = [];
+    }
+    this.__callbacks[event].push(callback);
+  },
+});
+
 Object.defineProperty(HTMLMediaElement.prototype, 'load', {
   configurable: true,
   value: jest.fn(),

@@ -44,6 +44,11 @@ export default class PlyrWrapper implements Wrapper {
     this.installPlyrEventListeners();
 
     this.installEventTracker();
+
+    window.addEventListener('beforeunload', () => {
+      const currentTime = this.plyr.currentTime;
+      this.eventTracker.handlePause(currentTime);
+    });
   }
 
   private installPlyrEventListeners() {
