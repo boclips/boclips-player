@@ -28,6 +28,7 @@ export default class PlyrWrapper implements Wrapper {
     });
 
     addResizeListener(container, this.handleResizeEvent);
+    this.handleResizeEvent();
 
     this.installPlyrEventListeners();
 
