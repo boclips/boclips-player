@@ -1,29 +1,29 @@
 import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { VideoFactory } from '../test-support/TestFactories';
-import { EventTracker } from './EventTracker';
+import { Analytics } from './Analytics';
 
-let eventTracker: EventTracker;
+let analytics: Analytics;
 const video = VideoFactory.sample();
 
 beforeEach(() => {
-  eventTracker = new EventTracker('321');
-  eventTracker.configure(video);
+  analytics = new Analytics('321');
+  analytics.configure(video);
 });
 
 it('can handle play events', () => {
-  eventTracker.handlePlay(15);
+  analytics.handlePlay(15);
 
-  expect(eventTracker.getSegmentPlaybackStartTime()).toEqual(15);
+  expect(analytics.getSegmentPlaybackStartTime()).toEqual(15);
 });
 
 it('can handle pause events once a play event has been handled', async done => {
   MockFetchVerify.post('create/playback/event', undefined, 201);
-  eventTracker = new EventTracker('321');
-  eventTracker.configure(video);
+  analytics = new Analytics('321');
+  analytics.configure(video);
 
-  eventTracker.handlePlay(5);
-  eventTracker.handlePause(20);
+  analytics.handlePlay(5);
+  analytics.handlePause(20);
 
   await eventually(() => {
     const history = MockFetchVerify.getHistory();
@@ -41,7 +41,7 @@ it('can handle pause events once a play event has been handled', async done => {
 });
 
 it('does nothing on pause events before a play event', () => {
-  eventTracker.handlePause(20);
+  analytics.handlePause(20);
 
   const history = MockFetchVerify.getHistory();
   expect(history).toBeTruthy();

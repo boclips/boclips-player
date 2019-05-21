@@ -3,14 +3,14 @@ import { parse, toSeconds } from 'iso8601-duration';
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
 
-export interface EventTrackerInstance {
+export interface AnalyticsInstance {
   configure: (video: Video) => void;
   handlePlay: (currentTime: number) => void;
   handlePause: (currentTime: number) => void;
   getSegmentPlaybackStartTime: () => number;
 }
 
-export class EventTracker implements EventTrackerInstance {
+export class Analytics implements AnalyticsInstance {
   private readonly playerId: string;
   private endpoints: { createPlaybackEvent?: Link } = {};
   private video: Video;

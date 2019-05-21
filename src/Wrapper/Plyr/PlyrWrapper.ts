@@ -4,7 +4,7 @@ import './PlyrWrapper.less';
 
 import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
-import { EventTracker } from '../../Analytics/EventTracker';
+import { Analytics } from '../../Events/Analytics';
 import { Video } from '../../types/Video';
 import convertPlaybackToSource from './utils/convertPlaybackToSource';
 
@@ -25,7 +25,7 @@ export default class PlyrWrapper implements Wrapper {
   // @ts-ignore
   constructor(
     private readonly container: HTMLElement,
-    private readonly eventTracker: EventTracker,
+    private readonly analytics: Analytics,
   ) {
     const video = document.createElement('video');
     video.setAttribute('data-qa', 'boclips-player');
@@ -43,11 +43,11 @@ export default class PlyrWrapper implements Wrapper {
 
     this.installPlyrEventListeners();
 
-    this.installEventTracker();
+    this.installAnalytics();
 
     window.addEventListener('beforeunload', () => {
       const currentTime = this.plyr.currentTime;
-      this.eventTracker.handlePause(currentTime);
+      this.analytics.handlePause(currentTime);
     });
   }
 
@@ -110,13 +110,13 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.pause();
   };
 
-  private installEventTracker = () => {
+  private installAnalytics = () => {
     this.plyr.on('playing', event => {
-      this.eventTracker.handlePlay(event.detail.plyr.currentTime);
+      this.analytics.handlePlay(event.detail.plyr.currentTime);
     });
 
     this.plyr.on('pause', event => {
-      this.eventTracker.handlePause(event.detail.plyr.currentTime);
+      this.analytics.handlePause(event.detail.plyr.currentTime);
     });
   };
 }

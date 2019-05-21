@@ -1,5 +1,5 @@
 import uuid from 'uuid/v1';
-import { EventTracker } from '../Analytics/EventTracker';
+import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
@@ -13,7 +13,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   private readonly wrapperConstructor: WrapperConstructor;
   private readonly wrapper: Wrapper;
   private readonly container: HTMLElement;
-  private readonly eventTracker: EventTracker;
+  private readonly analytics: Analytics;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
@@ -38,9 +38,9 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container = container;
     this.options = options;
 
-    this.eventTracker = new EventTracker(this.playerId);
+    this.analytics = new Analytics(this.playerId);
 
-    this.wrapper = new this.wrapperConstructor(container, this.eventTracker);
+    this.wrapper = new this.wrapperConstructor(container, this.analytics);
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
     if (videoUriAttribute) {
@@ -52,7 +52,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   public loadVideo = async (videoUri: string) => {
     return retrieveVideo(videoUri).then((video: Video) => {
       this.video = video;
-      this.eventTracker.configure(video);
+      this.analytics.configure(video);
       this.wrapper.configureWithVideo(video);
     });
   };
@@ -61,7 +61,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
   public getWrapper = () => this.wrapper;
 
-  public getEventTracker = () => this.eventTracker;
+  public getAnalytics = () => this.analytics;
 
   public getVideo = (): Video => this.video;
 

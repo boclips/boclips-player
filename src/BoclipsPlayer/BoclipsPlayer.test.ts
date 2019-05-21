@@ -1,5 +1,5 @@
 import { mocked } from 'ts-jest/utils';
-import { EventTracker } from '../Analytics/EventTracker';
+import { Analytics } from '../Events/Analytics';
 import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
@@ -12,7 +12,7 @@ import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
-jest.mock('../Analytics/EventTracker');
+jest.mock('../Analytics/Analytics');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
@@ -49,7 +49,7 @@ describe('BoclipsPlayer', () => {
   });
 
   it('Will initialise the event tracker with a player id', () => {
-    expect(EventTracker).toBeCalledTimes(1);
+    expect(Analytics).toBeCalledTimes(1);
   });
 
   it('Will auto load the video based on data attribute on container', () => {
@@ -143,9 +143,9 @@ describe('BoclipsPlayer', () => {
     MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
 
     return player.loadVideo(uri).then(() => {
-      const eventTracker = player.getEventTracker();
+      const analytics = player.getAnalytics();
 
-      expect(eventTracker.configure).toHaveBeenCalled();
+      expect(analytics.configure).toHaveBeenCalled();
     });
   });
 });

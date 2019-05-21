@@ -1,9 +1,9 @@
-import { EventTracker } from '../Analytics/EventTracker';
+import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
 
 export type WrapperConstructor = new (
   container: HTMLElement,
-  eventTracker: EventTracker,
+  analytics: Analytics,
 ) => Wrapper;
 
 export interface Wrapper {

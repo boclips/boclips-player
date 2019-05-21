@@ -2,26 +2,26 @@ import Hls from 'hls.js';
 import Plyr from 'plyr';
 import { addListener } from 'resize-detector';
 import { mocked } from 'ts-jest/utils';
-import { EventTracker } from '../../Analytics/EventTracker';
+import { Analytics } from '../../Events/Analytics';
 import { VideoFactory } from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
-jest.mock('../../Analytics/EventTracker');
+jest.mock('../../Analytics/Analytics');
 jest.mock('resize-detector');
 
 const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
 let wrapper: Wrapper = null;
-let tracker: EventTracker = null;
+let tracker: Analytics = null;
 
 beforeEach(() => {
   Hls.mockClear();
   Plyr.mockClear();
 
   container = document.createElement('div');
-  tracker = new EventTracker('player123');
+  tracker = new Analytics('player123');
   wrapper = new PlyrWrapper(container, tracker);
 });
 
@@ -118,7 +118,7 @@ describe('Event Tracking', () => {
     plyrInstance.on.mockClear();
   });
 
-  it('will add an on playing event listener that delegates to the EventTracker', () => {
+  it('will add an on playing event listener that delegates to the Analytics', () => {
     plyrInstance.__callEventCallback('playing', {
       detail: {
         plyr: {
@@ -130,7 +130,7 @@ describe('Event Tracking', () => {
     expect(tracker.handlePlay).toHaveBeenCalledWith(10);
   });
 
-  it('will add an on pause event listener that delegates to the EventTracker', () => {
+  it('will add an on pause event listener that delegates to the Analytics', () => {
     plyrInstance.__callEventCallback('pause', {
       detail: {
         plyr: {
