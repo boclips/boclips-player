@@ -37,7 +37,8 @@
     "uuid": "^3.3.2"
   },
   "files": [
-    "dist"
+    "dist",
+    "src"
   ],
   "module": "src/index.ts",
   "devDependencies": {
