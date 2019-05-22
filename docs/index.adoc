@@ -99,6 +99,7 @@ interface BoclipsPlayerOptions {
 interface BoclipsPlayer {
     play: () => Promise<void>;
     pause: () => void;
+    loadVideo: (videoUri: string) => void;
 }
 ----
 
