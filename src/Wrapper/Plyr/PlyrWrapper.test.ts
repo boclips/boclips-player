@@ -7,7 +7,7 @@ import { VideoFactory } from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
-jest.mock('../../Analytics/Analytics');
+jest.mock('../../Events/Analytics');
 jest.mock('resize-detector');
 
 const video = VideoFactory.sample();

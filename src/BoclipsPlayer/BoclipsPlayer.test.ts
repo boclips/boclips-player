@@ -12,7 +12,7 @@ import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
-jest.mock('../Analytics/Analytics');
+jest.mock('../Events/Analytics');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
