@@ -11,4 +11,4 @@ npm run build
 npm --no-git-tag-version -f version "$(< ../version/version)"
 )
 
-cp -R ${app}/dist/ ${app}/src/ ${app}/package.json ${app}/README.md dist/
+cp -R ${app}/dist/ ${app}/lib/ ${app}/package.json ${app}/README.md dist/
