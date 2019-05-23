@@ -6,7 +6,7 @@
   "scripts": {
     "audit": "audit-ci -m",
     "test": "jest",
-    "build": "tsc && webpack",
+    "build": "tsc && tsc --target ES6 --outDir esm && webpack",
     "compile": "tsc -p . --noEmit",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
@@ -38,9 +38,11 @@
   },
   "files": [
     "dist",
-    "lib"
+    "lib",
+    "esm"
   ],
   "typings": "lib/index.d.ts",
+  "module": "esm/index.js",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
