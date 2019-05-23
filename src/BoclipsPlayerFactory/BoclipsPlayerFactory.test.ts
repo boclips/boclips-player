@@ -1,4 +1,4 @@
-import { get, getSeveral, scan } from './BoclipsPlayerFactory';
+import { BoclipsPlayerFactory } from './BoclipsPlayerFactory';
 
 describe('getting a single player', () => {
   let container: HTMLElement;
@@ -10,32 +10,32 @@ describe('getting a single player', () => {
   });
 
   it('returns a single BoclipsPlayer when provided with a container element', () => {
-    const player = get(container);
+    const player = BoclipsPlayerFactory.get(container);
 
     expect(player).toBeTruthy();
     expect(player.getContainer()).toEqual(container);
   });
 
   it('returns a single BoclipsPlayer when provided with a matching selector', () => {
-    const player = get('div#test');
+    const player = BoclipsPlayerFactory.get('div#test');
 
     expect(player).toBeTruthy();
     expect(player.getContainer()).toEqual(container);
   });
 
   it('returns null when provided with a non-matching selector', () => {
-    const player = get('div#doesntexist');
+    const player = BoclipsPlayerFactory.get('div#doesntexist');
 
     expect(player).toBeNull();
   });
 
   it('does not add re add a player to an element', () => {
-    const player = get('div#test');
+    const player = BoclipsPlayerFactory.get('div#test');
 
     expect(player).toBeTruthy();
     expect(player.getContainer()).toEqual(container);
 
-    const secondPlayer = get('div#test');
+    const secondPlayer = BoclipsPlayerFactory.get('div#test');
     expect(secondPlayer).toBeNull();
   });
 });
@@ -56,7 +56,7 @@ describe('getting several players', () => {
   });
 
   it('returns a BoclipsPlayer per container', () => {
-    const players = getSeveral(containers);
+    const players = BoclipsPlayerFactory.getSeveral(containers);
 
     expect(players).toHaveLength(2);
 
@@ -65,7 +65,7 @@ describe('getting several players', () => {
   });
 
   it('returns a BoclipsPlayer per container when provided with a matching selector', () => {
-    const players = getSeveral('div');
+    const players = BoclipsPlayerFactory.getSeveral('div');
 
     expect(players).toHaveLength(2);
     expect(players[0].getContainer()).toEqual(containers[0]);
@@ -73,7 +73,7 @@ describe('getting several players', () => {
   });
 
   it('returns empty array when provided with a non-matching selector', () => {
-    const players = getSeveral([
+    const players = BoclipsPlayerFactory.getSeveral([
       'div.thatdoesntexist',
       'div.anotherthatdoesntexist',
     ]);
@@ -92,7 +92,7 @@ describe('scanning for videos', () => {
     autoElementTwo.setAttribute('data-boclips-player-container', 'true');
     document.body.appendChild(autoElementTwo);
 
-    const players = scan();
+    const players = BoclipsPlayerFactory.scan();
 
     expect(players).toHaveLength(2);
     expect(players[0].getContainer()).toEqual(autoElementOne);

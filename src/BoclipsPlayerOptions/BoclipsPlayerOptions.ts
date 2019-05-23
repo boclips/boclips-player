@@ -1,1 +1,1 @@
-interface BoclipsPlayerOptions {}
+export interface BoclipsPlayerOptions {}

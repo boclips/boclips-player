@@ -43,7 +43,7 @@ In order to load a video you must have a Video URI pointing to our API.
 <div id="container"></div>
 <script type="text/javascript">
     const container = document.querySelector('#container');
-    const player = BoclipsPlayer.get(container);
+    const player = BoclipsPlayerFactory.get(container);
     player.loadVideo('https://path.to.our/video/endpoint/1');
 </script>
 </body>
@@ -64,7 +64,7 @@ In order to load a video you must have a Video URI pointing to our API.
     <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/1"></div>
     <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/2"></div>
     <script>
-      BoclipsPlayer.scan();
+      BoclipsPlayerFactory.scan();
     </script>
 </body>
 </html>

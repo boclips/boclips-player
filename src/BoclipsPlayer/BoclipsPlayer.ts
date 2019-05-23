@@ -1,4 +1,5 @@
 import uuid from 'uuid/v1';
+import { BoclipsPlayerOptions } from '../BoclipsPlayerOptions/BoclipsPlayerOptions';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
 import retrieveVideo from '../utils/retrieveVideo';
