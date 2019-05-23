@@ -6,7 +6,7 @@
   "scripts": {
     "audit": "audit-ci -m",
     "test": "jest",
-    "build": "tsc && tsc --target ES6 --outDir esm && webpack",
+    "build": "./scripts/build.sh",
     "compile": "tsc -p . --noEmit",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
