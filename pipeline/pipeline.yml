@@ -9,13 +9,47 @@ jobs:
   - task: build
     file: source/pipeline/build.yml
 
-- name: publish
+- name: publish-major
+  plan:
+  - get: source
+    passed: [build]
+  - put: version
+    params:
+      bump: major
+  - task: publish
+    file: source/pipeline/publish.yml
+  - put: npm-registry
+    params:
+      username: {{npm-username}}
+      password: {{npm-password}}
+      email: engineering@boclips.com
+      path: dist
+
+
+- name: publish-minor
   plan:
   - get: source
     passed: [build]
   - put: version
     params:
       bump: minor
+  - task: publish
+    file: source/pipeline/publish.yml
+  - put: npm-registry
+    params:
+      username: {{npm-username}}
+      password: {{npm-password}}
+      email: engineering@boclips.com
+      path: dist
+
+
+- name: publish-patch
+  plan:
+  - get: source
+    passed: [build]
+  - put: version
+    params:
+      bump: patch
   - task: publish
     file: source/pipeline/publish.yml
   - put: npm-registry
