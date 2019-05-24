@@ -148,4 +148,16 @@ describe('BoclipsPlayer', () => {
       expect(analytics.configure).toHaveBeenCalled();
     });
   });
+
+  describe('passes through wrapper methods', () => {
+    const passThroughMethods = ['destroy', 'play', 'pause'];
+
+    passThroughMethods.forEach(method => {
+      it(`Will destroy the wrapper when ${method} is called`, () => {
+        player[method]();
+
+        expect(player.getWrapper()[method]).toHaveBeenCalled();
+      });
+    });
+  });
 });

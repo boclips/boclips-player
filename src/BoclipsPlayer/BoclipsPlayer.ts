@@ -9,6 +9,7 @@ export interface BoclipsPlayerInstance {
   play: () => Promise<any>;
   pause: () => void;
   loadVideo: (videoUri: string) => Promise<void>;
+  destroy: () => void;
 }
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
