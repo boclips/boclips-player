@@ -7,7 +7,7 @@ BoPlayer is a framework agnostic video player which serves to play Boclips suppl
 It will be integrated into other apps used by our API partners. We want to provide these partners with a complete player solution that allows us to gain insights to how our consumers watch our videos.
 
 ## Usage
-Please refer to the [hosted docs](https://docs.boclips.com) for usage instructions.
+Please refer to the [hosted docs](https://docs.boclips.com/docs/player-guide.html) for usage instructions.
 
 ## Development
 
