@@ -3,7 +3,10 @@ import Plyr from 'plyr';
 import { addListener } from 'resize-detector';
 import { mocked } from 'ts-jest/utils';
 import { Analytics } from '../../Events/Analytics';
-import { VideoFactory } from '../../test-support/TestFactories';
+import {
+  PlaybackFactory,
+  VideoFactory,
+} from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
@@ -41,7 +44,7 @@ it('Constructs a Plyr given an element a video element within container', () => 
 });
 
 describe('When a new video is configured', () => {
-  describe('When Hls is supported', () => {
+  describe('With a STREAM video when Hls is supported', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(true);
 
@@ -53,7 +56,6 @@ describe('When a new video is configured', () => {
     });
 
     it('attaches a new hls.js if supported when source is changed', () => {
-      expect(Hls).toHaveBeenCalled();
       const hlsMockInstance = Hls.mock.instances[0];
       expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
     });
@@ -66,9 +68,17 @@ describe('When a new video is configured', () => {
       callback();
       expect(hlsMockInstance.loadSource).toHaveBeenCalled();
     });
+
+    it('destroys HLS before loading another video', () => {
+      wrapper.configureWithVideo(
+        VideoFactory.sample(PlaybackFactory.youtubeSample()),
+      );
+      const hlsMockInstance = Hls.mock.instances[0];
+      expect(hlsMockInstance.destroy).toHaveBeenCalled();
+    });
   });
 
-  describe('When Hls is not supported', () => {
+  describe('When Hls is not supported with STREAM', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(false);
       wrapper.configureWithVideo(video);
@@ -90,6 +100,27 @@ describe('When a new video is configured', () => {
       callback();
 
       expect(plyrInstance.play).toHaveBeenCalled();
+    });
+  });
+
+  describe('When Hls is supported with YOUTUBE', () => {
+    beforeEach(() => {
+      Hls.isSupported.mockReturnValue(true);
+      wrapper.configureWithVideo(
+        VideoFactory.sample(PlaybackFactory.youtubeSample()),
+      );
+    });
+
+    it('does not instantiate a Hls', () => {
+      expect(Hls).not.toHaveBeenCalled();
+    });
+
+    it('does not add an loadedmetadata listener', () => {
+      const plyrInstance = Plyr.mock.instances[0];
+      expect(plyrInstance.media.addEventListener).not.toHaveBeenCalledWith(
+        'loadedmetadata',
+        expect.anything(),
+      );
     });
   });
 });
@@ -202,5 +233,25 @@ describe('is listening for plyr events', () => {
     container.classList.add('plyr--fullscreen');
     plyrInstance.__callEventCallback('exitfullscreen');
     expect(container.classList).not.toContain('plyr--fullscreen');
+  });
+});
+
+describe('when asked to destroy', () => {
+  it('calls destroy on Plyr', () => {
+    wrapper.destroy();
+    const plyrInstance = Plyr.mock.instances[0];
+
+    expect(plyrInstance.destroy).toHaveBeenCalled();
+  });
+  it('calls destroy on Hls', () => {
+    Hls.isSupported.mockReturnValue(true);
+    wrapper.configureWithVideo(
+      VideoFactory.sample(PlaybackFactory.streamSample()),
+    );
+
+    wrapper.destroy();
+    const hlsMockInstance = Hls.mock.instances[0];
+
+    expect(hlsMockInstance.destroy).toHaveBeenCalled();
   });
 });

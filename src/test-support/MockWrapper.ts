@@ -6,6 +6,7 @@ export const MockWrapper = jest.fn<Wrapper, any>(
       configureWithVideo: jest.fn(),
       play: jest.fn(),
       pause: jest.fn(),
+      destroy: jest.fn(),
     };
   },
 );

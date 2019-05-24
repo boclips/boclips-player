@@ -10,4 +10,5 @@ export interface Wrapper {
   play: () => Promise<void>;
   pause: () => void;
   configureWithVideo: (video: Video) => void;
+  destroy: () => void;
 }

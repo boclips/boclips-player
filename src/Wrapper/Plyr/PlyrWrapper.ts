@@ -68,23 +68,29 @@ export default class PlyrWrapper implements Wrapper {
   }
 
   public configureWithVideo = (video: Video) => {
+    if (this.hls) {
+      this.hls.destroy();
+    }
+
     const source = convertPlaybackToSource(video.playback);
 
     this.plyr.source = source;
 
-    if (Hls.isSupported()) {
-      this.hls = new Hls({
-        debug: process.env.NODE_ENV !== 'production',
-      });
-      this.hls.attachMedia(this.plyr.media);
-      this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        this.hls.loadSource(source.sources[0].src);
-      });
-    } else {
-      this.plyr.media.addEventListener('loadedmetadata', () => {
-        // noinspection JSIgnoredPromiseFromCall
-        this.play();
-      });
+    if (video.playback.type === 'STREAM') {
+      if (Hls.isSupported()) {
+        this.hls = new Hls({
+          debug: process.env.NODE_ENV !== 'production',
+        });
+        this.hls.attachMedia(this.plyr.media);
+        this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+          this.hls.loadSource(source.sources[0].src);
+        });
+      } else {
+        this.plyr.media.addEventListener('loadedmetadata', () => {
+          // noinspection JSIgnoredPromiseFromCall
+          this.play();
+        });
+      }
     }
   };
 
@@ -108,6 +114,14 @@ export default class PlyrWrapper implements Wrapper {
 
   public pause = (): void => {
     this.plyr.pause();
+  };
+
+  public destroy = () => {
+    if (this.hls) {
+      this.hls.destroy();
+    }
+
+    this.plyr.destroy();
   };
 
   private installAnalytics = () => {
