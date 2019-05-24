@@ -29,6 +29,15 @@ Boclips Player is hosted in the unpkg.com CDN
 
 In order to load a video you must have a Video URI pointing to our API.
 
+=== Cross-Origin Resource Sharing
+
+Our API is protected by several methods, one of these is CORs. Since the `boclips-player`
+makes API requests to our server you'll need to ensure we've whitelisted any domains where
+you load our player.
+
+In order to do this, please get in touch with us with a list of domain names (including
+protocols and any port numbers -- if required) that will host this player.
+
 === Programmatically
 
 [source,html]
