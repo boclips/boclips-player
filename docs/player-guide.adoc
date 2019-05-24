@@ -115,4 +115,6 @@ interface BoclipsPlayer {
 [[license]]
 == License
 
-_TBC_
+BSD 3-Clause "New" or "Revised" License
+
+Copyright (c) 2019, Knowledgemotion Ltd All rights reserved.
