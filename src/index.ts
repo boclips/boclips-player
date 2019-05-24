@@ -2,7 +2,9 @@
 export {
   BoclipsPlayerFactory,
 } from './BoclipsPlayerFactory/BoclipsPlayerFactory';
-export { BoclipsPlayer } from './BoclipsPlayer/BoclipsPlayer';
+export {
+  BoclipsPlayerInstance as BoclipsPlayer,
+} from './BoclipsPlayer/BoclipsPlayer';
 export {
   BoclipsPlayerOptions,
 } from './BoclipsPlayerOptions/BoclipsPlayerOptions';

@@ -5,9 +5,10 @@ import { Video } from '../types/Video';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 
-interface BoclipsPlayerInstance {
+export interface BoclipsPlayerInstance {
   play: () => Promise<any>;
   pause: () => void;
+  loadVideo: (videoUri: string) => Promise<void>;
 }
 
 export class BoclipsPlayer implements BoclipsPlayerInstance {
@@ -57,6 +58,8 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
       this.wrapper.configureWithVideo(video);
     });
   };
+
+  public destroy = () => this.wrapper.destroy();
 
   public getContainer = () => this.container;
 
