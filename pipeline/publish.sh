@@ -8,7 +8,8 @@ cd ${app}
 npm ci
 
 npm run build
-npm --no-git-tag-version -f version "$(< ../version/version)"
+npm -f version "$(< ../version/version)"
+git push --tags origin master
 )
 
 cp -R ${app}/dist/ ${app}/lib/ ${app}/esm/ ${app}/package.json ${app}/README.md dist/
