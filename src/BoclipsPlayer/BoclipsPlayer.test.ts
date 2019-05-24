@@ -123,6 +123,19 @@ describe('BoclipsPlayer', () => {
     });
   });
 
+  it('Will not reload the same video', () => {
+    const uri = '/v1/videos/177';
+    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+
+    return player.loadVideo(uri).then(() => {
+      const playback = player.getVideo().playback;
+      expect(isStreamPlayback(playback)).toBeTruthy();
+      return player.loadVideo(uri).then(() => {
+        expect(MockFetchVerify.getHistory().get).toHaveLength(1);
+      });
+    });
+  });
+
   it('Will configure the wrapper with the video', () => {
     const uri = '/v1/videos/177';
 

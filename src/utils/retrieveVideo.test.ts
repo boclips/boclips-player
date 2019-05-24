@@ -26,6 +26,9 @@ it('will make a request to the backend for a stream video', () => {
           ),
         },
       },
+      links: {
+        self: new Link(videoResource._links.self),
+      },
     }),
   );
 });
@@ -48,6 +51,9 @@ it('will make a request to the backend for a youtube video', () => {
             videoResource.playback._links.createPlaybackEvent,
           ),
         },
+      },
+      links: {
+        self: new Link(videoResource._links.self),
       },
     }),
   );

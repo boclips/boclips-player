@@ -34,5 +34,10 @@ export class VideoFactory {
   ) => ({
     id: 'video-id',
     playback,
+    links: {
+      self: new Link({
+        href: '/v1/videos/177',
+      }),
+    },
   });
 }

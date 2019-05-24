@@ -12,6 +12,11 @@ export const streamVideoSample = Object.freeze({
       },
     },
   },
+  _links: {
+    self: {
+      href: '/v1/videos/177',
+    },
+  },
 });
 
 export const youtubeVideoSample = Object.freeze({
@@ -25,6 +30,11 @@ export const youtubeVideoSample = Object.freeze({
       createPlaybackEvent: {
         href: 'create/playback/event',
       },
+    },
+  },
+  _links: {
+    self: {
+      href: '/v1/videos/177',
     },
   },
 });

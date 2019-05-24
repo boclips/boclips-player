@@ -53,6 +53,10 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   }
 
   public loadVideo = async (videoUri: string) => {
+    if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
+      return;
+    }
+
     return retrieveVideo(videoUri).then((video: Video) => {
       this.video = video;
       this.analytics.configure(video);
