@@ -23,20 +23,11 @@ jobs:
       bump: minor
       pre: dev
 
-- name: patch
-  plan:
-  - put: version
-    params:
-      bump: patch
-      pre: dev
-
 - name: release
   plan:
   - get: source
     passed: [test]
   - get: version
-    params:
-      bump: final
   - task: release
     file: source/pipeline/release.yml
   - put: npm-registry
@@ -53,7 +44,7 @@ jobs:
       commitish: source/.git/ref
   - put: version
     params:
-      file: version/version
+      bump: patch
 
 resources:
 - name: source
