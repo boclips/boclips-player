@@ -16,7 +16,7 @@ outputs:
 - name: release
 
 run:
-  path: source/pipeline/publish.sh
+  path: source/pipeline/release.sh
 
 caches:
 - path: ../../../root/.cache

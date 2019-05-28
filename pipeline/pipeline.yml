@@ -30,15 +30,15 @@ jobs:
       bump: patch
       pre: dev
 
-- name: publish
+- name: release
   plan:
   - get: source
     passed: [test]
   - get: version
     params:
       bump: final
-  - task: publish
-    file: source/pipeline/publish.yml
+  - task: release
+    file: source/pipeline/release.yml
   - put: npm-registry
     params:
       username: ((npm-username))
