@@ -11,7 +11,7 @@ inputs:
 - name: source
 
 run:
-  path: source/pipeline/build.sh
+  path: source/pipeline/test.sh
 
 caches:
   - path: ../../../root/.cache

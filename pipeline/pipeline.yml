@@ -1,13 +1,13 @@
 ---
 jobs:
-- name: build
+- name: test
   plan:
   - get: once-per-weekday
     trigger: true
   - get: source
     trigger: true
-  - task: build
-    file: source/pipeline/build.yml
+  - task: test
+    file: source/pipeline/test.yml
 
 - name: major
   plan:
@@ -33,7 +33,7 @@ jobs:
 - name: publish
   plan:
   - get: source
-    passed: [build]
+    passed: [test]
   - get: version
     params:
       bump: final
