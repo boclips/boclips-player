@@ -9,24 +9,49 @@ jobs:
   - task: test
     file: source/pipeline/test.yml
 
+- name: pre-release
+  plan:
+  - get: source
+    passed: [test]
+    trigger: true
+  - put: version
+    params:
+      pre: dev
+  - task: release
+    file: source/pipeline/release.yml
+  - put: npm-registry
+    params:
+      username: ((npm-username))
+      password: ((npm-password))
+      email: engineering@boclips.com
+      path: dist
+      tag: dev
+  - put: version
+    params:
+      file: version/version
+
 - name: major
   plan:
   - put: version
     params:
       bump: major
-      pre: dev
 
 - name: minor
   plan:
   - put: version
     params:
       bump: minor
-      pre: dev
+
+- name: patch
+  plan:
+  - put: version
+    params:
+      bump: patch
 
 - name: release
   plan:
   - get: source
-    passed: [test]
+    passed: [pre-release]
   - get: version
   - task: release
     file: source/pipeline/release.yml
