@@ -20,8 +20,8 @@ jobs:
     file: source/pipeline/publish.yml
   - put: npm-registry
     params:
-      username: {{npm-username}}
-      password: {{npm-password}}
+      username: ((npm-username))
+      password: ((npm-password))
       email: engineering@boclips.com
       path: dist
 
@@ -37,8 +37,8 @@ jobs:
     file: source/pipeline/publish.yml
   - put: npm-registry
     params:
-      username: {{npm-username}}
-      password: {{npm-password}}
+      username: ((npm-username))
+      password: ((npm-password))
       email: engineering@boclips.com
       path: dist
 
@@ -54,8 +54,8 @@ jobs:
     file: source/pipeline/publish.yml
   - put: npm-registry
     params:
-      username: {{npm-username}}
-      password: {{npm-password}}
+      username: ((npm-username))
+      password: ((npm-password))
       email: engineering@boclips.com
       path: dist
 
@@ -64,7 +64,7 @@ resources:
   type: git
   source:
     branch: master
-    private_key: {{boclips-player-repo-key}}
+    private_key: ((boclips-player-repo-key))
     uri: git@github.com:boclips/boclips-player.git
 
 - name: version
@@ -75,7 +75,7 @@ resources:
     uri: git@github.com:boclips/versions.git
     branch: master
     file: boclips-player
-    private_key: {{versions-repo-key}}
+    private_key: ((versions-repo-key))
 
 - name: npm-registry
   type: npm-resource
