@@ -18,13 +18,13 @@ jobs:
       bump: major
   - task: publish
     file: source/pipeline/publish.yml
-  - put: npm-registry
+  - &npm-put
+    put: npm-registry
     params:
       username: ((npm-username))
       password: ((npm-password))
       email: engineering@boclips.com
       path: dist
-
 
 - name: publish-minor
   plan:
@@ -35,13 +35,7 @@ jobs:
       bump: minor
   - task: publish
     file: source/pipeline/publish.yml
-  - put: npm-registry
-    params:
-      username: ((npm-username))
-      password: ((npm-password))
-      email: engineering@boclips.com
-      path: dist
-
+  - *npm-put
 
 - name: publish-patch
   plan:
@@ -52,12 +46,7 @@ jobs:
       bump: patch
   - task: publish
     file: source/pipeline/publish.yml
-  - put: npm-registry
-    params:
-      username: ((npm-username))
-      password: ((npm-password))
-      email: engineering@boclips.com
-      path: dist
+  - *npm-put
 
 resources:
 - name: source
