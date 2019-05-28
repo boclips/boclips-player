@@ -8,7 +8,6 @@ groups:
   jobs:
     - major
     - minor
-    - patch
     - release
 
 jobs:
@@ -54,17 +53,13 @@ jobs:
     params:
       bump: minor
 
-- name: patch
-  plan:
-  - put: version
-    params:
-      bump: patch
-
 - name: release
   plan:
   - get: source
     passed: [pre-release]
   - get: version
+    params:
+      bump: final
   - task: release
     file: source/pipeline/release.yml
   - put: npm-registry
