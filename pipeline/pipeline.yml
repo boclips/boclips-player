@@ -1,4 +1,16 @@
 ---
+groups:
+- name: develop
+  jobs:
+    - test
+    - pre-release
+- name: release
+  jobs:
+    - major
+    - minor
+    - patch
+    - release
+
 jobs:
 - name: test
   plan:
