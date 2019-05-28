@@ -2,13 +2,14 @@
 
 set -eu
 
-cwd="$(cd "$(dirname $0)" && pwd)"
+cwd="$(cd "$(dirname "$0")" && pwd)"
 
 fly --target ci \
     set-pipeline \
     --pipeline boclips-player \
-    --config $cwd/pipeline.yml \
+    --config "$cwd/pipeline.yml" \
     --var boclips-player-repo-key="$(lpass show concourse-boclips-player-repo-key --notes)" \
     --var versions-repo-key="$(lpass show concourse-versions-repo-key --notes)" \
     --var npm-username="$(lpass show npmjs --username)" \
     --var npm-password="$(lpass show npmjs --password)" \
+    --var github-access-token="$(lpass show boclips-player-github-access-token --notes)" \

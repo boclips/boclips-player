@@ -25,6 +25,13 @@ jobs:
       password: ((npm-password))
       email: engineering@boclips.com
       path: dist
+  - &release-put
+    put: github-release
+    params:
+      name: release/name
+      tag: release/name
+      body: release/notes
+      commitish: source/.git/ref
 
 - name: publish-minor
   plan:
@@ -36,6 +43,7 @@ jobs:
   - task: publish
     file: source/pipeline/publish.yml
   - *npm-put
+  - *release-put
 
 - name: publish-patch
   plan:
@@ -47,6 +55,7 @@ jobs:
   - task: publish
     file: source/pipeline/publish.yml
   - *npm-put
+  - *release-put
 
 resources:
 - name: source
@@ -78,6 +87,13 @@ resources:
     stop: 12:30 PM
     days: [Monday, Tuesday, Wednesday, Thursday, Friday]
     location: Europe/London
+
+- name: github-release
+  type: github-release
+  source:
+    owner: boclips
+    repository: boclips-player
+    access_token: ((github-access-token))
 
 resource_types:
 - name: npm-resource
