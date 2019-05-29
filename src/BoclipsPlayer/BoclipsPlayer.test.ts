@@ -1,5 +1,6 @@
 import { mocked } from 'ts-jest/utils';
 import { Analytics } from '../Events/Analytics';
+import { defaultOptions as defaultAnalyticsOptions } from '../Events/AnalyticsOptions';
 import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
@@ -11,6 +12,7 @@ import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
+import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
 
 jest.mock('../Events/Analytics');
 
@@ -172,5 +174,35 @@ describe('BoclipsPlayer', () => {
         expect(player.getWrapper()[method]).toHaveBeenCalled();
       });
     });
+  });
+
+  describe('Options', () => {
+    it('passes down analytics options', () => {
+      const options: Partial<BoclipsPlayerOptions> = {
+        analytics: {
+          metadata: {
+            one: 'one',
+          },
+        },
+      };
+
+      player = new BoclipsPlayer(
+        wrapperConstructor as WrapperConstructor,
+        container,
+        options,
+      );
+
+      expect(Analytics).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining(options.analytics),
+      );
+    });
+  });
+
+  it('uses default options when not provided', () => {
+    expect(Analytics).toHaveBeenCalled();
+    const options = mocked(Analytics).mock.calls[0][1];
+    expect(options).toBeTruthy();
+    expect(options).toEqual(defaultAnalyticsOptions);
   });
 });

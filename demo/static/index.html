@@ -6,7 +6,15 @@
     <div id="container"></div>
     <script>
       const container = document.querySelector('#container');
-      const player = BoclipsPlayerFactory.get(container);
+      const options = {
+        analytics: {
+          handleOnPlayback: console.log,
+          metadata: {
+            color: 'blue'
+          }
+        }
+      };
+      const player = BoclipsPlayerFactory.get(container, options);
       player.loadVideo('https://path.to.our/video/endpoint/1');
     </script>
   </body>

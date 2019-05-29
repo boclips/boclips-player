@@ -5,6 +5,4 @@ export {
 export {
   BoclipsPlayerInstance as BoclipsPlayer,
 } from './BoclipsPlayer/BoclipsPlayer';
-export {
-  BoclipsPlayerOptions,
-} from './BoclipsPlayerOptions/BoclipsPlayerOptions';
+export { BoclipsPlayerOptions } from './BoclipsPlayer/BoclipsPlayerOptions';

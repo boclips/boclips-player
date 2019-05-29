@@ -1,9 +1,10 @@
+import deepmerge from 'deepmerge';
 import uuid from 'uuid/v1';
-import { BoclipsPlayerOptions } from '../BoclipsPlayerOptions/BoclipsPlayerOptions';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
+import { BoclipsPlayerOptions, defaultOptions } from './BoclipsPlayerOptions';
 
 export interface BoclipsPlayerInstance {
   play: () => Promise<any>;
@@ -25,7 +26,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   constructor(
     wrapperConstructor: WrapperConstructor,
     container: HTMLElement,
-    options: BoclipsPlayerOptions = {},
+    options: Partial<BoclipsPlayerOptions> = {},
   ) {
     if (!wrapperConstructor) {
       throw Error(
@@ -39,9 +40,9 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     }
     this.wrapperConstructor = wrapperConstructor;
     this.container = container;
-    this.options = options;
+    this.options = deepmerge(defaultOptions, options);
 
-    this.analytics = new Analytics(this.playerId);
+    this.analytics = new Analytics(this.playerId, this.options.analytics);
 
     this.wrapper = new this.wrapperConstructor(container, this.analytics);
 

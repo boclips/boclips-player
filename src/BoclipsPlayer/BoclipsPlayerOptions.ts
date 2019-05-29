@@ -1,3 +1,12 @@
+import {
+  AnalyticsOptions,
+  defaultOptions as defaultAnalyticOptions,
+} from '../Events/AnalyticsOptions';
+
 export interface BoclipsPlayerOptions {
-  eventTracking: AnalyticsOptions;
+  analytics: Partial<AnalyticsOptions>;
 }
+
+export const defaultOptions: BoclipsPlayerOptions = Object.freeze({
+  analytics: defaultAnalyticOptions,
+});
