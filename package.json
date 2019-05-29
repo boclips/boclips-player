@@ -29,6 +29,7 @@
   "homepage": "https://github.com/boclips/boclips-player#readme",
   "dependencies": {
     "axios": "^0.18.0",
+    "deepmerge": "^3.2.0",
     "hls.js": "^0.12.4",
     "iso8601-duration": "^1.2.0",
     "plyr": "^3.5.4",
