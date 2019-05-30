@@ -1,5 +1,5 @@
 import axios from 'axios';
-import deepmerge = require('deepmerge');
+import deepmerge from 'deepmerge';
 import { parse, toSeconds } from 'iso8601-duration';
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
