@@ -9,6 +9,7 @@ import {
 } from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
+import {defaultOptions, WrapperOptions} from '../WrapperOptions';
 
 jest.mock('../../Events/Analytics');
 jest.mock('resize-detector');
@@ -254,4 +255,26 @@ describe('when asked to destroy', () => {
 
     expect(hlsMockInstance.destroy).toHaveBeenCalled();
   });
+});
+
+describe('option configuration', () => {
+  it('will use default controls if omitted', () => {
+    expect(Plyr).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({
+        controls: defaultOptions.controls,
+      }),
+    );
+  });
+
+  it('will pass through the control options', () => {
+    const options: WrapperOptions = {
+      controls: [
+          "play-large"
+      ]
+    }
+    new PlyrWrapper(container, tracker, options);
+    const actualOptions = mocked(Plyr).mock.calls[1][1];
+    expect(actualOptions.controls).toEqual(options.controls)
+  })
 });

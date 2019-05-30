@@ -6,36 +6,31 @@ import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
 import { Analytics } from '../../Events/Analytics';
 import { Video } from '../../types/Video';
+import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import convertPlaybackToSource from './utils/convertPlaybackToSource';
 
 export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
   private hls = null;
-  public static DEFAULT_CONTROLS = [
-    'play-large',
-    'play',
-    'progress',
-    'current-time',
-    'mute',
-    'volume',
-    'captions',
-    'fullscreen',
-  ];
+  private options: WrapperOptions;
 
   // @ts-ignore
   constructor(
     private readonly container: HTMLElement,
     private readonly analytics: Analytics,
+    options: Partial<WrapperOptions> = {},
   ) {
     const video = document.createElement('video');
     video.setAttribute('data-qa', 'boclips-player');
 
     container.appendChild(video);
 
+    this.options = { ...defaultOptions, ...options };
+
     this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
-      controls: PlyrWrapper.DEFAULT_CONTROLS,
+      controls: this.options.controls,
     });
 
     addResizeListener(container, this.handleResizeEvent);
