@@ -2,7 +2,7 @@ import { noop } from '../utils';
 import { PlaybackEvent } from './AnalyticsEvents';
 
 export interface AnalyticsOptions {
-  metadata: { [key: string]: string };
+  metadata: { [key: string]: any };
   handleOnPlayback: (event: PlaybackEvent) => void;
 }
 
