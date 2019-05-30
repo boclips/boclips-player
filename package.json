@@ -1,32 +1,39 @@
 {
   "name": "boclips-player",
-  "version": "0.1.0",
   "description": "A framework agnostic player for serving Boclips videos",
+  "license": "BSD-3-Clause",
+  "author": "Boclips <engineering@boclips.com>",
+  "contributors": [
+    "Antony O'Neill <antony@boclips.com>"
+  ],
+  "homepage": "https://github.com/boclips/boclips-player#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/boclips/boclips-player.git"
+  },
+  "bugs": {
+    "url": "https://github.com/boclips/boclips-player/issues"
+  },
+  "version": "0.1.0",
   "main": "dist/boclips-player.js",
+  "module": "esm/index.js",
+  "files": [
+    "dist",
+    "esm",
+    "lib"
+  ],
   "scripts": {
     "audit": "audit-ci -m",
-    "test": "jest",
     "build": "./scripts/build.sh",
     "compile": "tsc -p tsconfig.all.json --noEmit",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
     "lint": "tslint -c tslint.json -p .",
-    "lint:fix": "npm run lint -- --fix",
-    "prepublishOnly": "npm run lint && npm run test && npm run build"
+    "lint:fix": "prettier-package-json --write && npm run lint -- --fix",
+    "prepublishOnly": "npm run lint && npm run test && npm run build",
+    "test": "jest"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/boclips/boclips-player.git"
-  },
-  "author": "Boclips <engineering@boclips.com>",
-  "contributors": [
-    "Antony O'Neill <antony@boclips.com>"
-  ],
-  "license": "BSD-3-Clause",
-  "bugs": {
-    "url": "https://github.com/boclips/boclips-player/issues"
-  },
-  "homepage": "https://github.com/boclips/boclips-player#readme",
+  "typings": "lib/index.d.ts",
   "dependencies": {
     "axios": "^0.18.0",
     "deepmerge": "^3.2.0",
@@ -37,13 +44,6 @@
     "urijs": "^1.19.1",
     "uuid": "^3.3.2"
   },
-  "files": [
-    "dist",
-    "lib",
-    "esm"
-  ],
-  "typings": "lib/index.d.ts",
-  "module": "esm/index.js",
   "devDependencies": {
     "@types/chai": "^4.1.7",
     "@types/jest": "^24.0.12",
@@ -59,6 +59,7 @@
     "less-loader": "^5.0.0",
     "mini-css-extract-plugin": "^0.6.0",
     "prettier": "^1.17.0",
+    "prettier-package-json": "^2.1.0",
     "ts-jest": "^24.0.2",
     "ts-loader": "^6.0.0",
     "tslint": "^5.16.0",
