@@ -33,11 +33,18 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
         `IllegalArgument: Expected a valid WrapperConstructor. Given ${wrapperConstructor}`,
       );
     }
-    if (false === (container instanceof Node && document.contains(container))) {
+    if (false === container instanceof Node) {
       throw Error(
-        `IllegalArgument: Container element ${container} must be a node within the document body.`,
+        `IllegalArgument: Container element ${container} must be a node`,
       );
     }
+
+    if (!document.contains(container)) {
+      console.warn(
+        `Container element ${container} should be a node within the document body.`,
+      );
+    }
+
     this.wrapperConstructor = wrapperConstructor;
     this.container = container;
     this.options = deepmerge(defaultOptions, options);

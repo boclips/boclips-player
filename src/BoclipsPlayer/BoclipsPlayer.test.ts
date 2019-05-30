@@ -83,10 +83,6 @@ describe('BoclipsPlayer', () => {
       illegalContainer: null,
     },
     {
-      message: 'an unattached div',
-      illegalContainer: document.createElement('div'),
-    },
-    {
       message: 'a string',
       illegalContainer: 'hello',
     },
