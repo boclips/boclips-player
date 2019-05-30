@@ -44,7 +44,11 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     this.analytics = new Analytics(this.playerId, this.options.analytics);
 
-    this.wrapper = new this.wrapperConstructor(container, this.analytics);
+    this.wrapper = new this.wrapperConstructor(
+      container,
+      this.analytics,
+      this.options.player,
+    );
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
     if (videoUriAttribute) {

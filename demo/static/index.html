@@ -10,9 +10,12 @@
         analytics: {
           handleOnPlayback: console.log,
           metadata: {
-            color: 'blue'
-          }
-        }
+            color: 'blue',
+          },
+        },
+        player: {
+          controls: ['play-large', 'fullscreen'],
+        },
       };
       const player = BoclipsPlayerFactory.get(container, options);
       player.loadVideo('https://path.to.our/video/endpoint/1');
