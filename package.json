@@ -17,7 +17,7 @@
   "version": "0.1.0",
   "main": "lib/index.js",
   "module": "esm/index.js",
-  "browser": "dist/boclips-player.js",
+  "browser": "lib/index.js",
   "files": [
     "dist",
     "esm",
