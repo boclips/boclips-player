@@ -8,7 +8,7 @@ Boclips Engineering;
 :sectlinks:
 
 [[boclips-player]]
-= Overview
+== Overview
 
 Boclips Player is a framework agnostic video player which serves to play
 Boclips supplied videos on all our supported devices. It will feature
@@ -29,23 +29,21 @@ Boclips Player is hosted in the unpkg.com CDN
 
 In order to load a video you must have a Video URI pointing to our API.
 
-=== Cross-Origin Resource Sharing
-
+[NOTE]
+====
 Our API is protected by several methods, one of these is CORs. Since the `boclips-player`
 makes API requests to our server you'll need to ensure we've whitelisted any domains where
 you load our player.
 
 In order to do this, please get in touch with us with a list of domain names (including
 protocols and any port numbers -- if required) that will host this player.
+====
 
-[[javascript-api]]
-=== JavaScript API
-
-==== Loaded via a script tag
+=== Loaded via a script tag
 
 When this library is loaded via a script tag on a web page it exposes the `PlayerFactory` under the global variable `Boclips`. See <<module-import>> for more information on the interface.
 
-=== Programmatically
+==== Programmatically
 
 You can instantiate a Player by providing a HTML container, this will encapsulate the video player. The `Player` API allows you to load videos programmatically.
 
@@ -70,7 +68,7 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
 </html>
 ----
 
-=== Data Driven
+==== Data Driven
 
 You may also instantiate multiple players on a single page using the `data-boclips-player-container` attribute on the container elements.
 
@@ -95,7 +93,7 @@ You must add a `data-boplayer-video-uri` attribute to point to the video URI end
 ----
 
 [[module-import]]
-==== Importing as a module
+=== Importing as a module
 
 You can use the boclips-player as a module in your JavaScript application.
 
@@ -132,6 +130,7 @@ interface Player {
     loadVideo: (videoUri: string) => void;
 }
 ----
+
 
 [[license]]
 == License
