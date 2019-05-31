@@ -56,6 +56,10 @@ describe('When a new video is configured', () => {
       expect(Hls).toHaveBeenCalled();
     });
 
+    it('configures HLS to not autoload', () => {
+      expect(Hls).toHaveBeenCalledWith(expect.objectContaining({autoStartLoad: false}))
+    })
+
     it('attaches a new hls.js if supported when source is changed', () => {
       const hlsMockInstance = Hls.mock.instances[0];
       expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
