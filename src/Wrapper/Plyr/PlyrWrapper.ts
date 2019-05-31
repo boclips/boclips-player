@@ -60,6 +60,10 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.on('exitfullscreen', () => {
       this.handleExitFullscreen();
     });
+
+    this.plyr.on('ready', () => {
+      this.plyr.toggleControls(false);
+    });
   }
 
   public configureWithVideo = (video: Video) => {
