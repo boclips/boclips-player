@@ -29,6 +29,7 @@
     "compile": "tsc -p tsconfig.all.json --noEmit",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
+    "demo:module": "./node_modules/.bin/webpack-dev-server --config demo/module/webpack.config.js",
     "lint": "tslint -c tslint.json -p .",
     "lint:fix": "prettier-package-json --write && npm run lint -- --fix",
     "prepublishOnly": "npm run lint && npm run test && npm run build",

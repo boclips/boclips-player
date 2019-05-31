@@ -38,7 +38,18 @@ you load our player.
 In order to do this, please get in touch with us with a list of domain names (including
 protocols and any port numbers -- if required) that will host this player.
 
+[[javascript-api]]
+=== JavaScript API
+
+==== Loaded via a script tag
+
+When this library is loaded via a script tag on a web page it exposes the `PlayerFactory` under the global variable `Boclips`. See <<module-import>> for more information on the interface.
+
 === Programmatically
+
+You can instantiate a Player by providing a HTML container, this will encapsulate the video player. The `Player` API allows you to load videos programmatically.
+
+You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
 
 [source,html]
 ----
@@ -59,7 +70,11 @@ protocols and any port numbers -- if required) that will host this player.
 </html>
 ----
 
-=== Declaratively
+=== Data Driven
+
+You may also instantiate multiple players on a single page using the `data-boclips-player-container` attribute on the container elements.
+
+You must add a `data-boplayer-video-uri` attribute to point to the video URI endpoint. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
 
 [source,html]
 ----
@@ -79,14 +94,10 @@ protocols and any port numbers -- if required) that will host this player.
 </html>
 ----
 
-[[javascript-api]]
-=== JavaScript API
+[[module-import]]
+==== Importing as a module
 
-[[browser]]
-==== In the Browser
-
-When this library is loaded via a script tag on a web page it places a
-factory method on the window.
+You can use the boclips-player as a module in your JavaScript application.
 
 [source,typescript]
 ----
@@ -102,7 +113,17 @@ interface PlayerFactory {
 }
 
 interface PlayerOptions {
-    // There are currently no supported options.
+  analytics: Partial<AnalyticsOptions>;
+  player: Partial<WrapperOptions>;
+}
+
+interface WrapperOptions {
+  controls: Controls[];
+}
+
+interface AnalyticsOptions {
+  metadata: { [key: string]: any };
+  handleOnPlayback: (event: PlaybackEvent) => void;
 }
 
 interface Player {
