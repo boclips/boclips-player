@@ -5,7 +5,7 @@ set -xe
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"
 
 # Produce the ES5/CommonJS into /lib
-tsc
+tsc --target ES5 --outDir lib
 
 # Produce the ES6/ESModule into /esm
 tsc --target ES6 --outDir esm
