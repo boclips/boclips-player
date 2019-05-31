@@ -52,7 +52,7 @@ protocols and any port numbers -- if required) that will host this player.
 <div id="container"></div>
 <script type="text/javascript">
     const container = document.querySelector('#container');
-    const player = BoclipsPlayerFactory.get(container);
+    const player = Boclips.PlayerFactory.get(container);
     player.loadVideo('https://path.to.our/video/endpoint/1');
 </script>
 </body>
@@ -73,7 +73,7 @@ protocols and any port numbers -- if required) that will host this player.
     <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/1"></div>
     <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/2"></div>
     <script>
-      BoclipsPlayerFactory.scan();
+      Boclips.PlayerFactory.scan();
     </script>
 </body>
 </html>
@@ -90,22 +90,22 @@ factory method on the window.
 
 [source,typescript]
 ----
-interface BoclipsPlayerFactory {
+interface PlayerFactory {
     get: (
         container: HTMLElement | string,
-        options: BoclipsPlayerOptions = {}
-    ) => BoclipsPlayer;
+        options: PlayerOptions = {}
+    ) => Player;
     getSeveral = (
         containers: Array<HTMLElement | string> | string,
-    ): BoclipsPlayer[];
-    scan = (): BoclipsPlayer[];
+    ): Player[];
+    scan = (): Player[];
 }
 
-interface BoclipsPlayerOptions {
+interface PlayerOptions {
     // There are currently no supported options.
 }
 
-interface BoclipsPlayer {
+interface Player {
     play: () => Promise<void>;
     pause: () => void;
     loadVideo: (videoUri: string) => void;

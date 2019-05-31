@@ -1,8 +1,10 @@
 // noinspection JSUnusedGlobalSymbols
 export {
-  BoclipsPlayerFactory,
+  BoclipsPlayerFactory as PlayerFactory,
 } from './BoclipsPlayerFactory/BoclipsPlayerFactory';
+// noinspection JSUnusedGlobalSymbols
+export { BoclipsPlayerInstance as Player } from './BoclipsPlayer/BoclipsPlayer';
+// noinspection JSUnusedGlobalSymbols
 export {
-  BoclipsPlayerInstance as BoclipsPlayer,
-} from './BoclipsPlayer/BoclipsPlayer';
-export { BoclipsPlayerOptions } from './BoclipsPlayer/BoclipsPlayerOptions';
+  BoclipsPlayerOptions as PlayerOptions,
+} from './BoclipsPlayer/BoclipsPlayerOptions';
