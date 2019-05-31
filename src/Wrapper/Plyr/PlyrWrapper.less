@@ -2,6 +2,7 @@
 @import '../../styles/colours.less';
 
 .plyr {
+  border-radius: inherit;
 
   .plyr__captions {
     font-size: inherit;
@@ -40,4 +41,9 @@
     background-size: cover;
   }
 
+  .plyr__video-wrapper {
+    video, iframe {
+      max-height: 100%;
+    }
+  }
 }
