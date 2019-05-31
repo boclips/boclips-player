@@ -1,5 +1,12 @@
 ---
 groups:
+- name: all
+  jobs:
+    - test
+    - pre-release
+    - major
+    - minor
+    - release
 - name: develop
   jobs:
     - test
