@@ -1,3 +1,5 @@
+import { noop } from '../src/utils';
+
 const Plyr: any = jest.genMockFromModule('plyr');
 
 // tslint:disable-next-line ban-types
@@ -22,5 +24,6 @@ const media = {
 Plyr.prototype.on = on;
 Plyr.prototype.__callEventCallback = __callEventCallback;
 Plyr.prototype.media = media;
+Plyr.prototype.play = jest.fn().mockReturnValue(new Promise(noop));
 
 module.exports = Plyr;

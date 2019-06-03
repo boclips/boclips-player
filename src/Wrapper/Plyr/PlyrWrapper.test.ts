@@ -8,8 +8,8 @@ import {
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { Wrapper } from '../Wrapper';
+import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
-import {defaultOptions, WrapperOptions} from '../WrapperOptions';
 
 jest.mock('../../Events/Analytics');
 jest.mock('resize-detector');
@@ -57,8 +57,10 @@ describe('When a new video is configured', () => {
     });
 
     it('configures HLS to not autoload', () => {
-      expect(Hls).toHaveBeenCalledWith(expect.objectContaining({autoStartLoad: false}))
-    })
+      expect(Hls).toHaveBeenCalledWith(
+        expect.objectContaining({ autoStartLoad: false }),
+      );
+    });
 
     it('attaches a new hls.js if supported when source is changed', () => {
       const hlsMockInstance = Hls.mock.instances[0];
@@ -141,9 +143,9 @@ it('Will play', () => {
 it('Will pause', () => {
   wrapper.configureWithVideo(video);
 
-  wrapper.play();
+  wrapper.pause();
   const plyrInstance = Plyr.mock.instances[0];
-  expect(plyrInstance.play).toHaveBeenCalled();
+  expect(plyrInstance.pause).toHaveBeenCalled();
 });
 
 describe('Event Tracking', () => {
@@ -273,12 +275,10 @@ describe('option configuration', () => {
 
   it('will pass through the control options', () => {
     const options: WrapperOptions = {
-      controls: [
-          "play-large"
-      ]
-    }
+      controls: ['play-large'],
+    };
     new PlyrWrapper(container, tracker, options);
     const actualOptions = mocked(Plyr).mock.calls[1][1];
-    expect(actualOptions.controls).toEqual(options.controls)
-  })
+    expect(actualOptions.controls).toEqual(options.controls);
+  });
 });

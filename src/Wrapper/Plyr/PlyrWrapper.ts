@@ -39,11 +39,6 @@ export default class PlyrWrapper implements Wrapper {
     this.installPlyrEventListeners();
 
     this.installAnalytics();
-
-    window.addEventListener('beforeunload', () => {
-      const currentTime = this.plyr.currentTime;
-      this.analytics.handlePause(currentTime);
-    });
   }
 
   private installPlyrEventListeners() {
@@ -109,7 +104,9 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   public play = (): Promise<void> => {
-    return this.plyr.play();
+    return this.plyr.play().catch(error => {
+      console.log('Unable to Play.', error);
+    });
   };
 
   public pause = (): void => {
@@ -131,6 +128,11 @@ export default class PlyrWrapper implements Wrapper {
 
     this.plyr.on('pause', event => {
       this.analytics.handlePause(event.detail.plyr.currentTime);
+    });
+
+    window.addEventListener('beforeunload', () => {
+      const currentTime = this.plyr.currentTime;
+      this.analytics.handlePause(currentTime);
     });
   };
 }
