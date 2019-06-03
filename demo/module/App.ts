@@ -7,13 +7,15 @@ document.body.appendChild(playerContainer);
 
 const player = PlayerFactory.get(playerContainer);
 
-player.loadVideo(
-  'https://teachers.staging-boclips.com/v1/videos/5c542ab85438cdbcb56ddceb',
-).then(() => {
-  return player.play();
-}).then(() => {
-  setTimeout(() => {
-    player.pause()
-  }, 10000);
-});
-
+player
+  .loadVideo(
+    'https://teachers.staging-boclips.com/v1/videos/5c542ab85438cdbcb56ddceb',
+  )
+  .then(() => {
+    return player.play();
+  })
+  .then(() => {
+    setTimeout(() => {
+      player.pause();
+    }, 10000);
+  });

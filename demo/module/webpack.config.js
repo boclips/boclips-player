@@ -7,7 +7,7 @@ const path = require('path');
 
 module.exports = merge(common, {
   entry: {
-    'demo': path.resolve(__dirname, 'App.ts')
+    demo: path.resolve(__dirname, 'App.ts'),
   },
   plugins: [
     new HtmlWebpackPlugin({
