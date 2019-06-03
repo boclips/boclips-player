@@ -1,7 +1,22 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { BoclipsPlayerOptions } from '../BoclipsPlayer/BoclipsPlayerOptions';
+import { staticImplements } from '../utils/index';
 import { WrapperFactory } from '../Wrapper/WrapperFactory';
 
+// tag::doc[]
+interface PlayerFactory {
+  get: (
+    container: HTMLElement | string,
+    options: Partial<BoclipsPlayerOptions>,
+  ) => BoclipsPlayer;
+  getSeveral: (
+    containers: Array<HTMLElement | string> | string,
+  ) => BoclipsPlayer[];
+  scan: () => BoclipsPlayer[];
+}
+// end::doc[]
+
+@staticImplements<PlayerFactory>()
 export class BoclipsPlayerFactory {
   public static get(
     container: HTMLElement | string,

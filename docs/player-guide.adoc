@@ -51,21 +51,7 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
 
 [source,html]
 ----
-<html>
-<head>
-    <title>Plain Demo</title>
-    <script src="https://unpkg.com/boclips-player/dist/boclips-player.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boclips-player/dist/boclips-player.css" type="text/css"/>
-</head>
-<body>
-<div id="container"></div>
-<script type="text/javascript">
-    const container = document.querySelector('#container');
-    const player = Boclips.PlayerFactory.get(container);
-    player.loadVideo('https://path.to.our/video/endpoint/1');
-</script>
-</body>
-</html>
+include::index.html[tag=doc]
 ----
 
 ==== Data Driven

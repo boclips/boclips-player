@@ -1,3 +1,4 @@
+// tag::doc[]
 type Controls =
   | 'play-large'
   | 'play'
@@ -11,6 +12,7 @@ type Controls =
 export interface WrapperOptions {
   controls: Controls[];
 }
+// end::doc[]
 
 export const defaultOptions: WrapperOptions = {
   controls: [

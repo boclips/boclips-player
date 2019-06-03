@@ -1,0 +1,64 @@
+System.register("Events/AnalyticsEvents", [], function (exports_1, context_1) {
+    "use strict";
+    var __moduleName = context_1 && context_1.id;
+    return {
+        setters: [],
+        execute: function () {
+        }
+    };
+});
+System.register("Events/AnalyticsOptions", ["../utils"], function (exports_2, context_2) {
+    "use strict";
+    var utils_1, defaultOptions;
+    var __moduleName = context_2 && context_2.id;
+    return {
+        setters: [
+            function (utils_1_1) {
+                utils_1 = utils_1_1;
+            }
+        ],
+        execute: function () {
+            exports_2("defaultOptions", defaultOptions = Object.freeze({
+                metadata: {},
+                handleOnPlayback: utils_1.noop
+            }));
+        }
+    };
+});
+System.register("Wrapper/WrapperOptions", [], function (exports_3, context_3) {
+    "use strict";
+    var defaultOptions;
+    var __moduleName = context_3 && context_3.id;
+    return {
+        setters: [],
+        execute: function () {
+            exports_3("defaultOptions", defaultOptions = {
+                controls: [
+                    'play-large',
+                    'play',
+                    'progress',
+                    'current-time',
+                    'mute',
+                    'volume',
+                    'captions',
+                    'fullscreen',
+                ]
+            });
+        }
+    };
+});
+System.register("BoclipsPlayer/BoclipsPlayerOptions", [], function (exports_4, context_4) {
+    "use strict";
+    var defaultOptions;
+    var __moduleName = context_4 && context_4.id;
+    return {
+        setters: [],
+        execute: function () {
+            // end::doc[]
+            exports_4("defaultOptions", defaultOptions = Object.freeze({
+                analytics: {},
+                player: {}
+            }));
+        }
+    };
+});
