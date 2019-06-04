@@ -114,6 +114,9 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   public destroy = () => {
+    this.handleBeforeUnload();
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
+
     if (this.hls) {
       this.hls.destroy();
     }
@@ -130,9 +133,13 @@ export default class PlyrWrapper implements Wrapper {
       this.analytics.handlePause(event.detail.plyr.currentTime);
     });
 
-    window.addEventListener('beforeunload', () => {
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+  };
+
+  private handleBeforeUnload = () => {
+    if (this.plyr) {
       const currentTime = this.plyr.currentTime;
       this.analytics.handlePause(currentTime);
-    });
+    }
   };
 }

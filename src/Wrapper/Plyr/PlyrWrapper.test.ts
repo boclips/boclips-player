@@ -193,6 +193,18 @@ describe('Event Tracking', () => {
 
     expect(tracker.handlePause).toHaveBeenCalledWith(25);
   });
+
+  it('will remove an unload event listener on destruction', () => {
+    expect((window as any).__callbacks.beforeunload).toHaveLength(1);
+
+    plyrInstance.currentTime = 15;
+
+    wrapper.destroy();
+
+    expect(tracker.handlePause).toHaveBeenCalledWith(15);
+
+    expect((window as any).__callbacks.beforeunload).toHaveLength(0);
+  });
 });
 
 describe('is listening for container resizes', () => {
@@ -277,6 +289,7 @@ describe('option configuration', () => {
     const options: WrapperOptions = {
       controls: ['play-large'],
     };
+    // tslint:disable-next-line:no-unused-expression
     new PlyrWrapper(container, tracker, options);
     const actualOptions = mocked(Plyr).mock.calls[1][1];
     expect(actualOptions.controls).toEqual(options.controls);
