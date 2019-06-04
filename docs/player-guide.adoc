@@ -10,13 +10,13 @@ Boclips Engineering;
 [[boclips-player]]
 == Overview
 
-Boclips Player is a framework agnostic video player which serves to play
+Boclips Player is a framework agnostic HTML5 video player which serves to play
 Boclips supplied videos on all our supported devices. It will feature
 core functionality that is expected of modern video players, such as
 analytics, closed captions, and adaptive bit rate streaming.
 
-It will be integrated into other apps used by our API partners. We want
-to provide these partners with a complete player solution that allows us
+It can be integrated into JavaScript applications with ease. We are fully committed
+to provide partners with a complete player solution that allows us
 to gain insights to how our consumers watch our videos.
 
 [[usage]]
@@ -31,7 +31,7 @@ In order to load a video you must have a Video URI pointing to our API.
 
 [NOTE]
 ====
-Our API is protected by several methods, one of these is CORs. Since the `boclips-player`
+Our API is protected by several methods, one of these is CORS. Since the `boclips-player`
 makes API requests to our server you'll need to ensure we've whitelisted any domains where
 you load our player.
 
@@ -134,30 +134,27 @@ interface Player {
 [[analytics]]
 == Analytics
 
-In order to gain insights into the way in which our users watch our curated videos we provide some analytics out of the
-box. We use this data internally to make decisions on acquisition, and promotion of videos.
+In order to gain insights into the way in which our users watch our curated videos, the player reports basic view stats back to our backend systems. This information helps us to personalise the Boclips experience in the long-term.
 
-We do this by triggering events when certain user actions occur. Detailed information on these tracking mechanisms may
-be gleaned by inspecting the source code of this project.
+Detailed information on these tracking mechanisms may be gleaned by inspecting the source code of this project.
 
-Where appropriate we ask that you enrich these events with extra data. See <<analytics-metadata>>
+Where appropriate we will ask you to enrich these events with extra data. See <<analytics-metadata>>
 
-This information will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
+Any information provided will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
 
 [[analytics-metadata]]
 === Additional Metadata
 
 To gain the best insights we ask that you provide extra data about the circumstance that this player is being used.
 
-When initialising the player, you may pass metadata into the analytics module. For example, the position the video came
-in search results:
+When initialising the player, you may pass metadata into the analytics module. For example, what user is watching the video:
 
 [source,typescript]
 ----
 const options = {
     analytics: {
         metadata: {
-            videoIndex: results.indexOf(video)
+            userId: results.indexOf(video)
         }
     }
 }
@@ -166,7 +163,7 @@ const player = Boclips.PlayerFactory.get(document.querySelector('#player-contain
 player.loadVideo(video);
 ----
 
-
+All analytics data should be anonymised.
 
 [[license]]
 == License
