@@ -111,17 +111,17 @@ interface PlayerFactory {
 }
 
 interface PlayerOptions {
-  analytics: Partial<AnalyticsOptions>;
-  player: Partial<WrapperOptions>;
+    analytics: Partial<AnalyticsOptions>;
+    player: Partial<WrapperOptions>;
 }
 
 interface WrapperOptions {
-  controls: Controls[];
+    controls: Controls[];
 }
 
 interface AnalyticsOptions {
-  metadata: { [key: string]: any };
-  handleOnPlayback: (event: PlaybackEvent) => void;
+    metadata: { [key: string]: any };
+    handleOnPlayback: (event: PlaybackEvent) => void;
 }
 
 interface Player {
@@ -130,6 +130,43 @@ interface Player {
     loadVideo: (videoUri: string) => void;
 }
 ----
+
+[[analytics]]
+== Analytics
+
+In order to gain insights into the way in which our users watch our curated videos we provide some analytics out of the
+box. We use this data internally to make decisions on acquisition, and promotion of videos.
+
+We do this by triggering events when certain user actions occur. Detailed information on these tracking mechanisms may
+be gleaned by inspecting the source code of this project.
+
+Where appropriate we ask that you enrich these events with unique identifiers per user. This allows us to correlate
+between events and identify trends between segments of users.
+
+This information will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
+
+[[analytics-metadata]]
+=== Additional Metadata
+
+To gain the best insights we ask that you provide extra data about the circumstance that this player is being used.
+
+When initialising the player, you may pass metadata into the analytics module. For example, the position the video came
+in search results:
+
+[source,typescript]
+----
+const options = {
+    analytics: {
+        metadata: {
+            videoIndex: results.indexOf(video)
+        }
+    }
+}
+
+const player = Boclips.PlayerFactory.get(document.querySelector('#player-container'), options);
+player.loadVideo(video);
+----
+
 
 
 [[license]]
