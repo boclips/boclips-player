@@ -45,7 +45,7 @@ export default class PlyrWrapper implements Wrapper {
 
   private installPlyrEventListeners() {
     this.plyr.on('play', () => {
-      if (this.hls) {
+      if (!this.hasBeenDestroyed && this.hls) {
         this.hls.startLoad();
       }
     });
@@ -110,6 +110,10 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   public play = (): Promise<void> => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
+
     return this.plyr.play().catch(error => {
       console.log('Unable to Play.', error);
     });
