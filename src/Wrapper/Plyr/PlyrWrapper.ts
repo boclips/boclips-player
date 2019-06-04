@@ -6,11 +6,14 @@ import './PlyrWrapper.less';
 import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
 import { Analytics } from '../../Events/Analytics';
-import { Playback } from '../../types/Playback';
+import {
+  isStreamPlayback,
+  Playback,
+  StreamPlayback,
+  YoutubePlayback,
+} from '../../types/Playback';
 import { Video } from '../../types/Video';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
-import { Source } from './types';
-import convertPlaybackToSource from './utils/convertPlaybackToSource';
 
 export default class PlyrWrapper implements Wrapper {
   private plyr;
@@ -34,41 +37,46 @@ export default class PlyrWrapper implements Wrapper {
     this.handleResizeEvent();
   }
 
-  private createStreamPlyr = (playback?: Playback, source?: Source) => {
+  private createStreamPlyr = (playback?: StreamPlayback) => {
     this.container.innerHTML = '';
 
-    const video = document.createElement('video');
-    video.setAttribute('data-qa', 'boclips-player');
-    video.setAttribute('preload', 'metadata');
+    const media = document.createElement('video');
 
-    if (source) {
-      source.sources.forEach(sourceEntry => {
-        const sourceElement = document.createElement('source');
-        Object.keys(sourceEntry).forEach(key =>
-          sourceElement.setAttribute(key, sourceEntry[key]),
-        );
-        video.appendChild(sourceElement);
+    media.setAttribute('data-qa', 'boclips-player');
+    media.setAttribute('preload', 'metadata');
+
+    if (playback) {
+      media.setAttribute('src', playback.streamUrl);
+      media.setAttribute('poster', playback.thumbnailUrl);
+    }
+
+    this.container.appendChild(media);
+
+    this.resetPlyrInstance(media, playback);
+
+    if (Hls.isSupported()) {
+      this.hls = new Hls({
+        debug: process.env.NODE_ENV !== 'production',
+        autoStartLoad: false,
       });
-
-      if (source.poster) {
-        video.setAttribute('poster', source.poster);
-      }
+      this.hls.attachMedia(this.plyr.media);
+      this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+        this.hls.loadSource(this.plyr.media.src);
+      });
     }
+  };
 
-    this.container.appendChild(video);
+  private createYoutubePlyr = (playback: YoutubePlayback) => {
+    this.container.innerHTML = '';
 
-    if (this.plyr) {
-      this.plyr.destroy();
-    }
+    const media = document.createElement('div');
+    media.setAttribute('data-qa', 'boclips-player');
+    media.setAttribute('data-plyr-provider', 'youtube');
+    media.setAttribute('data-plyr-embed-id', playback.id);
 
-    this.plyr = new Plyr(video, {
-      debug: process.env.NODE_ENV !== 'production',
-      captions: { active: false, language: 'en', update: true },
-      controls: this.options.controls,
-      duration: playback ? toSeconds(parse(playback.duration)) : null,
-    });
+    this.container.appendChild(media);
 
-    this.installPlyrEventListeners();
+    this.resetPlyrInstance(media, playback);
   };
 
   private installPlyrEventListeners() {
@@ -99,7 +107,7 @@ export default class PlyrWrapper implements Wrapper {
     });
   }
 
-  public configureWithVideo = (video: Video) => {
+  public configureWithVideo = ({ playback }: Video) => {
     if (this.hasBeenDestroyed) {
       return;
     }
@@ -108,28 +116,10 @@ export default class PlyrWrapper implements Wrapper {
       this.hls.destroy();
     }
 
-    const source = convertPlaybackToSource(video.playback);
-
-    if (video.playback.type === 'STREAM') {
-      this.createStreamPlyr(video.playback, source);
-
-      if (Hls.isSupported()) {
-        this.hls = new Hls({
-          debug: process.env.NODE_ENV !== 'production',
-          autoStartLoad: false,
-        });
-        this.hls.attachMedia(this.plyr.media);
-        this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-          this.hls.loadSource(source.sources[0].src);
-        });
-      } else {
-        this.plyr.media.addEventListener('loadedmetadata', () => {
-          // noinspection JSIgnoredPromiseFromCall
-          this.play();
-        });
-      }
+    if (isStreamPlayback(playback)) {
+      this.createStreamPlyr(playback);
     } else {
-      this.plyr.source = source;
+      this.createYoutubePlyr(playback);
     }
   };
 
@@ -185,5 +175,23 @@ export default class PlyrWrapper implements Wrapper {
       const currentTime = this.plyr.currentTime;
       this.analytics.handlePause(currentTime);
     }
+  };
+
+  private resetPlyrInstance = (
+    media: HTMLDivElement | HTMLVideoElement,
+    playback?: Playback,
+  ) => {
+    if (this.plyr) {
+      this.plyr.destroy();
+    }
+
+    this.plyr = new Plyr(media, {
+      debug: process.env.NODE_ENV !== 'production',
+      captions: { active: false, language: 'en', update: true },
+      controls: this.options.controls,
+      duration: playback ? toSeconds(parse(playback.duration)) : null,
+    });
+
+    this.installPlyrEventListeners();
   };
 }

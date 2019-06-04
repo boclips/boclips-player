@@ -68,15 +68,6 @@ describe('When a new video is configured', () => {
       expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
     });
 
-    it('loads source once media is attached', () => {
-      const hlsMockInstance = Hls.mock.instances[0];
-      const [event, callback] = hlsMockInstance.on.mock.calls[0];
-
-      expect(event).toEqual(Hls.Events.MEDIA_ATTACHED);
-      callback();
-      expect(hlsMockInstance.loadSource).toHaveBeenCalled();
-    });
-
     it('destroys HLS before loading another video', () => {
       wrapper.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
@@ -88,26 +79,13 @@ describe('When a new video is configured', () => {
 
   describe('When Hls is not supported with STREAM', () => {
     beforeEach(() => {
+      Hls.mockClear();
       Hls.isSupported.mockReturnValue(false);
       wrapper.configureWithVideo(video);
     });
 
     it('does not instantiate a Hls', () => {
       expect(Hls).not.toHaveBeenCalled();
-    });
-
-    it('adds an loadedmetadata listener to the video which then plays', () => {
-      const plyrInstance = Plyr.mock.instances[1];
-      expect(plyrInstance.media.addEventListener).toHaveBeenCalledWith(
-        'loadedmetadata',
-        expect.anything(),
-      );
-
-      const callback = plyrInstance.media.addEventListener.mock.calls[0][1];
-
-      callback();
-
-      expect(plyrInstance.play).toHaveBeenCalled();
     });
   });
 
