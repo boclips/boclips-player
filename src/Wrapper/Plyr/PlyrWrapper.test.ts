@@ -295,3 +295,17 @@ describe('option configuration', () => {
     expect(actualOptions.controls).toEqual(options.controls);
   });
 });
+
+it('does not configure video when the Plyr has been destroyed', () => {
+  const plyrInstance = Plyr.mock.instances[0];
+  const sourceSetSpy = jest.fn();
+  Object.defineProperty(plyrInstance, 'source', {
+    set: sourceSetSpy,
+  });
+
+  wrapper.destroy();
+
+  wrapper.configureWithVideo(VideoFactory.sample());
+
+  expect(sourceSetSpy).not.toHaveBeenCalled();
+});

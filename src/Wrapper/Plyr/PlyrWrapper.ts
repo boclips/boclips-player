@@ -13,6 +13,7 @@ export default class PlyrWrapper implements Wrapper {
   private readonly plyr;
   private hls = null;
   private options: WrapperOptions;
+  private hasBeenDestroyed: boolean = false;
 
   // @ts-ignore
   constructor(
@@ -34,6 +35,7 @@ export default class PlyrWrapper implements Wrapper {
     });
 
     addResizeListener(container, this.handleResizeEvent);
+
     this.handleResizeEvent();
 
     this.installPlyrEventListeners();
@@ -62,6 +64,10 @@ export default class PlyrWrapper implements Wrapper {
   }
 
   public configureWithVideo = (video: Video) => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
+
     if (this.hls) {
       this.hls.destroy();
     }
@@ -122,6 +128,8 @@ export default class PlyrWrapper implements Wrapper {
     }
 
     this.plyr.destroy();
+
+    this.hasBeenDestroyed = true;
   };
 
   private installAnalytics = () => {
