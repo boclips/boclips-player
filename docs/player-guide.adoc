@@ -140,8 +140,7 @@ box. We use this data internally to make decisions on acquisition, and promotion
 We do this by triggering events when certain user actions occur. Detailed information on these tracking mechanisms may
 be gleaned by inspecting the source code of this project.
 
-Where appropriate we ask that you enrich these events with unique identifiers per user. This allows us to correlate
-between events and identify trends between segments of users.
+Where appropriate we ask that you enrich these events with extra data. See <<analytics-metadata>>
 
 This information will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
 
