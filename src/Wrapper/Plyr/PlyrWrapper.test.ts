@@ -35,6 +35,7 @@ it('Constructs a Plyr given an element a video element within container', () => 
   const videoElement = container.children.item(0);
   expect(videoElement.tagName).toEqual('VIDEO');
   expect(videoElement.getAttribute('data-qa')).toEqual('boclips-player');
+  expect(videoElement.getAttribute('preload')).toEqual('metadata');
 
   expect(Plyr).toHaveBeenCalledWith(
     videoElement,
@@ -96,7 +97,7 @@ describe('When a new video is configured', () => {
     });
 
     it('adds an loadedmetadata listener to the video which then plays', () => {
-      const plyrInstance = Plyr.mock.instances[0];
+      const plyrInstance = Plyr.mock.instances[1];
       expect(plyrInstance.media.addEventListener).toHaveBeenCalledWith(
         'loadedmetadata',
         expect.anything(),
@@ -136,7 +137,7 @@ it('Will play', () => {
   wrapper.configureWithVideo(video);
 
   wrapper.play();
-  const plyrInstance = Plyr.mock.instances[0];
+  const plyrInstance = Plyr.mock.instances[1];
   expect(plyrInstance.play).toHaveBeenCalled();
 });
 
@@ -144,7 +145,7 @@ it('Will pause', () => {
   wrapper.configureWithVideo(video);
 
   wrapper.pause();
-  const plyrInstance = Plyr.mock.instances[0];
+  const plyrInstance = Plyr.mock.instances[1];
   expect(plyrInstance.pause).toHaveBeenCalled();
 });
 

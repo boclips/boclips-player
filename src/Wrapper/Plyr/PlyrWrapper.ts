@@ -1,3 +1,4 @@
+import { parse, toSeconds } from 'iso8601-duration';
 import Plyr from 'plyr';
 import { Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
@@ -5,12 +6,14 @@ import './PlyrWrapper.less';
 import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
 import { Analytics } from '../../Events/Analytics';
+import { Playback } from '../../types/Playback';
 import { Video } from '../../types/Video';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
+import { Source } from './types';
 import convertPlaybackToSource from './utils/convertPlaybackToSource';
 
 export default class PlyrWrapper implements Wrapper {
-  private readonly plyr;
+  private plyr;
   private hls = null;
   private options: WrapperOptions;
   private hasBeenDestroyed: boolean = false;
@@ -21,27 +24,52 @@ export default class PlyrWrapper implements Wrapper {
     private readonly analytics: Analytics,
     options: Partial<WrapperOptions> = {},
   ) {
+    this.options = { ...defaultOptions, ...options };
+
+    this.createStreamPlyr();
+
+    addResizeListener(container, this.handleResizeEvent);
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+
+    this.handleResizeEvent();
+  }
+
+  private createStreamPlyr = (playback?: Playback, source?: Source) => {
+    this.container.innerHTML = '';
+
     const video = document.createElement('video');
     video.setAttribute('data-qa', 'boclips-player');
+    video.setAttribute('preload', 'metadata');
 
-    container.appendChild(video);
+    if (source) {
+      source.sources.forEach(sourceEntry => {
+        const sourceElement = document.createElement('source');
+        Object.keys(sourceEntry).forEach(key =>
+          sourceElement.setAttribute(key, sourceEntry[key]),
+        );
+        video.appendChild(sourceElement);
+      });
 
-    this.options = { ...defaultOptions, ...options };
+      if (source.poster) {
+        video.setAttribute('poster', source.poster);
+      }
+    }
+
+    this.container.appendChild(video);
+
+    if (this.plyr) {
+      this.plyr.destroy();
+    }
 
     this.plyr = new Plyr(video, {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
       controls: this.options.controls,
+      duration: playback ? toSeconds(parse(playback.duration)) : null,
     });
 
-    addResizeListener(container, this.handleResizeEvent);
-
-    this.handleResizeEvent();
-
     this.installPlyrEventListeners();
-
-    this.installAnalytics();
-  }
+  };
 
   private installPlyrEventListeners() {
     this.plyr.on('play', () => {
@@ -61,6 +89,14 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.on('ready', () => {
       this.plyr.toggleControls(false);
     });
+
+    this.plyr.on('playing', event => {
+      this.analytics.handlePlay(event.detail.plyr.currentTime);
+    });
+
+    this.plyr.on('pause', event => {
+      this.analytics.handlePause(event.detail.plyr.currentTime);
+    });
   }
 
   public configureWithVideo = (video: Video) => {
@@ -74,9 +110,9 @@ export default class PlyrWrapper implements Wrapper {
 
     const source = convertPlaybackToSource(video.playback);
 
-    this.plyr.source = source;
-
     if (video.playback.type === 'STREAM') {
+      this.createStreamPlyr(video.playback, source);
+
       if (Hls.isSupported()) {
         this.hls = new Hls({
           debug: process.env.NODE_ENV !== 'production',
@@ -92,6 +128,8 @@ export default class PlyrWrapper implements Wrapper {
           this.play();
         });
       }
+    } else {
+      this.plyr.source = source;
     }
   };
 
@@ -114,9 +152,15 @@ export default class PlyrWrapper implements Wrapper {
       return;
     }
 
-    return this.plyr.play().catch(error => {
-      console.log('Unable to Play.', error);
-    });
+    const maybePromise = this.plyr.play();
+
+    if (maybePromise) {
+      return maybePromise.catch(error => {
+        console.log('Unable to Play.', error);
+      });
+    }
+
+    return new Promise(resolve => resolve());
   };
 
   public pause = (): void => {
@@ -134,18 +178,6 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.destroy();
 
     this.hasBeenDestroyed = true;
-  };
-
-  private installAnalytics = () => {
-    this.plyr.on('playing', event => {
-      this.analytics.handlePlay(event.detail.plyr.currentTime);
-    });
-
-    this.plyr.on('pause', event => {
-      this.analytics.handlePause(event.detail.plyr.currentTime);
-    });
-
-    window.addEventListener('beforeunload', this.handleBeforeUnload);
   };
 
   private handleBeforeUnload = () => {
