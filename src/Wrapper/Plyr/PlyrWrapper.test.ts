@@ -7,6 +7,7 @@ import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
+import { StreamPlayback } from '../../types/Playback';
 import { Wrapper } from '../Wrapper';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
@@ -53,6 +54,13 @@ describe('When a new video is configured', () => {
       wrapper.configureWithVideo(video);
     });
 
+    it('does not instantiate Hls if there is no playback', () => {
+      Hls.mockClear();
+      // tslint:disable-next-line:no-unused-expression
+      new PlyrWrapper(container, tracker);
+      expect(Hls).not.toHaveBeenCalled();
+    });
+
     it('instantiates a Hls', () => {
       expect(Hls).toHaveBeenCalled();
     });
@@ -63,9 +71,23 @@ describe('When a new video is configured', () => {
       );
     });
 
-    it('attaches a new hls.js if supported when source is changed', () => {
+    it('attaches a new hls.js if supported', () => {
       const hlsMockInstance = Hls.mock.instances[0];
       expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
+    });
+
+    it('loads the playback url when attached', () => {
+      const hlsMockInstance = Hls.mock.instances[0];
+      const [event, callback] = mocked(hlsMockInstance.on).mock.calls[0];
+
+      expect(event).toEqual(Hls.Events.MEDIA_ATTACHED);
+      expect(callback).toBeTruthy();
+
+      callback();
+
+      expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
+        (video.playback as StreamPlayback).streamUrl,
+      );
     });
 
     it('destroys HLS before loading another video', () => {

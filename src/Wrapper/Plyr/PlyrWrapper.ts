@@ -54,15 +54,15 @@ export default class PlyrWrapper implements Wrapper {
 
     this.resetPlyrInstance(media, playback);
 
-    if (Hls.isSupported()) {
+    if (playback && Hls.isSupported()) {
       this.hls = new Hls({
         debug: process.env.NODE_ENV !== 'production',
         autoStartLoad: false,
       });
-      this.hls.attachMedia(this.plyr.media);
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        this.hls.loadSource(this.plyr.media.src);
+        this.hls.loadSource(playback.streamUrl);
       });
+      this.hls.attachMedia(this.plyr.media);
     }
   };
 
