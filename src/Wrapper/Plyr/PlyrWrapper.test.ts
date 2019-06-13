@@ -263,6 +263,18 @@ describe('when asked to destroy', () => {
 
     expect(plyrInstance.destroy).toHaveBeenCalled();
   });
+
+  it('catches exceptions from the destroy function of plyr', () => {
+    const plyrInstance = Plyr.mock.instances[0];
+    plyrInstance.destroy.mockImplementation(() => {
+      throw Error('This should not bubble');
+    });
+
+    expect(() => {
+      wrapper.destroy();
+    }).not.toThrow();
+  });
+
   it('calls destroy on Hls', () => {
     Hls.isSupported.mockReturnValue(true);
     wrapper.configureWithVideo(
@@ -273,6 +285,31 @@ describe('when asked to destroy', () => {
     const hlsMockInstance = Hls.mock.instances[0];
 
     expect(hlsMockInstance.destroy).toHaveBeenCalled();
+  });
+
+  it('catches exceptions from the destroy function of hls', () => {
+    Hls.isSupported.mockReturnValue(true);
+    wrapper.configureWithVideo(
+        VideoFactory.sample(PlaybackFactory.streamSample()),
+    );
+
+    const hlsMockInstance = Hls.mock.instances[0];
+    hlsMockInstance.destroy.mockImplementation(() => {
+      throw Error('This should not bubble');
+    });
+
+    expect(() => {
+      wrapper.destroy();
+    }).not.toThrow();
+  });
+
+  it('sends a pause event on destruction', () => {
+    const plyrInstance = Plyr.mock.instances[0];
+    plyrInstance.currentTime = 50;
+
+    wrapper.destroy();
+
+    expect(tracker.handlePause).toHaveBeenCalledWith(50);
   });
 });
 

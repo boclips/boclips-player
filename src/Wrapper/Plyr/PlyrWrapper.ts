@@ -161,11 +161,19 @@ export default class PlyrWrapper implements Wrapper {
     this.handleBeforeUnload();
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
 
-    if (this.hls) {
-      this.hls.destroy();
+    try {
+      if (this.hls) {
+        this.hls.destroy();
+      }
+    } catch (error) {
+      console.warn('Error occurred while destroying hls', error);
     }
 
-    this.plyr.destroy();
+    try {
+      this.plyr.destroy();
+    } catch (error) {
+      console.warn('Error occurred while destroying plyr', error);
+    }
 
     this.hasBeenDestroyed = true;
   };
