@@ -35,6 +35,13 @@ export default class PlyrWrapper implements Wrapper {
     window.addEventListener('beforeunload', this.handleBeforeUnload);
 
     this.handleResizeEvent();
+
+    if (
+      this.options.controls.indexOf('mute') !== -1 &&
+      this.options.controls.indexOf('volume') === -1
+    ) {
+      this.container.classList.add('plyr--only-mute');
+    }
   }
 
   private createStreamPlyr = (playback?: StreamPlayback) => {
