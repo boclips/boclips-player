@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1] - 2019-06-14
 
+### Added
+- Support for the rest of the Plyr controls
+
 ### Fixed
 - Catch exceptions caused when destroying a YouTube Plyr instance after the elements are removed from the DOM.
 
