@@ -14,11 +14,27 @@
           },
         },
         player: {
-          controls: ['play-large', 'fullscreen', 'play', 'progress'],
+          controls: [
+            'play-large',
+            'rewind',
+            'play',
+            'fast-forward',
+            'progress',
+            'current-time',
+            'settings',
+            'mute',
+            'volume',
+            'captions',
+            'fullscreen',
+            'play-large',
+            'fullscreen',
+          ],
         },
       };
       const player = Boclips.PlayerFactory.get(container, options);
-      player.loadVideo('https://teachers.staging-boclips.com/v1/videos/5c542ab85438cdbcb56ddceb');
+      player.loadVideo(
+        'https://teachers.staging-boclips.com/v1/videos/5c542ab85438cdbcb56ddceb',
+      );
     </script>
   </body>
 </html>
