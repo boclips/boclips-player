@@ -11,9 +11,7 @@ echo "This is $release_name" \
     > release/notes
 npm="npm --prefix $app"
 
-version=1.0.3
-
-if [[ -z $(grep -F "## [${version}]" ${app}/CHANGELOG.md) ]]; then
+if [[ ! ${version} =~ "dev" && -z $(grep -F "## [${version}]" ${app}/CHANGELOG.md) ]]; then
     echo "Changelog does not have an entry for this version"
     exit 1
 fi
