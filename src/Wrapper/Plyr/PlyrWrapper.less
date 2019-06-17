@@ -5,11 +5,13 @@
   border-radius: inherit;
 
   .plyr__captions {
-    font-size: inherit;
     padding: 0.5em;
+
+    font-size: inherit;
 
     .plyr__caption {
       padding: 0.2em;
+
       line-height: 190%;
     }
   }
@@ -19,15 +21,16 @@
   }
 
   .plyr__control--overlaid {
-     background: @cta-blue;
+    background: @cta-blue;
   }
 
   .plyr__control {
     .plyr__tab-focus,
     &:hover,
     &[aria-expanded=true] {
-      background: @mid-blue;
       color: #fff;
+
+      background: @mid-blue;
     }
   }
 
@@ -42,7 +45,8 @@
   }
 
   .plyr__video-wrapper {
-    video, iframe {
+    video,
+    iframe {
       max-height: 100%;
     }
   }
