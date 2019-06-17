@@ -290,7 +290,7 @@ describe('when asked to destroy', () => {
   it('catches exceptions from the destroy function of hls', () => {
     Hls.isSupported.mockReturnValue(true);
     wrapper.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.streamSample()),
+      VideoFactory.sample(PlaybackFactory.streamSample()),
     );
 
     const hlsMockInstance = Hls.mock.instances[0];
