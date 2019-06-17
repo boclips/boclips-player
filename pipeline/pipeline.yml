@@ -112,7 +112,7 @@ resources:
   type: time
   source:
     start: 09:30 AM
-    stop: 12:30 PM
+    stop: 06:30 PM
     days: [Monday, Tuesday, Wednesday, Thursday, Friday]
     location: Europe/London
 
