@@ -8,6 +8,7 @@ import {
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { StreamPlayback } from '../../types/Playback';
+import { ErrorHandler } from '../../utils/ErrorHandler';
 import { Wrapper } from '../Wrapper';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
@@ -20,6 +21,7 @@ const video = VideoFactory.sample();
 let container: HTMLElement = null;
 let wrapper: Wrapper = null;
 let tracker: Analytics = null;
+let errorHandler: ErrorHandler = null;
 
 beforeEach(() => {
   Hls.mockClear();
@@ -27,7 +29,8 @@ beforeEach(() => {
 
   container = document.createElement('div');
   tracker = new Analytics('player123');
-  wrapper = new PlyrWrapper(container, tracker);
+  errorHandler = new ErrorHandler(container);
+  wrapper = new PlyrWrapper(container, tracker, errorHandler);
 });
 
 it('Constructs a Plyr given an element a video element within container', () => {
@@ -57,7 +60,7 @@ describe('When a new video is configured', () => {
     it('does not instantiate Hls if there is no playback', () => {
       Hls.mockClear();
       // tslint:disable-next-line:no-unused-expression
-      new PlyrWrapper(container, tracker);
+      new PlyrWrapper(container, tracker, errorHandler);
       expect(Hls).not.toHaveBeenCalled();
     });
 
@@ -328,7 +331,7 @@ describe('option configuration', () => {
       controls: ['play-large'],
     };
     // tslint:disable-next-line:no-unused-expression
-    new PlyrWrapper(container, tracker, options);
+    new PlyrWrapper(container, tracker, errorHandler, options);
     const actualOptions = mocked(Plyr).mock.calls[1][1];
     expect(actualOptions.controls).toEqual(options.controls);
   });

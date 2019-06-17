@@ -1,10 +1,12 @@
-import { Analytics } from '../Events/Analytics';
+import { AnalyticsInstance } from '../Events/Analytics';
 import { Video } from '../types/Video';
+import { ErrorHandlerInstance } from '../utils/ErrorHandler';
 import { WrapperOptions } from './WrapperOptions';
 
 export type WrapperConstructor = new (
   container: HTMLElement,
-  analytics: Analytics,
+  analytics: AnalyticsInstance,
+  errorHandler: ErrorHandlerInstance,
   options: Partial<WrapperOptions>,
 ) => Wrapper;
 

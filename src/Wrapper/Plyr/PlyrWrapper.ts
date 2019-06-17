@@ -5,7 +5,7 @@ import './PlyrWrapper.less';
 
 import Hls from 'hls.js';
 import { addListener as addResizeListener } from 'resize-detector';
-import { Analytics } from '../../Events/Analytics';
+import { AnalyticsInstance } from '../../Events/Analytics';
 import {
   isStreamPlayback,
   Playback,
@@ -13,6 +13,7 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
+import { ErrorHandlerInstance } from '../../utils/ErrorHandler';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 
 export default class PlyrWrapper implements Wrapper {
@@ -24,7 +25,8 @@ export default class PlyrWrapper implements Wrapper {
   // @ts-ignore
   constructor(
     private readonly container: HTMLElement,
-    private readonly analytics: Analytics,
+    private readonly analytics: AnalyticsInstance,
+    private readonly errorHandler: ErrorHandlerInstance,
     options: Partial<WrapperOptions> = {},
   ) {
     this.options = { ...defaultOptions, ...options };
@@ -69,6 +71,13 @@ export default class PlyrWrapper implements Wrapper {
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         this.hls.loadSource(playback.streamUrl);
       });
+      this.hls.on(Hls.Events.ERROR, (_, data) => {
+        this.errorHandler.handleError({
+          fatal: data.fatal,
+          type: data.type,
+          payload: data,
+        });
+      });
       this.hls.attachMedia(this.plyr.media);
     }
   };
@@ -111,6 +120,21 @@ export default class PlyrWrapper implements Wrapper {
 
     this.plyr.on('pause', event => {
       this.analytics.handlePause(event.detail.plyr.currentTime);
+    });
+
+    this.plyr.on('error', event => {
+      const mediaError = event.detail.plyr.media.error;
+
+      if (mediaError.code && mediaError.message) {
+        this.errorHandler.handleError({
+          fatal: true,
+          type: 'PLAYBACK_ERROR',
+          payload: {
+            code: mediaError.code,
+            message: mediaError.message,
+          },
+        });
+      }
     });
   }
 

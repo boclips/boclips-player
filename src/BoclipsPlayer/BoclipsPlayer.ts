@@ -60,6 +60,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.wrapper = new this.wrapperConstructor(
       container,
       this.analytics,
+      this.errorHandler,
       this.options.player,
     );
 
@@ -85,7 +86,33 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
         this.analytics.configure(video);
         this.wrapper.configureWithVideo(video);
       })
-      .catch(this.errorHandler.handleError);
+      .catch(error => {
+        if (error && error.response && error.response.status) {
+          if (error.response.status === 404) {
+            this.errorHandler.handleError({
+              fatal: true,
+              type: 'API_ERROR',
+              payload: {
+                statusCode: 404,
+              },
+            });
+          } else {
+            this.errorHandler.handleError({
+              fatal: true,
+              type: 'API_ERROR',
+              payload: {
+                statusCode: error.response.status,
+              },
+            });
+          }
+        } else {
+          this.errorHandler.handleError({
+            fatal: true,
+            type: 'UNKNOWN_ERROR',
+            payload: error,
+          });
+        }
+      });
   };
 
   public destroy = () => this.wrapper.destroy();

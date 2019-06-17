@@ -6,19 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-- Enhanced error handling to display a friendly error message
-
-### Fixed
-- BoclipsPlayer state reset before loading a new video 
-
 ## [1.0.1] - 2019-06-14
 
 ### Added
 - Support for the rest of the Plyr controls
+- Enhanced error handling to display a friendly error message
 
 ### Fixed
 - Catch exceptions caused when destroying a YouTube Plyr instance after the elements are removed from the DOM.
+- BoclipsPlayer state reset before loading a new video
 
 ## [1.0.0] - 2019-06-05
 

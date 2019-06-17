@@ -46,6 +46,7 @@ describe('BoclipsPlayer', () => {
       container,
       expect.anything(),
       expect.anything(),
+      expect.anything(),
     );
   });
 
@@ -258,6 +259,7 @@ describe('BoclipsPlayer', () => {
       expect(MockWrapper).toHaveBeenCalledWith(
         expect.anything(),
         expect.anything(),
+        expect.anything(),
         expect.objectContaining(options.player),
       );
     });
@@ -272,6 +274,8 @@ describe('BoclipsPlayer', () => {
     expect(errorHandler.handleError).toHaveBeenCalled();
 
     const args = errorHandler.handleError.mock.calls[0];
-    expect(args).toMatchObject([{ response: { status: 404 } }]);
+    expect(args).toMatchObject([
+      { fatal: true, payload: { statusCode: 404 }, type: 'API_ERROR' },
+    ]);
   });
 });

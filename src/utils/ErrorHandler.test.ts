@@ -1,5 +1,4 @@
-import { AxiosError } from 'axios';
-import { ErrorHandler } from './ErrorHandler';
+import { Error, ErrorHandler } from './ErrorHandler';
 
 describe('error message handling', () => {
   let container;
@@ -9,45 +8,77 @@ describe('error message handling', () => {
     errorHandler = new ErrorHandler(container);
   });
 
-  const testData = [
+  const testData: Array<{
+    when: string;
+    expectTitle: string;
+    expectBody: string;
+    error: Error;
+  }> = [
     {
-      when: 'video does not exist',
+      when: '404 API error',
       expectTitle: 'Video Unavailable',
       expectBody: 'This video is currently unavailable.',
-      status: 404,
+      error: {
+        type: 'API_ERROR',
+        fatal: true,
+        payload: {
+          statusCode: 404,
+        },
+      },
     },
     {
-      when: 'Unexpected error',
+      when: '500 API error',
       expectTitle: 'Unexpected Error Occurred',
       expectBody: 'Please try again later',
-      status: 500,
+      error: {
+        type: 'API_ERROR',
+        fatal: true,
+        payload: {
+          statusCode: 500,
+        },
+      },
+    },
+    {
+      when: 'HLS stream error',
+      expectTitle: 'Unexpected Error Occurred',
+      expectBody: 'Please try again later',
+      error: {
+        type: 'NETWORK_ERROR',
+        fatal: true,
+        payload: {},
+      },
+    },
+    {
+      when: 'YouTube 150',
+      expectTitle: 'Video Unavailable',
+      expectBody: 'This video is currently unavailable.',
+      error: {
+        type: 'PLAYBACK_ERROR',
+        fatal: true,
+        payload: {
+          code: 150,
+          message: 'blah',
+        },
+      },
     },
   ];
 
-  testData.forEach(({ when, expectTitle, expectBody, status }) => {
+  testData.forEach(({ when, expectTitle, expectBody, error }) => {
     it('will render an error message ' + when, async () => {
-      const axiosError = {
-        response: { status },
-      } as AxiosError;
+      errorHandler.handleError(error);
 
-      errorHandler.handleError(axiosError, container);
-
-      const errorContainer = container.querySelector('.error');
-      expect(errorContainer).toBeTruthy();
-
-      const title = errorContainer.querySelector('.title');
-      expect(title.textContent).toEqual(expectTitle);
-
-      const body = errorContainer.querySelector('.body');
-      expect(body.textContent).toEqual(expectBody);
+      expectError(container, expectTitle, expectBody);
     });
   });
 
   it('removes the error box from the container', () => {
-    const axiosError = {
-      response: { status: 404 },
-    } as AxiosError;
-    errorHandler.handleError(axiosError, container);
+    errorHandler.handleError({
+      type: 'API_ERROR',
+      fatal: true,
+      payload: {
+        statusCode: 404,
+      },
+    });
 
     errorHandler.clearError(container);
 
@@ -56,15 +87,34 @@ describe('error message handling', () => {
   });
 
   it('only displays one error at a time', () => {
-    const axiosError = {
-      response: { status: 404 },
-    } as AxiosError;
+    const error = {
+      type: 'API_ERROR',
+      fatal: true,
+      payload: {
+        statusCode: 404,
+      },
+    };
 
-    errorHandler.handleError(axiosError, container);
+    errorHandler.handleError(error);
 
-    errorHandler.handleError(axiosError, container);
+    errorHandler.handleError(error);
 
     const errorContainers = container.querySelectorAll('.error');
     expect(errorContainers).toHaveLength(1);
   });
+
+  const expectError = (
+    containerElement: HTMLElement,
+    title: string,
+    body: string,
+  ) => {
+    const errorContainer = containerElement.querySelector('.error');
+    expect(errorContainer).toBeTruthy();
+
+    const titleElement = errorContainer.querySelector('.title');
+    expect(titleElement.textContent).toEqual(title);
+
+    const bodyElement = errorContainer.querySelector('.body');
+    expect(bodyElement.textContent).toEqual(body);
+  };
 });
