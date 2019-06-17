@@ -3,17 +3,16 @@ import { Analytics } from '../Events/Analytics';
 import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
-import {
-  streamVideoSample,
-  youtubeVideoSample,
-} from '../test-support/video-service-responses';
+import { VideoResourceFactory } from '../test-support/TestFactories';
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { Video } from '../types/Video';
+import { clearError, errorHandler } from '../utils/errorHandler';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
 
 jest.mock('../Events/Analytics');
+jest.mock('../utils/errorHandler');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
@@ -57,7 +56,10 @@ describe('BoclipsPlayer', () => {
   it('Will auto load the video based on data attribute on container', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
 
     const autoContainer = document.createElement('div');
     autoContainer.setAttribute('data-boplayer-video-uri', uri);
@@ -110,7 +112,10 @@ describe('BoclipsPlayer', () => {
 
   it('Will retrieve details from the Playback endpoint', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
 
     return player.loadVideo(uri).then(() => {
       const playback = player.getVideo().playback;
@@ -121,9 +126,24 @@ describe('BoclipsPlayer', () => {
     });
   });
 
+  it('Will clear errors when successfully loaded a video', () => {
+    const uri = '/v1/videos/177';
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
+
+    return player.loadVideo(uri).then(() => {
+      expect(clearError).toHaveBeenCalledWith(container);
+    });
+  });
+
   it('Will not reload the same video', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
 
     return player.loadVideo(uri).then(() => {
       const playback = player.getVideo().playback;
@@ -134,24 +154,50 @@ describe('BoclipsPlayer', () => {
     });
   });
 
+  it('Will reload a video if an erroneous video was loaded afterwards', async () => {
+    const goodUri = '/v1/videos/177';
+    MockFetchVerify.get(
+      goodUri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
+
+    const errorUri = '/v1/videos';
+    MockFetchVerify.get(errorUri, {}, 404);
+
+    await player.loadVideo(goodUri);
+    await player.loadVideo(errorUri);
+    await player.loadVideo(goodUri);
+
+    expect(clearError).toHaveBeenCalledTimes(2);
+
+    const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+    expect(calls).toHaveLength(2);
+  });
+
   it('Will configure the wrapper with the video', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(uri, JSON.stringify(streamVideoSample));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.streamSample()),
+    );
 
     return player.loadVideo(uri).then(() => {
       const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
       expect(calls).toHaveLength(1);
       const video = calls[0][0] as Video;
       expect(video).toBeTruthy();
-      expect(video.id).toEqual(streamVideoSample.id);
+      expect(video.id).toEqual(VideoResourceFactory.streamSample().id);
     });
   });
 
   it('Will install event tracking when a video is loaded', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(uri, JSON.stringify(youtubeVideoSample));
+    MockFetchVerify.get(
+      uri,
+      JSON.stringify(VideoResourceFactory.youtubeSample()),
+    );
 
     return player.loadVideo(uri).then(() => {
       const analytics = player.getAnalytics();
@@ -212,6 +258,16 @@ describe('BoclipsPlayer', () => {
         expect.anything(),
         expect.objectContaining(options.player),
       );
+    });
+  });
+
+  describe('error message handling', () => {
+    it('will delegate axios error handling to the module', async () => {
+      const uri = 'http://server/path/to/error/video';
+      MockFetchVerify.get(uri, {}, 404);
+      await player.loadVideo(uri);
+
+      expect(errorHandler).toHaveBeenCalledWith(expect.anything(), container);
     });
   });
 });

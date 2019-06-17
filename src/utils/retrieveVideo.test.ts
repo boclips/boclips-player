@@ -1,13 +1,10 @@
 import MockFetchVerify from '../test-support/MockFetchVerify';
-import {
-  streamVideoSample,
-  youtubeVideoSample,
-} from '../test-support/video-service-responses';
+import { VideoResourceFactory } from '../test-support/TestFactories';
 import { Link } from '../types/Link';
 import retrieveVideo from './retrieveVideo';
 
 it('will make a request to the backend for a stream video', () => {
-  const videoResource = streamVideoSample;
+  const videoResource = VideoResourceFactory.streamSample();
 
   MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
@@ -34,7 +31,7 @@ it('will make a request to the backend for a stream video', () => {
 });
 
 it('will make a request to the backend for a youtube video', () => {
-  const videoResource = youtubeVideoSample;
+  const videoResource = VideoResourceFactory.youtubeSample();
 
   MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 

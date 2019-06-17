@@ -1,7 +1,4 @@
-import {
-  streamVideoSample,
-  youtubeVideoSample,
-} from '../test-support/video-service-responses';
+import { VideoResourceFactory } from '../test-support/TestFactories';
 import {
   isStreamPlayback,
   isYoutubePlayback,
@@ -12,7 +9,7 @@ import convertPlaybackResource from './convertPlaybackResource';
 
 it('Can map the response to a StreamPlayback object', () => {
   const playback = convertPlaybackResource(
-    streamVideoSample.playback,
+    VideoResourceFactory.streamSample().playback,
   ) as StreamPlayback;
   expect(isStreamPlayback(playback)).toBeTruthy();
   expect(playback.id).toEqual('stream-playback-id');
@@ -26,7 +23,7 @@ it('Can map the response to a StreamPlayback object', () => {
 
 it('Can map the response to a YoutubePlayback object', () => {
   const playback = convertPlaybackResource(
-    youtubeVideoSample.playback,
+    VideoResourceFactory.youtubeSample().playback,
   ) as YoutubePlayback;
   expect(isYoutubePlayback(playback)).toBeTruthy();
   expect(playback.id).toEqual('youtube-playback-id');

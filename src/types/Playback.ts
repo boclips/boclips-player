@@ -7,8 +7,8 @@ interface PlaybackLinks {
 export type PlaybackType = StreamPlayback | YoutubePlayback;
 
 export interface Playback {
-  type: 'YOUTUBE' | 'STREAM';
   id: string;
+  type: 'YOUTUBE' | 'STREAM';
   thumbnailUrl: string;
   duration: string;
   links: PlaybackLinks;
