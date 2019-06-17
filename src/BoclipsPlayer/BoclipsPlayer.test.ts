@@ -6,13 +6,13 @@ import { MockWrapper } from '../test-support/MockWrapper';
 import { VideoResourceFactory } from '../test-support/TestFactories';
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { Video } from '../types/Video';
-import { clearError, errorHandler } from '../utils/errorHandler';
+import { ErrorHandler } from '../utils/ErrorHandler';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
 
 jest.mock('../Events/Analytics');
-jest.mock('../utils/errorHandler');
+jest.mock('../utils/ErrorHandler');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
@@ -134,7 +134,8 @@ describe('BoclipsPlayer', () => {
     );
 
     return player.loadVideo(uri).then(() => {
-      expect(clearError).toHaveBeenCalledWith(container);
+      const errorHandler = mocked(ErrorHandler).mock.results[0].value;
+      expect(errorHandler.clearError).toHaveBeenCalled();
     });
   });
 
@@ -168,7 +169,8 @@ describe('BoclipsPlayer', () => {
     await player.loadVideo(errorUri);
     await player.loadVideo(goodUri);
 
-    expect(clearError).toHaveBeenCalledTimes(2);
+    const errorHandler = mocked(ErrorHandler).mock.results[0].value;
+    expect(errorHandler.clearError).toHaveBeenCalledTimes(2);
 
     const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
     expect(calls).toHaveLength(2);
@@ -261,13 +263,15 @@ describe('BoclipsPlayer', () => {
     });
   });
 
-  describe('error message handling', () => {
-    it('will delegate axios error handling to the module', async () => {
-      const uri = 'http://server/path/to/error/video';
-      MockFetchVerify.get(uri, {}, 404);
-      await player.loadVideo(uri);
+  it('will delegate axios error handling to the module', async () => {
+    const uri = 'http://server/path/to/error/video';
+    MockFetchVerify.get(uri, {}, 404);
+    await player.loadVideo(uri);
 
-      expect(errorHandler).toHaveBeenCalledWith(expect.anything(), container);
-    });
+    const errorHandler = mocked(ErrorHandler).mock.results[0].value;
+    expect(errorHandler.handleError).toHaveBeenCalled();
+
+    const args = errorHandler.handleError.mock.calls[0];
+    expect(args).toMatchObject([{ response: { status: 404 } }]);
   });
 });

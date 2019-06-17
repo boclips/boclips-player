@@ -2,7 +2,7 @@ import deepmerge from 'deepmerge';
 import uuid from 'uuid/v1';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
-import { clearError, errorHandler } from '../utils/errorHandler';
+import { ErrorHandler } from '../utils/ErrorHandler';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 import './BoclipsPlayer.less';
@@ -20,6 +20,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   private readonly wrapper: Wrapper;
   private readonly container: HTMLElement;
   private readonly analytics: Analytics;
+  private readonly errorHandler: ErrorHandler;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
@@ -54,6 +55,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     container.classList.add('boclips-player-container');
 
     this.analytics = new Analytics(this.playerId, this.options.analytics);
+    this.errorHandler = new ErrorHandler(this.container);
 
     this.wrapper = new this.wrapperConstructor(
       container,
@@ -77,13 +79,13 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     return retrieveVideo(videoUri)
       .then((video: Video) => {
-        clearError(this.container);
+        this.errorHandler.clearError();
 
         this.video = video;
         this.analytics.configure(video);
         this.wrapper.configureWithVideo(video);
       })
-      .catch(err => errorHandler(err, this.container));
+      .catch(this.errorHandler.handleError);
   };
 
   public destroy = () => this.wrapper.destroy();

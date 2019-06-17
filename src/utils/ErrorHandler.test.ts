@@ -1,11 +1,12 @@
 import { AxiosError } from 'axios';
-import { clearError, errorHandler } from './errorHandler';
+import { ErrorHandler } from './ErrorHandler';
 
 describe('error message handling', () => {
   let container;
-
+  let errorHandler;
   beforeEach(() => {
     container = document.createElement('section');
+    errorHandler = new ErrorHandler(container);
   });
 
   const testData = [
@@ -29,7 +30,7 @@ describe('error message handling', () => {
         response: { status },
       } as AxiosError;
 
-      errorHandler(axiosError, container);
+      errorHandler.handleError(axiosError, container);
 
       const errorContainer = container.querySelector('.error');
       expect(errorContainer).toBeTruthy();
@@ -46,9 +47,9 @@ describe('error message handling', () => {
     const axiosError = {
       response: { status: 404 },
     } as AxiosError;
-    errorHandler(axiosError, container);
+    errorHandler.handleError(axiosError, container);
 
-    clearError(container);
+    errorHandler.clearError(container);
 
     const errorContainer = container.querySelector('.error');
     expect(errorContainer).toBeFalsy();
@@ -59,9 +60,9 @@ describe('error message handling', () => {
       response: { status: 404 },
     } as AxiosError;
 
-    errorHandler(axiosError, container);
+    errorHandler.handleError(axiosError, container);
 
-    errorHandler(axiosError, container);
+    errorHandler.handleError(axiosError, container);
 
     const errorContainers = container.querySelectorAll('.error');
     expect(errorContainers).toHaveLength(1);
