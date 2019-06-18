@@ -23,9 +23,9 @@ webpack
 # cd to src so it doesn't appear in the find output
 cd $SRC
 
-LESS_FILES=$(find . -name \*.less)
+ASSET_FILES=$(find . -name \*.less -o -name \*.svg)
 
-for FILE in $LESS_FILES; do
+for FILE in $ASSET_FILES; do
     DIR_PATH=$(dirname $FILE)
 
     mkdir -p $LIB/$DIR_PATH
