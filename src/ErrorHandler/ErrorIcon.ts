@@ -1,5 +1,6 @@
+export default `
 <?xml version="1.0" encoding="UTF-8"?>
-<svg class="icon" width="60px" height="60px" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<svg class="icon" viewBox="0 0 60 60" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
     <!-- Generator: sketchtool 55.2 (78181) - https://sketchapp.com -->
     <title>An error has occurred</title>
     <desc></desc>
@@ -44,4 +45,4 @@
             </g>
         </g>
     </g>
-</svg>
+</svg>`;

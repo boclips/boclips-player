@@ -1,5 +1,5 @@
 import './ErrorHandler.less';
-import ErrorIcon from './ErrorIcon.svg';
+import ErrorIcon from './ErrorIcon';
 
 export interface ErrorHandlerInstance {
   handleError: (error: Error) => void;
