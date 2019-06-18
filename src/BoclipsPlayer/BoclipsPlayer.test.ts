@@ -1,4 +1,6 @@
+import { addListener } from 'resize-detector';
 import { mocked } from 'ts-jest/utils';
+import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import eventually from '../test-support/eventually';
 import MockFetchVerify from '../test-support/MockFetchVerify';
@@ -6,13 +8,13 @@ import { MockWrapper } from '../test-support/MockWrapper';
 import { VideoResourceFactory } from '../test-support/TestFactories';
 import { isStreamPlayback, StreamPlayback } from '../types/Playback';
 import { Video } from '../types/Video';
-import { ErrorHandler } from '../utils/ErrorHandler';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
 
+jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
-jest.mock('../utils/ErrorHandler');
+jest.mock('../ErrorHandler/ErrorHandler');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
@@ -277,5 +279,33 @@ describe('BoclipsPlayer', () => {
     expect(args).toMatchObject([
       { fatal: true, payload: { statusCode: 404 }, type: 'API_ERROR' },
     ]);
+  });
+
+  describe('is listening for container resizes', () => {
+    it('adds a resize detector', () => {
+      expect(addListener).toHaveBeenCalledWith(container, expect.anything());
+    });
+
+    it('sets the fontsize to be 4% of the height', () => {
+      const callback = mocked(addListener).mock.calls[0][1];
+
+      // @ts-ignore
+      container.__jsdomMockClientHeight = 10;
+      callback();
+
+      expect(container.style.fontSize).toEqual(12 + 'px');
+
+      // @ts-ignore
+      container.__jsdomMockClientHeight = 700;
+      callback();
+
+      expect(container.style.fontSize).toEqual(700 * 0.04 + 'px');
+
+      // @ts-ignore
+      container.__jsdomMockClientHeight = 1200;
+      callback();
+
+      expect(container.style.fontSize).toEqual(1200 * 0.04 + 'px');
+    });
   });
 });

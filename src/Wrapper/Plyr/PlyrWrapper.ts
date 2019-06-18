@@ -4,7 +4,7 @@ import { Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
 
 import Hls from 'hls.js';
-import { addListener as addResizeListener } from 'resize-detector';
+import { ErrorHandlerInstance } from '../../ErrorHandler/ErrorHandler';
 import { AnalyticsInstance } from '../../Events/Analytics';
 import {
   isStreamPlayback,
@@ -13,7 +13,6 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { ErrorHandlerInstance } from '../../utils/ErrorHandler';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 
 export default class PlyrWrapper implements Wrapper {
@@ -33,10 +32,7 @@ export default class PlyrWrapper implements Wrapper {
 
     this.createStreamPlyr();
 
-    addResizeListener(container, this.handleResizeEvent);
     window.addEventListener('beforeunload', this.handleBeforeUnload);
-
-    this.handleResizeEvent();
 
     if (
       this.options.controls.indexOf('mute') !== -1 &&
@@ -152,12 +148,6 @@ export default class PlyrWrapper implements Wrapper {
     } else {
       this.createYoutubePlyr(playback);
     }
-  };
-
-  private handleResizeEvent = () => {
-    const height = this.container.clientHeight;
-    const fontSize = Math.max(0.04 * height, 12);
-    this.container.style.fontSize = fontSize + 'px';
   };
 
   private handleEnterFullscreen = () => {

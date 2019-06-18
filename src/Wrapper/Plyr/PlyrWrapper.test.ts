@@ -1,20 +1,18 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
-import { addListener } from 'resize-detector';
 import { mocked } from 'ts-jest/utils';
+import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 import { Analytics } from '../../Events/Analytics';
 import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { StreamPlayback } from '../../types/Playback';
-import { ErrorHandler } from '../../utils/ErrorHandler';
 import { Wrapper } from '../Wrapper';
 import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../../Events/Analytics');
-jest.mock('resize-detector');
 
 const video = VideoFactory.sample();
 
@@ -208,34 +206,6 @@ describe('Event Tracking', () => {
     expect(tracker.handlePause).toHaveBeenCalledWith(15);
 
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
-  });
-});
-
-describe('is listening for container resizes', () => {
-  it('adds a resize detector', () => {
-    expect(addListener).toHaveBeenCalledWith(container, expect.anything());
-  });
-
-  it('sets the fontsize to be 4% of the height', () => {
-    const callback = mocked(addListener).mock.calls[0][1];
-
-    // @ts-ignore
-    container.__jsdomMockClientHeight = 10;
-    callback();
-
-    expect(container.style.fontSize).toEqual(12 + 'px');
-
-    // @ts-ignore
-    container.__jsdomMockClientHeight = 700;
-    callback();
-
-    expect(container.style.fontSize).toEqual(700 * 0.04 + 'px');
-
-    // @ts-ignore
-    container.__jsdomMockClientHeight = 1200;
-    callback();
-
-    expect(container.style.fontSize).toEqual(1200 * 0.04 + 'px');
   });
 });
 

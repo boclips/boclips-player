@@ -1,3 +1,6 @@
+import './ErrorHandler.less';
+import ErrorIcon from './ErrorIcon.svg';
+
 export interface ErrorHandlerInstance {
   handleError: (error: Error) => void;
   clearError: () => void;
@@ -73,9 +76,6 @@ export class ErrorHandler implements ErrorHandlerInstance {
   };
 
   private renderErrorContainer = (title: string, content: string) => {
-    const errorContainer = document.createElement('section');
-    errorContainer.classList.add(ErrorHandler.CONTAINER_CLASS);
-
     const titleElement = document.createElement('h1');
     titleElement.classList.add('title');
     titleElement.textContent = title;
@@ -84,8 +84,15 @@ export class ErrorHandler implements ErrorHandlerInstance {
     bodyElement.classList.add('body');
     bodyElement.textContent = content;
 
-    errorContainer.appendChild(titleElement);
-    errorContainer.appendChild(bodyElement);
+    const text = document.createElement('div');
+    text.appendChild(titleElement);
+    text.appendChild(bodyElement);
+
+    const errorContainer = document.createElement('section');
+    errorContainer.classList.add(ErrorHandler.CONTAINER_CLASS);
+
+    errorContainer.insertAdjacentHTML('afterbegin', ErrorIcon);
+    errorContainer.appendChild(text);
 
     this.clearError();
     this.container.appendChild(errorContainer);

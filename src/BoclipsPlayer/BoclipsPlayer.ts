@@ -1,8 +1,9 @@
 import deepmerge from 'deepmerge';
+import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
+import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
-import { ErrorHandler } from '../utils/ErrorHandler';
 import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 import './BoclipsPlayer.less';
@@ -52,6 +53,9 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     this.container = container;
     this.options = deepmerge(defaultOptions, options);
 
+    addResizeListener(container, this.handleResizeEvent);
+    this.handleResizeEvent();
+
     container.classList.add('boclips-player-container');
 
     this.analytics = new Analytics(this.playerId, this.options.analytics);
@@ -70,6 +74,28 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
       this.loadVideo(videoUriAttribute);
     }
   }
+
+  private handleResizeEvent = () => {
+    const height = this.container.clientHeight;
+    const fontSize = Math.max(0.04 * height, 12);
+    this.container.style.fontSize = fontSize + 'px';
+
+    const width = this.container.clientWidth;
+
+    this.container.classList.remove(
+      'large-player',
+      'medium-player',
+      'small-player',
+    );
+
+    if (width > 500) {
+      this.container.classList.add('large-player');
+    } else if (width < 300) {
+      this.container.classList.add('small-player');
+    } else {
+      this.container.classList.add('medium-player');
+    }
+  };
 
   public loadVideo = async (videoUri: string) => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
