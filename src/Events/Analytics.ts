@@ -1,7 +1,6 @@
-import axios from 'axios';
 import deepmerge from 'deepmerge';
 import { parse, toSeconds } from 'iso8601-duration';
-import { Link } from '../types/Link';
+import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { Video } from '../types/Video';
 import { PlaybackEvent } from './AnalyticsEvents';
 import { AnalyticsOptions, defaultOptions } from './AnalyticsOptions';
@@ -14,22 +13,25 @@ export interface AnalyticsInstance {
 }
 
 export class Analytics implements AnalyticsInstance {
+  // @ts-ignore
+  private readonly boclipsClient: BoclipsClient;
   private readonly playerId: string;
-  private endpoints: { createPlaybackEvent?: Link } = {};
   private video: Video;
   private segmentPlaybackStartTime: number = -1;
   private options: AnalyticsOptions;
 
-  constructor(playerId: string, options: Partial<AnalyticsOptions> = {}) {
+  constructor(
+    boclipsClient: BoclipsClient,
+    playerId: string,
+    options: Partial<AnalyticsOptions> = {},
+  ) {
+    this.boclipsClient = boclipsClient;
     this.options = deepmerge(defaultOptions, options);
     this.playerId = playerId;
   }
 
   public configure = (video: Video) => {
     this.video = video;
-    this.endpoints = {
-      createPlaybackEvent: video.playback.links.createPlaybackEvent,
-    };
   };
 
   public handlePlay = (currentTime: number) => {
@@ -59,9 +61,8 @@ export class Analytics implements AnalyticsInstance {
       segmentEndSeconds: end,
     };
 
-    if (this.endpoints.createPlaybackEvent) {
-      axios.post(this.endpoints.createPlaybackEvent.getOriginalLink(), event);
-    }
+    // noinspection JSIgnoredPromiseFromCall
+    this.boclipsClient.createPlaybackEvent(this.video, event);
 
     this.options.handleOnPlayback(event);
   };

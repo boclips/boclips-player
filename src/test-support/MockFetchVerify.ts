@@ -25,6 +25,10 @@ export default class MockFetchVerify {
     axiosMock.onPost(matcher, requestBody).reply(status, responseBody);
   }
 
+  public static any(urlMatcher) {
+    axiosMock.onAny(urlMatcher);
+  }
+
   public static patch(matcher, requestBody, status, responseBody?) {
     axiosMock.onPatch(matcher, requestBody).reply(status, responseBody);
   }

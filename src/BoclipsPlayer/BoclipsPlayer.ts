@@ -1,10 +1,11 @@
 import deepmerge from 'deepmerge';
 import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
+import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
+import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
-import retrieveVideo from '../utils/retrieveVideo';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 import './BoclipsPlayer.less';
 import { BoclipsPlayerOptions, defaultOptions } from './BoclipsPlayerOptions';
@@ -22,6 +23,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   private readonly container: HTMLElement;
   private readonly analytics: Analytics;
   private readonly errorHandler: ErrorHandler;
+  private readonly boclipsClient: BoclipsClient;
   // @ts-ignore
   private options: BoclipsPlayerOptions = {};
   private video: Video;
@@ -58,8 +60,15 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     container.classList.add('boclips-player-container');
 
-    this.analytics = new Analytics(this.playerId, this.options.analytics);
     this.errorHandler = new ErrorHandler(this.container);
+    this.boclipsClient = new AxiosBoclipsClient(
+      this.options.authorization.tokenFactory,
+    );
+    this.analytics = new Analytics(
+      this.boclipsClient,
+      this.playerId,
+      this.options.analytics,
+    );
 
     this.wrapper = new this.wrapperConstructor(
       container,
@@ -104,7 +113,8 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     this.video = null;
 
-    return retrieveVideo(videoUri)
+    return this.boclipsClient
+      .retrieveVideo(videoUri)
       .then((video: Video) => {
         this.errorHandler.clearError();
 
@@ -148,6 +158,8 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   public getWrapper = () => this.wrapper;
 
   public getAnalytics = () => this.analytics;
+
+  public getBoclipsClient = () => this.boclipsClient;
 
   public getVideo = (): Video => this.video;
 
