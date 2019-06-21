@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.2] - 2019-06-21
+
+### Deprecated
+- `options.analytics.handleOnPlayback` callback signature will be replaced with in the next release with:
+  ```typescript
+  options.analytics.handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
+  ```
+
+
 ## [1.0.1] - 2019-06-14
 
 ### Added
