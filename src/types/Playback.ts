@@ -10,7 +10,7 @@ export interface Playback {
   id: string;
   type: 'YOUTUBE' | 'STREAM';
   thumbnailUrl: string;
-  duration: string;
+  duration: number;
   links: PlaybackLinks;
 }
 

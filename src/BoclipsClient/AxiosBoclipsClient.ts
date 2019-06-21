@@ -16,45 +16,56 @@ export class AxiosBoclipsClient implements BoclipsClient {
     this.axios = axios.create();
   }
 
-  public retrieveVideo = async (uri: string): Promise<Video> =>
-    this.buildHeaders().then(async headers => {
-      return await this.axios
-        .get(uri, { headers })
-        .then(response => response.data)
-        .then(convertVideoResource);
-    });
+  public retrieveVideo = async (uri: string): Promise<Video> => {
+    const headers = await this.buildHeaders();
 
-  public createPlaybackEvent = async (
+    return this.axios
+      .get(uri, { headers })
+      .then(response => response.data)
+      .then(convertVideoResource);
+  };
+
+  public emitPlaybackEvent = async (
     video: Video,
-    event: PlaybackEvent,
-  ): Promise<void> =>
-    this.buildHeaders().then(async headers => {
-      return await this.axios.post(
-        video.playback.links.createPlaybackEvent.getOriginalLink(),
-        event,
-        { headers },
-      );
+    segmentStartSeconds: number,
+    segmentEndSeconds: number,
+    metadata: { [key: string]: any } = {},
+  ): Promise<void> => {
+    const headers = await this.buildHeaders();
+
+    const event: PlaybackEvent = {
+      ...metadata,
+      // playerId: this.playerId,
+      captureTime: new Date(),
+      videoId: video.id,
+      videoDurationSeconds: video.playback.duration,
+      segmentStartSeconds,
+      segmentEndSeconds,
+    };
+
+    return this.axios
+      .post(video.playback.links.createPlaybackEvent.getOriginalLink(), event, {
+        headers,
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  private buildHeaders = async () => {
+    if (!this.options.tokenFactory) {
+      return {};
+    }
+
+    const token = await this.options.tokenFactory().catch(error => {
+      console.error(error);
+      throw {
+        type: 'API_ERROR',
+        payload: { statusCode: 403 },
+        fatal: true,
+      } as APIError;
     });
 
-  private buildHeaders = async () =>
-    new Promise((resolve, reject) => {
-      if (!this.options.tokenFactory) {
-        resolve({});
-      }
-
-      this.options
-        .tokenFactory()
-        .then(token => {
-          resolve({ Authorization: `Bearer ${token}` });
-        })
-        .catch(error => {
-          const errorEvent: APIError = {
-            type: 'API_ERROR',
-            payload: { statusCode: 403 },
-            fatal: true,
-          };
-          console.error(error);
-          reject(errorEvent);
-        });
-    });
+    return { Authorization: `Bearer ${token}` };
+  };
 }

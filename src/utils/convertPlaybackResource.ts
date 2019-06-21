@@ -1,3 +1,4 @@
+import { parse, toSeconds } from 'iso8601-duration';
 import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
 
@@ -12,7 +13,7 @@ const convertPlaybackResource = (
     type: rawPlayback.type,
     id: rawPlayback.id,
     thumbnailUrl: rawPlayback.thumbnailUrl,
-    duration: rawPlayback.duration,
+    duration: toSeconds(parse(rawPlayback.duration)),
     links: {},
   };
   if (rawPlayback._links) {

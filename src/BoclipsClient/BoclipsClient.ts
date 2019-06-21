@@ -1,4 +1,3 @@
-import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 
 export interface BoclipsOptions {
@@ -11,5 +10,10 @@ export const defaultOptions: BoclipsOptions = Object.freeze({
 
 export interface BoclipsClient {
   retrieveVideo: (uri: string) => Promise<Video>;
-  createPlaybackEvent: (video: Video, event: PlaybackEvent) => Promise<void>;
+  emitPlaybackEvent: (
+    video: Video,
+    segmentStartSeconds: number,
+    segmentEndSeconds: number,
+    metadata: { [key: string]: any },
+  ) => Promise<void>;
 }

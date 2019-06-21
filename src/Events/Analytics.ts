@@ -1,8 +1,6 @@
 import deepmerge from 'deepmerge';
-import { parse, toSeconds } from 'iso8601-duration';
 import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { Video } from '../types/Video';
-import { PlaybackEvent } from './AnalyticsEvents';
 import { AnalyticsOptions, defaultOptions } from './AnalyticsOptions';
 
 export interface AnalyticsInstance {
@@ -14,19 +12,16 @@ export interface AnalyticsInstance {
 
 export class Analytics implements AnalyticsInstance {
   private readonly boclipsClient: BoclipsClient;
-  private readonly playerId: string;
   private video: Video;
   private segmentPlaybackStartTime: number = -1;
   private options: AnalyticsOptions;
 
   constructor(
     boclipsClient: BoclipsClient,
-    playerId: string,
     options: Partial<AnalyticsOptions> = {},
   ) {
     this.boclipsClient = boclipsClient;
     this.options = deepmerge(defaultOptions, options);
-    this.playerId = playerId;
   }
 
   public configure = (video: Video) => {
@@ -50,19 +45,14 @@ export class Analytics implements AnalyticsInstance {
   public getSegmentPlaybackStartTime = () => this.segmentPlaybackStartTime;
 
   private emitPlaybackEvent = (start: number, end: number) => {
-    const event: PlaybackEvent = {
-      ...this.options.metadata,
-      playerId: this.playerId,
-      captureTime: new Date(),
-      videoId: this.video.id,
-      videoDurationSeconds: toSeconds(parse(this.video.playback.duration)),
-      segmentStartSeconds: start,
-      segmentEndSeconds: end,
-    };
-
     // noinspection JSIgnoredPromiseFromCall
-    this.boclipsClient.createPlaybackEvent(this.video, event);
+    this.boclipsClient.emitPlaybackEvent(
+      this.video,
+      start,
+      end,
+      this.options.metadata,
+    );
 
-    this.options.handleOnPlayback(event);
+    this.options.handleOnSegmentPlayback(this.video, start, end);
   };
 }

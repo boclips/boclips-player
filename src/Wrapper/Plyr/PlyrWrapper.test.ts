@@ -27,7 +27,7 @@ beforeEach(() => {
   Plyr.mockClear();
 
   container = document.createElement('div');
-  tracker = new Analytics(new AxiosBoclipsClient(), 'player123');
+  tracker = new Analytics(new AxiosBoclipsClient());
   errorHandler = new ErrorHandler(container);
   wrapper = new PlyrWrapper(container, tracker, errorHandler);
 });

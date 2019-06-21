@@ -4,6 +4,6 @@ import { BoclipsClient } from '../BoclipsClient';
 export const AxiosBoclipsClient = jest.fn().mockImplementation(() => {
   return {
     retrieveVideo: jest.fn(),
-    createPlaybackEvent: jest.fn(),
+    emitPlaybackEvent: jest.fn(),
   } as BoclipsClient;
 });

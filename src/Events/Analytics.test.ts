@@ -1,5 +1,5 @@
-import { mocked } from 'ts-jest';
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { mocked } from 'ts-jest/utils';
 import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
 import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { VideoFactory } from '../test-support/TestFactories';
@@ -15,7 +15,7 @@ let boclipsClient: MaybeMocked<BoclipsClient>;
 
 beforeEach(() => {
   boclipsClient = mocked(new AxiosBoclipsClient());
-  analytics = new Analytics(boclipsClient, '321');
+  analytics = new Analytics(boclipsClient);
   analytics.configure(video);
 });
 
@@ -28,7 +28,7 @@ it('can handle play events', () => {
 it('does nothing on pause events before a play event', () => {
   analytics.handlePause(20);
 
-  expect(boclipsClient.createPlaybackEvent).not.toHaveBeenCalled();
+  expect(boclipsClient.emitPlaybackEvent).not.toHaveBeenCalled();
 });
 
 describe('will emit a playback event on pause after a play event', () => {
@@ -38,17 +38,10 @@ describe('will emit a playback event on pause after a play event', () => {
     analytics.handlePlay(5);
     analytics.handlePause(20);
 
-    expect(boclipsClient.createPlaybackEvent).toHaveBeenCalled();
+    expect(boclipsClient.emitPlaybackEvent).toHaveBeenCalled();
 
-    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
-    expect(call[0]).toEqual(video);
-    expect(call[1]).toMatchObject({
-      segmentStartSeconds: 5,
-      segmentEndSeconds: 20,
-      videoDurationSeconds: 60,
-      videoId: video.id,
-      playerId: '321',
-    });
+    const call = boclipsClient.emitPlaybackEvent.mock.calls[0];
+    expect(call).toEqual([video, 5, 20, {}]);
   });
 
   it('will pass through the metadata to the endpoint', () => {
@@ -58,52 +51,27 @@ describe('will emit a playback event on pause after a play event', () => {
         someId: 'abc',
       },
     };
-    analytics = new Analytics(boclipsClient, '321', options);
+    analytics = new Analytics(boclipsClient, options);
     analytics.configure(video);
 
     analytics.handlePlay(10);
     analytics.handlePause(25);
 
-    expect(boclipsClient.createPlaybackEvent).toHaveBeenCalled();
+    expect(boclipsClient.emitPlaybackEvent).toHaveBeenCalled();
 
-    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
-    expect(call[0]).toEqual(video);
-    expect(call[1]).toMatchObject({
-      testing: '123',
-      someId: 'abc',
-    });
-  });
-
-  it('does not allow overriding of properties via metadata', () => {
-    const options: Partial<AnalyticsOptions> = {
-      metadata: {
-        segmentStartSeconds: 'abcdef',
-      },
-    };
-    analytics = new Analytics(boclipsClient, '321', options);
-    analytics.configure(video);
-
-    analytics.handlePlay(15);
-    analytics.handlePause(30);
-
-    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
-    expect(call[0]).toEqual(video);
-    expect(call[1]).toMatchObject({
-      segmentStartSeconds: 15,
-    });
+    const call = boclipsClient.emitPlaybackEvent.mock.calls[0];
+    expect(call).toEqual([video, 10, 25, options.metadata]);
   });
 });
 
-describe('handleOnPlayback', () => {
-  it('does emit an event to the callback with metadata', () => {
+describe('handleOnSegmentPlayback', () => {
+  it('does emit an event to the callback', () => {
     const spy = jest.fn();
     const options: Partial<AnalyticsOptions> = {
-      metadata: {
-        one: 'one',
-      },
-      handleOnPlayback: spy,
+      handleOnSegmentPlayback: spy,
     };
-    analytics = new Analytics(new AxiosBoclipsClient(), '321', options);
+
+    analytics = new Analytics(new AxiosBoclipsClient(), options);
     analytics.configure(video);
 
     analytics.handlePlay(15);
@@ -111,11 +79,7 @@ describe('handleOnPlayback', () => {
 
     expect(spy).toHaveBeenCalled();
 
-    const event = spy.mock.calls[0][0];
-    expect(event).toBeTruthy();
-    expect(event).toMatchObject({
-      one: 'one',
-      segmentStartSeconds: 15,
-    });
+    const call = spy.mock.calls[0];
+    expect(call).toEqual([video, 15, 30]);
   });
 });

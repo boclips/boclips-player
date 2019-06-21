@@ -61,11 +61,12 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
 
     this.errorHandler = new ErrorHandler(this.container);
     this.boclipsClient = new AxiosBoclipsClient(this.options.boclips);
-    this.analytics = new Analytics(
-      this.boclipsClient,
-      this.playerId,
-      this.options.analytics,
-    );
+
+    if (!this.options.analytics.metadata) {
+      this.options.analytics.metadata = {};
+    }
+    this.options.analytics.metadata.playerId = this.playerId;
+    this.analytics = new Analytics(this.boclipsClient, this.options.analytics);
 
     this.wrapper = new this.wrapperConstructor(
       container,
@@ -151,6 +152,8 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
         }
       });
   };
+
+  public getPlayerId = () => this.playerId;
 
   public destroy = () => this.wrapper.destroy();
 

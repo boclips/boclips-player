@@ -1,5 +1,5 @@
 export interface PlaybackEvent {
-  playerId: string;
+  playerId?: string;
   videoId: string;
   segmentStartSeconds: number;
   segmentEndSeconds: number;

@@ -5,7 +5,7 @@ export class PlaybackFactory {
   public static streamSample = (): StreamPlayback => ({
     id: 'stream-playback-id',
     thumbnailUrl: 'some/stream/image.jpg',
-    duration: 'PT1M',
+    duration: 60,
     type: 'STREAM',
     streamUrl: 'some/stream.mp4',
     links: {
@@ -18,7 +18,7 @@ export class PlaybackFactory {
   public static youtubeSample = (): YoutubePlayback => ({
     id: 'youtube-stream-id',
     thumbnailUrl: 'some/youtube/image.jpg',
-    duration: 'PT2M',
+    duration: 120,
     type: 'YOUTUBE',
     links: {
       createPlaybackEvent: new Link({

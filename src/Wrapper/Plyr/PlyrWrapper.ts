@@ -1,4 +1,3 @@
-import { parse, toSeconds } from 'iso8601-duration';
 import Plyr from 'plyr';
 import { Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
@@ -218,7 +217,7 @@ export default class PlyrWrapper implements Wrapper {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
       controls: this.options.controls,
-      duration: playback ? toSeconds(parse(playback.duration)) : null,
+      duration: playback ? playback.duration : null,
     });
 
     this.installPlyrEventListeners();

@@ -1,9 +1,14 @@
+import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import MockFetchVerify from '../test-support/MockFetchVerify';
-import { VideoResourceFactory } from '../test-support/TestFactories';
+import {
+  VideoFactory,
+  VideoResourceFactory,
+} from '../test-support/TestFactories';
 import { Link } from '../types/Link';
+import { Video } from '../types/Video';
 import { AxiosBoclipsClient } from './AxiosBoclipsClient';
 
-let boclipsClient;
+let boclipsClient: AxiosBoclipsClient;
 
 beforeEach(() => {
   boclipsClient = new AxiosBoclipsClient();
@@ -16,11 +21,10 @@ describe('retrieve video', () => {
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
     return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
-      expect(video).toEqual({
+      expect(video).toMatchObject({
         id: videoResource.id,
         playback: {
           id: videoResource.playback.id,
-          duration: videoResource.playback.duration,
           streamUrl: videoResource.playback.streamUrl,
           thumbnailUrl: videoResource.playback.thumbnailUrl,
           type: videoResource.playback.type,
@@ -43,10 +47,9 @@ describe('retrieve video', () => {
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
     return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
-      expect(video).toEqual({
+      expect(video).toMatchObject({
         id: video.id,
         playback: {
-          duration: videoResource.playback.duration,
           id: videoResource.playback.id,
           thumbnailUrl: videoResource.playback.thumbnailUrl,
           type: videoResource.playback.type,
@@ -62,7 +65,84 @@ describe('retrieve video', () => {
       }),
     );
   });
+});
 
+describe('Creating a playback event', () => {
+  let video: Video;
+
+  beforeEach(() => {
+    video = VideoFactory.sample();
+    MockFetchVerify.post(
+      video.playback.links.createPlaybackEvent.getOriginalLink(),
+      undefined,
+      201,
+    );
+  });
+
+  it('Will create a playback event', () => {
+    const expectedEvent: PlaybackEvent = {
+      videoId: video.id,
+      segmentStartSeconds: 15,
+      segmentEndSeconds: 30,
+      captureTime: expect.anything(),
+      videoDurationSeconds: expect.anything(),
+      // playerId: expect.anything(),
+    };
+
+    return boclipsClient.emitPlaybackEvent(video, 15, 30).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(JSON.parse(request.data)).toMatchObject(expectedEvent);
+    });
+  });
+
+  it('will pass through the metadata to the endpoint', () => {
+    const metadata = {
+      testing: '123',
+      someId: 'abc',
+    };
+
+    return boclipsClient.emitPlaybackEvent(video, 15, 30, metadata).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(JSON.parse(request.data)).toMatchObject(metadata);
+    });
+  });
+
+  it('does not allow overriding of properties via metadata', () => {
+    const metadata = {
+      segmentStartSeconds: 100000000,
+    };
+
+    return boclipsClient.emitPlaybackEvent(video, 15, 30, metadata).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.data.segmentStartSeconds).not.toEqual(
+        metadata.segmentStartSeconds,
+      );
+      expect(JSON.parse(request.data).segmentStartSeconds).toEqual(15);
+    });
+  });
+
+  it('Will gracefully handle an API error', () => {
+    MockFetchVerify.clear();
+    MockFetchVerify.post(
+      video.playback.links.createPlaybackEvent.getOriginalLink(),
+      undefined,
+      500,
+    );
+
+    return boclipsClient.emitPlaybackEvent(video, 15, 30);
+  });
+});
+
+describe('With authorisation', () => {
   it('Will use a bearer token if provided with a factory', async () => {
     const uri = '/v1/videos/177';
 

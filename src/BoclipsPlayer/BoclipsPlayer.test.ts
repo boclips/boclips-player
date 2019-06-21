@@ -221,6 +221,7 @@ describe('BoclipsPlayer', () => {
       const options: Partial<BoclipsPlayerOptions> = {
         analytics: {
           metadata: {
+            playerId: expect.anything(),
             one: 'one',
           },
         },
@@ -233,7 +234,6 @@ describe('BoclipsPlayer', () => {
       );
 
       expect(Analytics).toHaveBeenCalledWith(
-        expect.anything(),
         expect.anything(),
         expect.objectContaining(options.analytics),
       );
