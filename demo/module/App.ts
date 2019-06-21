@@ -1,4 +1,4 @@
-import { PlayerFactory } from '../../lib/index';
+import { PlayerFactory } from '../../src/index';
 
 const playerContainer = document.createElement('div');
 playerContainer.id = 'player-container';
