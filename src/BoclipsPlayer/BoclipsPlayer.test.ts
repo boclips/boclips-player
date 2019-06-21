@@ -10,7 +10,7 @@ import { VideoFactory } from '../test-support/TestFactories';
 import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
-import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
+import { PlayerOptions } from './PlayerOptions';
 
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
@@ -218,7 +218,7 @@ describe('BoclipsPlayer', () => {
 
   describe('Options', () => {
     it('passes down analytics options', () => {
-      const options: Partial<BoclipsPlayerOptions> = {
+      const options: Partial<PlayerOptions> = {
         analytics: {
           metadata: {
             playerId: expect.anything(),
@@ -240,7 +240,7 @@ describe('BoclipsPlayer', () => {
     });
 
     it('passes down wrapper options', () => {
-      const options: Partial<BoclipsPlayerOptions> = {
+      const options: Partial<PlayerOptions> = {
         player: {
           controls: ['captions'],
         },

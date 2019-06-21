@@ -8,30 +8,32 @@ import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
 import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
 import './BoclipsPlayer.less';
-import { BoclipsPlayerOptions, defaultOptions } from './BoclipsPlayerOptions';
+import { defaultOptions, PlayerOptions } from './PlayerOptions';
 
-export interface BoclipsPlayerInstance {
+export interface Player {
   play: () => Promise<any>;
   pause: () => void;
   loadVideo: (videoUri: string) => Promise<void>;
   destroy: () => void;
+  getPlayerId: () => string;
+  getOptions: () => Partial<PlayerOptions>;
 }
 
-export class BoclipsPlayer implements BoclipsPlayerInstance {
+export class BoclipsPlayer implements Player {
   private readonly wrapperConstructor: WrapperConstructor;
   private readonly wrapper: Wrapper;
   private readonly container: HTMLElement;
   private readonly analytics: Analytics;
   private readonly errorHandler: ErrorHandler;
   private readonly boclipsClient: BoclipsClient;
-  private options: Partial<BoclipsPlayerOptions> = {};
+  private options: Partial<PlayerOptions> = {};
   private video: Video;
   private playerId: string = uuid();
 
   constructor(
     wrapperConstructor: WrapperConstructor,
     container: HTMLElement,
-    options: Partial<BoclipsPlayerOptions> = {},
+    options: Partial<PlayerOptions> = {},
   ) {
     if (!wrapperConstructor) {
       throw Error(
@@ -60,7 +62,7 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
     container.classList.add('boclips-player-container');
 
     this.errorHandler = new ErrorHandler(this.container);
-    this.boclipsClient = new AxiosBoclipsClient(this.options.boclips);
+    this.boclipsClient = new AxiosBoclipsClient(this);
 
     if (!this.options.analytics.metadata) {
       this.options.analytics.metadata = {};
@@ -170,4 +172,6 @@ export class BoclipsPlayer implements BoclipsPlayerInstance {
   public play = (): Promise<void> => this.wrapper.play();
 
   public pause = (): void => this.wrapper.pause();
+
+  public getOptions = () => this.options;
 }

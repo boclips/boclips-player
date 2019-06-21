@@ -1,3 +1,7 @@
+import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { mocked } from 'ts-jest/utils';
+import { Player } from '..';
+import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import {
@@ -8,10 +12,14 @@ import { Link } from '../types/Link';
 import { Video } from '../types/Video';
 import { AxiosBoclipsClient } from './AxiosBoclipsClient';
 
+jest.mock('../BoclipsPlayer/BoclipsPlayer');
+
+let player: MaybeMocked<Player>;
 let boclipsClient: AxiosBoclipsClient;
 
 beforeEach(() => {
-  boclipsClient = new AxiosBoclipsClient();
+  player = mocked(new BoclipsPlayer(null, null, null));
+  boclipsClient = new AxiosBoclipsClient(player);
 });
 
 describe('retrieve video', () => {
@@ -150,11 +158,13 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    const authenticatedClient = new AxiosBoclipsClient({
-      tokenFactory: () => new Promise(resolve => resolve('test-bearer-token')),
+    player.getOptions.mockReturnValue({
+      boclips: {
+        tokenFactory: jest.fn().mockResolvedValue('test-bearer-token'),
+      },
     });
 
-    return authenticatedClient.retrieveVideo(uri).then(() => {
+    return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
       expect(requests).toHaveLength(1);
 
@@ -172,14 +182,15 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    const authenticatedClient = new AxiosBoclipsClient({
-      tokenFactory: () =>
-        new Promise(() => {
-          throw new Error('Some fatal authorization error');
-        }),
+    player.getOptions.mockReturnValue({
+      boclips: {
+        tokenFactory: jest
+          .fn()
+          .mockRejectedValue(new Error('Some fatal authorization error')),
+      },
     });
 
-    return authenticatedClient.retrieveVideo(uri).catch(error => {
+    return boclipsClient.retrieveVideo(uri).catch(error => {
       expect(error).not.toBeNull();
     });
   });

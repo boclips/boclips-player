@@ -102,7 +102,7 @@ You can use the boclips-player as a module in your JavaScript application.
 interface PlayerFactory {
     get: (
         container: HTMLElement | string,
-        options: Partial<BoclipsPlayerOptions> = {}
+        options: Partial<PlayerOptions> = {}
     ) => Player;
     getSeveral: (
         containers: Array<HTMLElement | string> | string,
@@ -116,7 +116,7 @@ interface Player {
     loadVideo: (videoUri: string) => void;
 }
 
-interface BoclipsPlayerOptions {
+interface PlayerOptions {
   analytics: Partial<AnalyticsOptions>;
   boclips: Partial<BoclipsOptions>;
   player: Partial<WrapperOptions>;

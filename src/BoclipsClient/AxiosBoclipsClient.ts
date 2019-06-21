@@ -1,18 +1,18 @@
 import axios from 'axios';
 import deepmerge from 'deepmerge';
+import { Player } from '..';
 import { APIError } from '../ErrorHandler/ErrorHandler';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 import convertVideoResource from '../utils/convertVideoResource';
-import { BoclipsClient, BoclipsOptions, defaultOptions } from './BoclipsClient';
+import { BoclipsClient, defaultOptions } from './BoclipsClient';
 
 export class AxiosBoclipsClient implements BoclipsClient {
-  private readonly options;
+  private readonly player: Player;
   private readonly axios;
 
-  public constructor(options: Partial<BoclipsOptions> = {}) {
-    this.options = deepmerge(defaultOptions, options);
-
+  public constructor(player: Player) {
+    this.player = player;
     this.axios = axios.create();
   }
 
@@ -35,7 +35,7 @@ export class AxiosBoclipsClient implements BoclipsClient {
 
     const event: PlaybackEvent = {
       ...metadata,
-      // playerId: this.playerId,
+      playerId: this.player.getPlayerId(),
       captureTime: new Date(),
       videoId: video.id,
       videoDurationSeconds: video.playback.duration,
@@ -52,19 +52,24 @@ export class AxiosBoclipsClient implements BoclipsClient {
       });
   };
 
+  private getOptions = () =>
+    deepmerge(defaultOptions, this.player.getOptions().boclips);
+
   private buildHeaders = async () => {
-    if (!this.options.tokenFactory) {
+    if (!this.getOptions().tokenFactory) {
       return {};
     }
 
-    const token = await this.options.tokenFactory().catch(error => {
-      console.error(error);
-      throw {
-        type: 'API_ERROR',
-        payload: { statusCode: 403 },
-        fatal: true,
-      } as APIError;
-    });
+    const token = await this.getOptions()
+      .tokenFactory()
+      .catch(error => {
+        console.error(error);
+        throw {
+          type: 'API_ERROR',
+          payload: { statusCode: 403 },
+          fatal: true,
+        } as APIError;
+      });
 
     return { Authorization: `Bearer ${token}` };
   };

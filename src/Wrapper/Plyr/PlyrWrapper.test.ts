@@ -1,7 +1,9 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
 import { mocked } from 'ts-jest/utils';
+import { Player } from '../..';
 import { AxiosBoclipsClient } from '../../BoclipsClient/AxiosBoclipsClient';
+import { BoclipsPlayer } from '../../BoclipsPlayer/BoclipsPlayer';
 import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 import { Analytics } from '../../Events/Analytics';
 import {
@@ -14,10 +16,12 @@ import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../../Events/Analytics');
+jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 
 const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
+let player: Player;
 let wrapper: Wrapper = null;
 let tracker: Analytics = null;
 let errorHandler: ErrorHandler = null;
@@ -27,7 +31,8 @@ beforeEach(() => {
   Plyr.mockClear();
 
   container = document.createElement('div');
-  tracker = new Analytics(new AxiosBoclipsClient());
+  player = new BoclipsPlayer(null, null, null);
+  tracker = new Analytics(new AxiosBoclipsClient(player));
   errorHandler = new ErrorHandler(container);
   wrapper = new PlyrWrapper(container, tracker, errorHandler);
 });
