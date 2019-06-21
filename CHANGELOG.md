@@ -6,14 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Added an option to pass an authenticated bearer token to the API
+  ```javascript
+  options.boclips.tokenFactory: () => Promise<string>;
+  ``` 
+
+### Changed
+- Significant refactor of API calls into BoclipsClient module
+
+### Fixed
+-- Minor documentation fixes
+
 ## [1.0.2] - 2019-06-21
 
 ### Deprecated
-- `options.analytics.handleOnPlayback` callback signature will be replaced with in the next release with:
+- `options.analytics.handleOnPlayback` callback signature will be replaced with in the a subsequent release with:
   ```typescript
   options.analytics.handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
   ```
-
 
 ## [1.0.1] - 2019-06-14
 

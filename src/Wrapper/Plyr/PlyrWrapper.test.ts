@@ -1,6 +1,7 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
 import { mocked } from 'ts-jest/utils';
+import { AxiosBoclipsClient } from '../../BoclipsClient/AxiosBoclipsClient';
 import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 import { Analytics } from '../../Events/Analytics';
 import {
@@ -26,7 +27,7 @@ beforeEach(() => {
   Plyr.mockClear();
 
   container = document.createElement('div');
-  tracker = new Analytics('player123');
+  tracker = new Analytics(new AxiosBoclipsClient(), 'player123');
   errorHandler = new ErrorHandler(container);
   wrapper = new PlyrWrapper(container, tracker, errorHandler);
 });

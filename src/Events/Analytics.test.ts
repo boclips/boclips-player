@@ -1,14 +1,21 @@
-import eventually from '../test-support/eventually';
-import MockFetchVerify from '../test-support/MockFetchVerify';
+import { mocked } from 'ts-jest';
+import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
+import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { VideoFactory } from '../test-support/TestFactories';
 import { Analytics } from './Analytics';
 import { AnalyticsOptions } from './AnalyticsOptions';
 
+jest.mock('../BoclipsClient/AxiosBoclipsClient');
+
 let analytics: Analytics;
 const video = VideoFactory.sample();
 
+let boclipsClient: MaybeMocked<BoclipsClient>;
+
 beforeEach(() => {
-  analytics = new Analytics('321');
+  boclipsClient = mocked(new AxiosBoclipsClient());
+  analytics = new Analytics(boclipsClient, '321');
   analytics.configure(video);
 });
 
@@ -21,33 +28,26 @@ it('can handle play events', () => {
 it('does nothing on pause events before a play event', () => {
   analytics.handlePause(20);
 
-  const history = MockFetchVerify.getHistory();
-  expect(history).toBeTruthy();
+  expect(boclipsClient.createPlaybackEvent).not.toHaveBeenCalled();
 });
 
 describe('will emit a playback event on pause after a play event', () => {
-  beforeEach(() => {
-    MockFetchVerify.post('create/playback/event', undefined, 201);
-  });
-
   it('can handle pause events once a play event has been handled', () => {
-    analytics = new Analytics('321');
     analytics.configure(video);
 
     analytics.handlePlay(5);
     analytics.handlePause(20);
 
-    return eventually(() => {
-      const history = MockFetchVerify.getHistory();
-      const actual = JSON.parse(history.post[0].data);
+    expect(boclipsClient.createPlaybackEvent).toHaveBeenCalled();
 
-      expect(actual).toMatchObject({
-        segmentStartSeconds: 5,
-        segmentEndSeconds: 20,
-        videoDurationSeconds: 60,
-        videoId: video.id,
-        playerId: '321',
-      });
+    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
+    expect(call[0]).toEqual(video);
+    expect(call[1]).toMatchObject({
+      segmentStartSeconds: 5,
+      segmentEndSeconds: 20,
+      videoDurationSeconds: 60,
+      videoId: video.id,
+      playerId: '321',
     });
   });
 
@@ -58,20 +58,19 @@ describe('will emit a playback event on pause after a play event', () => {
         someId: 'abc',
       },
     };
-    analytics = new Analytics('321', options);
+    analytics = new Analytics(boclipsClient, '321', options);
     analytics.configure(video);
 
     analytics.handlePlay(10);
     analytics.handlePause(25);
 
-    return eventually(() => {
-      const history = MockFetchVerify.getHistory();
-      const actual = JSON.parse(history.post[0].data);
+    expect(boclipsClient.createPlaybackEvent).toHaveBeenCalled();
 
-      expect(actual).toMatchObject({
-        testing: '123',
-        someId: 'abc',
-      });
+    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
+    expect(call[0]).toEqual(video);
+    expect(call[1]).toMatchObject({
+      testing: '123',
+      someId: 'abc',
     });
   });
 
@@ -81,17 +80,16 @@ describe('will emit a playback event on pause after a play event', () => {
         segmentStartSeconds: 'abcdef',
       },
     };
-    analytics = new Analytics('321', options);
+    analytics = new Analytics(boclipsClient, '321', options);
     analytics.configure(video);
 
     analytics.handlePlay(15);
     analytics.handlePause(30);
 
-    return eventually(() => {
-      const history = MockFetchVerify.getHistory();
-      const actual = JSON.parse(history.post[0].data);
-
-      expect(actual.segmentStartSeconds).toEqual(15);
+    const call = boclipsClient.createPlaybackEvent.mock.calls[0];
+    expect(call[0]).toEqual(video);
+    expect(call[1]).toMatchObject({
+      segmentStartSeconds: 15,
     });
   });
 });
@@ -105,7 +103,7 @@ describe('handleOnPlayback', () => {
       },
       handleOnPlayback: spy,
     };
-    analytics = new Analytics('321', options);
+    analytics = new Analytics(new AxiosBoclipsClient(), '321', options);
     analytics.configure(video);
 
     analytics.handlePlay(15);

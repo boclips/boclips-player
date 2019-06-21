@@ -4,9 +4,10 @@ import ErrorIcon from './ErrorIcon';
 export interface ErrorHandlerInstance {
   handleError: (error: Error) => void;
   clearError: () => void;
+  isDefinedError: (error: any) => boolean;
 }
 
-interface APIError {
+export interface APIError {
   fatal: boolean;
   type: 'API_ERROR';
   payload: {
@@ -51,6 +52,11 @@ export class ErrorHandler implements ErrorHandlerInstance {
     }
   };
 
+  public isDefinedError = (error: any): error is Error =>
+    error.hasOwnProperty('fatal') &&
+    error.hasOwnProperty('type') &&
+    error.hasOwnProperty('payload');
+
   public handleError = (error: Error) => {
     console.error(error);
 
@@ -66,13 +72,20 @@ export class ErrorHandler implements ErrorHandlerInstance {
         'Video Unavailable',
         'This video is currently unavailable.',
       );
-      return;
+    } else if (
+      error.type === 'API_ERROR' &&
+      (error.payload.statusCode === 403 || error.payload.statusCode === 401)
+    ) {
+      this.renderErrorContainer(
+        'Video Unavailable',
+        'You must log in to view this video',
+      );
+    } else {
+      this.renderErrorContainer(
+        'Unexpected Error Occurred',
+        'Please try again later',
+      );
     }
-
-    this.renderErrorContainer(
-      'Unexpected Error Occurred',
-      'Please try again later',
-    );
   };
 
   private renderErrorContainer = (title: string, content: string) => {

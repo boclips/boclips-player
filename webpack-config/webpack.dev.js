@@ -8,6 +8,7 @@ const distPath = path.resolve(__dirname, '../dist');
 module.exports = merge(common, {
   mode: 'development',
   devServer: {
+    port: 8081,
     contentBase: distPath,
   },
   devtool: 'inline-source-map',

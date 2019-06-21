@@ -1,12 +1,12 @@
 import { addListener } from 'resize-detector';
+import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
+import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
+import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
-import eventually from '../test-support/eventually';
-import MockFetchVerify from '../test-support/MockFetchVerify';
 import { MockWrapper } from '../test-support/MockWrapper';
-import { VideoResourceFactory } from '../test-support/TestFactories';
-import { isStreamPlayback, StreamPlayback } from '../types/Playback';
+import { VideoFactory } from '../test-support/TestFactories';
 import { Video } from '../types/Video';
 import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
@@ -15,11 +15,13 @@ import { BoclipsPlayerOptions } from './BoclipsPlayerOptions';
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
 jest.mock('../ErrorHandler/ErrorHandler');
+jest.mock('../BoclipsClient/AxiosBoclipsClient.ts');
 
 describe('BoclipsPlayer', () => {
   const wrapperConstructor = MockWrapper;
   let container: HTMLElement;
   let player: BoclipsPlayer;
+  let boclipsClient: MaybeMocked<BoclipsClient>;
 
   beforeEach(() => {
     container = document.createElement('div');
@@ -28,6 +30,7 @@ describe('BoclipsPlayer', () => {
       wrapperConstructor as WrapperConstructor,
       container,
     );
+    boclipsClient = mocked(AxiosBoclipsClient).mock.results[0].value;
   });
 
   it('Constructs a new player when passed an element', () => {
@@ -59,24 +62,13 @@ describe('BoclipsPlayer', () => {
   it('Will auto load the video based on data attribute on container', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
-    );
-
     const autoContainer = document.createElement('div');
     autoContainer.setAttribute('data-boplayer-video-uri', uri);
     document.body.appendChild(autoContainer);
 
-    const autoPlayer = new BoclipsPlayer(wrapperConstructor, autoContainer);
+    player = new BoclipsPlayer(wrapperConstructor, autoContainer);
 
-    return eventually(() => {
-      const playback = autoPlayer.getVideo().playback;
-      expect(isStreamPlayback(playback)).toBeTruthy();
-      expect((playback as StreamPlayback).streamUrl).toEqual(
-        'kaltura/stream.mp4',
-      );
-    });
+    expect(player.getBoclipsClient().retrieveVideo).toHaveBeenCalledWith(uri);
   });
 
   const illegalContainers: Array<{
@@ -115,26 +107,24 @@ describe('BoclipsPlayer', () => {
 
   it('Will retrieve details from the Playback endpoint', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
+
+    const video = VideoFactory.sample();
+
+    boclipsClient.retrieveVideo.mockReturnValue(
+      new Promise(resolve => resolve(video)),
     );
 
     return player.loadVideo(uri).then(() => {
-      const playback = player.getVideo().playback;
-      expect(isStreamPlayback(playback)).toBeTruthy();
-      expect((playback as StreamPlayback).streamUrl).toEqual(
-        'kaltura/stream.mp4',
-      );
+      expect(boclipsClient.retrieveVideo).toHaveBeenCalledWith(uri);
+
+      expect(player.getVideo()).toEqual(video);
     });
   });
 
   it('Will clear errors when successfully loaded a video', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
-    );
+
+    boclipsClient.retrieveVideo.mockResolvedValue(VideoFactory.sample());
 
     return player.loadVideo(uri).then(() => {
       const errorHandler = mocked(ErrorHandler).mock.results[0].value;
@@ -144,29 +134,30 @@ describe('BoclipsPlayer', () => {
 
   it('Will not reload the same video', () => {
     const uri = '/v1/videos/177';
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
-    );
+
+    boclipsClient.retrieveVideo.mockResolvedValue(VideoFactory.sample());
 
     return player.loadVideo(uri).then(() => {
-      const playback = player.getVideo().playback;
-      expect(isStreamPlayback(playback)).toBeTruthy();
       return player.loadVideo(uri).then(() => {
-        expect(MockFetchVerify.getHistory().get).toHaveLength(1);
+        expect(boclipsClient.retrieveVideo).toHaveBeenCalledTimes(1);
       });
     });
   });
 
   it('Will reload a video if an erroneous video was loaded afterwards', async () => {
     const goodUri = '/v1/videos/177';
-    MockFetchVerify.get(
-      goodUri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
-    );
-
     const errorUri = '/v1/videos';
-    MockFetchVerify.get(errorUri, {}, 404);
+
+    boclipsClient.retrieveVideo.mockImplementation(
+      (uri: string) =>
+        new Promise((resolve, reject) => {
+          if (uri === goodUri) {
+            resolve(VideoFactory.sample());
+          } else {
+            reject('NO WAY JOSE');
+          }
+        }),
+    );
 
     await player.loadVideo(goodUri);
     await player.loadVideo(errorUri);
@@ -182,32 +173,34 @@ describe('BoclipsPlayer', () => {
   it('Will configure the wrapper with the video', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.streamSample()),
+    const video = VideoFactory.sample();
+
+    boclipsClient.retrieveVideo.mockReturnValue(
+      new Promise(resolve => resolve(video)),
     );
 
     return player.loadVideo(uri).then(() => {
       const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
       expect(calls).toHaveLength(1);
-      const video = calls[0][0] as Video;
-      expect(video).toBeTruthy();
-      expect(video.id).toEqual(VideoResourceFactory.streamSample().id);
+      const actualVideo = calls[0][0] as Video;
+      expect(actualVideo).toBeTruthy();
+      expect(actualVideo).toEqual(video);
     });
   });
 
   it('Will install event tracking when a video is loaded', () => {
     const uri = '/v1/videos/177';
 
-    MockFetchVerify.get(
-      uri,
-      JSON.stringify(VideoResourceFactory.youtubeSample()),
+    const video = VideoFactory.sample();
+
+    boclipsClient.retrieveVideo.mockReturnValue(
+      new Promise(resolve => resolve(video)),
     );
 
     return player.loadVideo(uri).then(() => {
       const analytics = player.getAnalytics();
 
-      expect(analytics.configure).toHaveBeenCalled();
+      expect(analytics.configure).toHaveBeenCalledWith(video);
     });
   });
 
@@ -241,6 +234,7 @@ describe('BoclipsPlayer', () => {
 
       expect(Analytics).toHaveBeenCalledWith(
         expect.anything(),
+        expect.anything(),
         expect.objectContaining(options.analytics),
       );
     });
@@ -269,7 +263,11 @@ describe('BoclipsPlayer', () => {
 
   it('will delegate axios error handling to the module', async () => {
     const uri = 'http://server/path/to/error/video';
-    MockFetchVerify.get(uri, {}, 404);
+
+    boclipsClient.retrieveVideo.mockRejectedValue({
+      response: { status: 404 },
+    });
+
     await player.loadVideo(uri);
 
     const errorHandler = mocked(ErrorHandler).mock.results[0].value;
@@ -277,7 +275,33 @@ describe('BoclipsPlayer', () => {
 
     const args = errorHandler.handleError.mock.calls[0];
     expect(args).toMatchObject([
-      { fatal: true, payload: { statusCode: 404 }, type: 'API_ERROR' },
+      {
+        fatal: true,
+        payload: { statusCode: 404 },
+        type: 'API_ERROR',
+      },
+    ]);
+  });
+
+  it('will render an error if there is an API error', async () => {
+    const uri = 'http://server/path/to/error/video';
+
+    boclipsClient.retrieveVideo.mockRejectedValue({
+      response: { status: 404 },
+    });
+
+    await player.loadVideo(uri);
+
+    const errorHandler = mocked(ErrorHandler).mock.results[0].value;
+    expect(errorHandler.handleError).toHaveBeenCalled();
+
+    const args = errorHandler.handleError.mock.calls[0];
+    expect(args).toMatchObject([
+      {
+        fatal: true,
+        payload: { statusCode: 404 },
+        type: 'API_ERROR',
+      },
     ]);
   });
 

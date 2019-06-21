@@ -102,35 +102,77 @@ You can use the boclips-player as a module in your JavaScript application.
 interface PlayerFactory {
     get: (
         container: HTMLElement | string,
-        options: PlayerOptions = {}
+        options: Partial<BoclipsPlayerOptions> = {}
     ) => Player;
-    getSeveral = (
+    getSeveral: (
         containers: Array<HTMLElement | string> | string,
-    ): Player[];
-    scan = (): Player[];
-}
-
-interface PlayerOptions {
-    analytics: Partial<AnalyticsOptions>;
-    player: Partial<WrapperOptions>;
-}
-
-interface WrapperOptions {
-    controls: Controls[];
-}
-
-interface AnalyticsOptions {
-    metadata: { [key: string]: any };
-    /**
-    * @deprecated Callback signature will be replaced in a future version
-    */
-    handleOnPlayback: (event: PlaybackEvent) => void;
+    ) => Player[];
+    scan: () => Player[];
 }
 
 interface Player {
     play: () => Promise<void>;
     pause: () => void;
     loadVideo: (videoUri: string) => void;
+}
+
+interface BoclipsPlayerOptions {
+  analytics: Partial<AnalyticsOptions>;
+  boclips: Partial<BoclipsOptions>;
+  player: Partial<WrapperOptions>;
+}
+----
+
+=== Player Options
+
+The various modules within the player accept optional parameters to drive the behaviour of the player.
+
+==== Interface Options
+
+[source,typescript]
+----
+interface WrapperOptions {
+    controls: Controls[];
+}
+
+type Controls =
+  | 'play-large'
+  | 'restart'
+  | 'rewind'
+  | 'play'
+  | 'fast-forward'
+  | 'progress'
+  | 'current-time'
+  | 'duration'
+  | 'mute'
+  | 'volume'
+  | 'captions'
+  | 'settings'
+  | 'pip'
+  | 'airplay'
+  | 'download'
+  | 'fullscreen';
+----
+
+==== Boclips API Options
+
+[source,typescript]
+----
+interface BoclipsOptions {
+  tokenFactory?: () => string;
+}
+----
+
+==== Analytics Options
+
+[source,typescript]
+----
+interface AnalyticsOptions {
+    metadata: { [key: string]: any };
+    /**
+    * @deprecated Callback signature will be replaced in a future version
+    */
+    handleOnPlayback: (event: PlaybackEvent) => void;
 }
 ----
 
@@ -157,7 +199,7 @@ When initialising the player, you may pass metadata into the analytics module. F
 const options = {
     analytics: {
         metadata: {
-            userId: results.indexOf(video)
+            userId: user.id
         }
     }
 }
