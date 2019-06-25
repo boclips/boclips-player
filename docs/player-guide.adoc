@@ -114,12 +114,15 @@ interface Player {
     play: () => Promise<void>;
     pause: () => void;
     loadVideo: (videoUri: string) => void;
+    destroy: () => void;
+    getPlayerId: () => string;
+    getOptions: () => Partial<PlayerOptions>;
 }
 
 interface PlayerOptions {
-  analytics: Partial<AnalyticsOptions>;
-  boclips: Partial<BoclipsOptions>;
-  player: Partial<WrapperOptions>;
+    analytics: Partial<AnalyticsOptions>;
+    boclips: Partial<BoclipsOptions>;
+    player: Partial<WrapperOptions>;
 }
 ----
 
@@ -159,7 +162,7 @@ type Controls =
 [source,typescript]
 ----
 interface BoclipsOptions {
-  tokenFactory?: () => string;
+    tokenFactory?: () => string;
 }
 ----
 
