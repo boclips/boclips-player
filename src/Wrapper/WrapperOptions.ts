@@ -20,7 +20,7 @@ export interface WrapperOptions {
   controls: Controls[];
 }
 
-export const defaultOptions: WrapperOptions = {
+export const defaultWrapperOptions: WrapperOptions = {
   controls: [
     'play-large',
     'play',

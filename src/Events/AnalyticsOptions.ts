@@ -10,7 +10,7 @@ export interface AnalyticsOptions {
   ) => void;
 }
 
-export const defaultOptions: AnalyticsOptions = Object.freeze({
+export const defaultAnalyticsOptions: AnalyticsOptions = Object.freeze({
   metadata: {},
   handleOnSegmentPlayback: noop,
 });

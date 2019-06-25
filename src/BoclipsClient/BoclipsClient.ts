@@ -4,7 +4,7 @@ export interface BoclipsOptions {
   tokenFactory?: () => Promise<string>;
 }
 
-export const defaultOptions: BoclipsOptions = Object.freeze({
+export const defaultBoclipsOptions: BoclipsOptions = Object.freeze({
   tokenFactory: null,
 });
 

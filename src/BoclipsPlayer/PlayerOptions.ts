@@ -1,6 +1,15 @@
-import { BoclipsOptions } from '../BoclipsClient/BoclipsClient';
-import { AnalyticsOptions } from '../Events/AnalyticsOptions';
-import { WrapperOptions } from '../Wrapper/WrapperOptions';
+import {
+  BoclipsOptions,
+  defaultBoclipsOptions,
+} from '../BoclipsClient/BoclipsClient';
+import {
+  AnalyticsOptions,
+  defaultAnalyticsOptions,
+} from '../Events/AnalyticsOptions';
+import {
+  defaultWrapperOptions,
+  WrapperOptions,
+} from '../Wrapper/WrapperOptions';
 
 export interface PlayerOptions {
   analytics: Partial<AnalyticsOptions>;
@@ -9,7 +18,7 @@ export interface PlayerOptions {
 }
 
 export const defaultOptions: PlayerOptions = Object.freeze({
-  analytics: {},
-  boclips: {},
-  player: {},
+  analytics: defaultAnalyticsOptions,
+  boclips: defaultBoclipsOptions,
+  player: defaultWrapperOptions,
 });

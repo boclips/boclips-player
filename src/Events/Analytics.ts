@@ -1,7 +1,5 @@
-import deepmerge from 'deepmerge';
 import { Player } from '..';
 import { Video } from '../types/Video';
-import { defaultOptions } from './AnalyticsOptions';
 
 export interface AnalyticsInstance {
   configure: (video: Video) => void;
@@ -15,9 +13,6 @@ export class Analytics implements AnalyticsInstance {
   private segmentPlaybackStartTime: number = -1;
 
   constructor(private player: Player) {}
-
-  private getOptions = () =>
-    deepmerge(defaultOptions, this.player.getOptions().analytics);
 
   public configure = (video: Video) => {
     this.video = video;
@@ -47,4 +42,6 @@ export class Analytics implements AnalyticsInstance {
 
     this.getOptions().handleOnSegmentPlayback(this.video, start, end);
   };
+
+  private getOptions = () => this.player.getOptions().analytics;
 }

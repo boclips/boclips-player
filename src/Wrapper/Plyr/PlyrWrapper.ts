@@ -12,7 +12,7 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { defaultOptions, WrapperOptions } from '../WrapperOptions';
+import { defaultWrapperOptions, WrapperOptions } from '../WrapperOptions';
 
 export default class PlyrWrapper implements Wrapper {
   private plyr;
@@ -27,7 +27,7 @@ export default class PlyrWrapper implements Wrapper {
     private readonly errorHandler: ErrorHandlerInstance,
     options: Partial<WrapperOptions> = {},
   ) {
-    this.options = { ...defaultOptions, ...options };
+    this.options = { ...defaultWrapperOptions, ...options };
 
     this.createStreamPlyr();
 

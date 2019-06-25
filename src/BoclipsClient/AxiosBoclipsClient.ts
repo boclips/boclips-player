@@ -1,11 +1,10 @@
 import axios from 'axios';
-import deepmerge from 'deepmerge';
 import { Player } from '..';
 import { APIError } from '../ErrorHandler/ErrorHandler';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 import convertVideoResource from '../utils/convertVideoResource';
-import { BoclipsClient, defaultOptions } from './BoclipsClient';
+import { BoclipsClient } from './BoclipsClient';
 
 export class AxiosBoclipsClient implements BoclipsClient {
   private readonly player: Player;
@@ -52,9 +51,6 @@ export class AxiosBoclipsClient implements BoclipsClient {
       });
   };
 
-  private getOptions = () =>
-    deepmerge(defaultOptions, this.player.getOptions().boclips);
-
   private buildHeaders = async () => {
     if (!this.getOptions().tokenFactory) {
       return {};
@@ -73,4 +69,6 @@ export class AxiosBoclipsClient implements BoclipsClient {
 
     return { Authorization: `Bearer ${token}` };
   };
+
+  private getOptions = () => this.player.getOptions().boclips;
 }

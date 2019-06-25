@@ -1,4 +1,4 @@
-import deepmerge from 'deepmerge';
+import deepmerge = require('deepmerge');
 import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
 import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
@@ -22,19 +22,17 @@ export interface Player {
 }
 
 export class BoclipsPlayer implements Player {
-  private readonly wrapperConstructor: WrapperConstructor;
+  private readonly options: PlayerOptions;
   private readonly wrapper: Wrapper;
-  private readonly container: HTMLElement;
   private readonly analytics: Analytics;
   private readonly errorHandler: ErrorHandler;
   private readonly boclipsClient: BoclipsClient;
-  private options: Partial<PlayerOptions> = {};
   private video: Video;
   private playerId: string = uuid();
 
   constructor(
-    wrapperConstructor: WrapperConstructor,
-    container: HTMLElement,
+    private readonly wrapperConstructor: WrapperConstructor,
+    private readonly container: HTMLElement,
     options: Partial<PlayerOptions> = {},
   ) {
     if (!wrapperConstructor) {
@@ -54,10 +52,6 @@ export class BoclipsPlayer implements Player {
       );
     }
 
-    this.wrapperConstructor = wrapperConstructor;
-    this.container = container;
-    this.options = deepmerge(defaultOptions, options);
-
     addResizeListener(container, this.handleResizeEvent);
     this.handleResizeEvent();
 
@@ -66,10 +60,13 @@ export class BoclipsPlayer implements Player {
     this.errorHandler = new ErrorHandler(this);
     this.boclipsClient = new AxiosBoclipsClient(this);
 
+    this.options = deepmerge(defaultOptions, options);
+
     if (!this.options.analytics.metadata) {
       this.options.analytics.metadata = {};
     }
     this.options.analytics.metadata.playerId = this.playerId;
+
     this.analytics = new Analytics(this);
 
     this.wrapper = new this.wrapperConstructor(
