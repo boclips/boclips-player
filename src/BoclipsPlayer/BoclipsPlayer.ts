@@ -1,8 +1,8 @@
 import deepmerge from 'deepmerge';
 import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
-import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
-import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
+import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
+import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
@@ -22,7 +22,7 @@ export interface Player {
 
 export interface PrivatePlayer extends Player {
   getContainer: () => HTMLElement;
-  getClient: () => BoclipsClient;
+  getClient: () => BoclipsApiClient;
   getAnalytics: () => Analytics;
   getErrorHandler: () => ErrorHandler;
 }
@@ -32,7 +32,7 @@ export class BoclipsPlayer implements PrivatePlayer {
   private readonly wrapper: Wrapper;
   private readonly analytics: Analytics;
   private readonly errorHandler: ErrorHandler;
-  private readonly boclipsClient: BoclipsClient;
+  private readonly boclipsClient: BoclipsApiClient;
   private video: Video;
   private playerId: string = uuid();
 
@@ -60,7 +60,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     this.options = deepmerge(defaultOptions, options);
 
     this.errorHandler = new ErrorHandler(this);
-    this.boclipsClient = new AxiosBoclipsClient(this);
+    this.boclipsClient = new AxiosBoclipsApiClient(this);
     this.analytics = new Analytics(this);
     this.wrapper = new (WrapperFactory.get())(this);
 

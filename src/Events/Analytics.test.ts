@@ -5,7 +5,7 @@ import { VideoFactory } from '../test-support/TestFactories';
 import { noop } from '../utils';
 import { Analytics } from './Analytics';
 
-jest.mock('../BoclipsClient/AxiosBoclipsClient');
+jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient');
 jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
 let analytics: Analytics;

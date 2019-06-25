@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Added an option to pass an authenticated bearer token to the API
   ```typescript
-  options.boclips.tokenFactory: () => Promise<string>;
+  options.api.tokenFactory: () => Promise<string>;
   ``` 
 - Added an option to replace now removed `options.analytics.handleOnPlayback`
   ```typescript

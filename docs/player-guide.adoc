@@ -121,7 +121,7 @@ interface Player {
 
 interface PlayerOptions {
     analytics: Partial<AnalyticsOptions>;
-    boclips: Partial<BoclipsOptions>;
+    api: Partial<BoclipsOptions>;
     player: Partial<WrapperOptions>;
 }
 ----
@@ -183,7 +183,7 @@ The Boclips API requires authentication in order to accurately track viewer attr
 
 The Player allows the users token to be passed in as a `Promise<string>` in order to generate a valid token
 for the user at the time that the player calls to the API. This is important as tokens do expire, it is your
-responsibility to ensure that the token that is returned by `options.boclips.tokenFactory` is a valid token --
+responsibility to ensure that the token that is returned by `options.api.tokenFactory` is a valid token --
 failure to do so may result in a poor experience for the user.
 
 An example tokenFactory, using `boclips-js-security@2.0.1`:
@@ -221,14 +221,14 @@ function tokenFactory() {
 
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    boclips: { tokenFactory },
+    api: { tokenFactory },
   });
 };
 ```
 
 [WARNING]
 ====
-`options.boclips.tokenFactory` is currently optional. In the v3.0.0 it will become mandatory.
+`options.api.tokenFactory` is currently optional. In the v3.0.0 it will become mandatory.
 ====
 
 

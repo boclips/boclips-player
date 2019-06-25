@@ -38,7 +38,7 @@ function tokenFactory() {
 
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    boclips: { tokenFactory },
+    api: { tokenFactory },
   });
 
   player

@@ -9,17 +9,17 @@ import {
 } from '../test-support/TestFactories';
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
-import { AxiosBoclipsClient } from './AxiosBoclipsClient';
+import { AxiosBoclipsApiClient } from './AxiosBoclipsApiClient';
 
 jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
 let player: MaybeMocked<PrivatePlayer>;
-let boclipsClient: AxiosBoclipsClient;
+let boclipsClient: AxiosBoclipsApiClient;
 
 beforeEach(() => {
   // @ts-ignore
   player = mocked(new BoclipsPlayer());
-  boclipsClient = new AxiosBoclipsClient(player);
+  boclipsClient = new AxiosBoclipsApiClient(player);
 });
 
 describe('retrieve video', () => {
@@ -159,7 +159,7 @@ describe('With authorisation', () => {
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
     player.getOptions.mockReturnValue({
-      boclips: {
+      api: {
         tokenFactory: jest.fn().mockResolvedValue('test-bearer-token'),
       },
     });
@@ -175,7 +175,7 @@ describe('With authorisation', () => {
     });
   });
 
-  it('Will fail gracefully if a token factory throws an exception', async () => {
+  it('Will fail gracefully if a token factory throws an exception', (done) => {
     const uri = '/v1/videos/177';
 
     const videoResource = VideoResourceFactory.youtubeSample();
@@ -183,7 +183,7 @@ describe('With authorisation', () => {
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
     player.getOptions.mockReturnValue({
-      boclips: {
+      api: {
         tokenFactory: jest
           .fn()
           .mockRejectedValue(new Error('Some fatal authorization error')),
@@ -192,6 +192,7 @@ describe('With authorisation', () => {
 
     return boclipsClient.retrieveVideo(uri).catch(error => {
       expect(error).not.toBeNull();
+      done();
     });
   });
 });

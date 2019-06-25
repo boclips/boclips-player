@@ -1,7 +1,7 @@
 import {
-  BoclipsOptions,
-  defaultBoclipsOptions,
-} from '../BoclipsClient/BoclipsClient';
+  ApiOptions,
+  defaultApiOptions,
+} from '../BoclipsApiClient/BoclipsApiClient';
 import {
   AnalyticsOptions,
   defaultAnalyticsOptions,
@@ -13,12 +13,12 @@ import {
 
 export interface PlayerOptions {
   analytics: Partial<AnalyticsOptions>;
-  boclips: Partial<BoclipsOptions>;
+  api: Partial<ApiOptions>;
   player: Partial<WrapperOptions>;
 }
 
 export const defaultOptions: PlayerOptions = Object.freeze({
   analytics: defaultAnalyticsOptions,
-  boclips: defaultBoclipsOptions,
+  api: defaultApiOptions,
   player: defaultWrapperOptions,
 });

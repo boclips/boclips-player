@@ -1,14 +1,14 @@
 import { Video } from '../types/Video';
 
-export interface BoclipsOptions {
+export interface ApiOptions {
   tokenFactory?: () => Promise<string>;
 }
 
-export const defaultBoclipsOptions: BoclipsOptions = Object.freeze({
+export const defaultApiOptions: ApiOptions = Object.freeze({
   tokenFactory: null,
 });
 
-export interface BoclipsClient {
+export interface BoclipsApiClient {
   retrieveVideo: (uri: string) => Promise<Video>;
   emitPlaybackEvent: (
     video: Video,

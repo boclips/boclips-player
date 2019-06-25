@@ -1,8 +1,8 @@
 import { addListener } from 'resize-detector';
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
-import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
-import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
+import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
+import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { VideoFactory } from '../test-support/TestFactories';
@@ -14,19 +14,19 @@ import { WrapperFactory } from '../Wrapper/WrapperFactory';
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
 jest.mock('../ErrorHandler/ErrorHandler');
-jest.mock('../BoclipsClient/AxiosBoclipsClient.ts');
+jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient.ts');
 jest.mock('../Wrapper/WrapperFactory.ts');
 
 describe('BoclipsPlayer', () => {
   let container: HTMLElement;
   let player: BoclipsPlayer;
-  let boclipsClient: MaybeMocked<BoclipsClient>;
+  let boclipsClient: MaybeMocked<BoclipsApiClient>;
 
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
     player = new BoclipsPlayer(container);
-    boclipsClient = mocked(AxiosBoclipsClient).mock.results[0].value;
+    boclipsClient = mocked(AxiosBoclipsApiClient).mock.results[0].value;
   });
 
   it('Constructs a new player when passed an element', () => {

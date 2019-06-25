@@ -1,4 +1,4 @@
-import { AxiosBoclipsClient } from '../../BoclipsClient/AxiosBoclipsClient';
+import { AxiosBoclipsApiClient } from '../../BoclipsApiClient/AxiosBoclipsApiClient';
 import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 import { Analytics } from '../../Events/Analytics';
 import { PrivatePlayer } from '../BoclipsPlayer';
@@ -21,7 +21,7 @@ export const BoclipsPlayer = jest
       getErrorHandler: null,
     } as PrivatePlayer;
 
-    const client = new AxiosBoclipsClient(player);
+    const client = new AxiosBoclipsApiClient(player);
     const analytics = new Analytics(player);
     const errorHandler = new ErrorHandler(player);
 

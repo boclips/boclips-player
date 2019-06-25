@@ -4,9 +4,9 @@ import { APIError } from '../ErrorHandler/ErrorHandler';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 import convertVideoResource from '../utils/convertVideoResource';
-import { BoclipsClient } from './BoclipsClient';
+import { BoclipsApiClient } from './BoclipsApiClient';
 
-export class AxiosBoclipsClient implements BoclipsClient {
+export class AxiosBoclipsApiClient implements BoclipsApiClient {
   private readonly axios;
 
   public constructor(private readonly player: PrivatePlayer) {
@@ -68,5 +68,5 @@ export class AxiosBoclipsClient implements BoclipsClient {
     return { Authorization: `Bearer ${token}` };
   };
 
-  private getOptions = () => this.player.getOptions().boclips;
+  private getOptions = () => this.player.getOptions().api;
 }
