@@ -45,18 +45,14 @@ describe('BoclipsPlayer', () => {
     expect(player.getWrapper().play).toBeTruthy();
   });
 
-  it('Will initialise the wrapper with the container', () => {
+  it('Will initialise the wrapper with the player', () => {
     expect(wrapperConstructor).toBeCalledTimes(1);
-    expect(wrapperConstructor).toHaveBeenCalledWith(
-      container,
-      expect.anything(),
-      expect.anything(),
-      expect.anything(),
-    );
+    expect(wrapperConstructor).toHaveBeenCalledWith(player);
   });
 
-  it('Will initialise the event tracker with a player id', () => {
+  it('Will initialise the event tracker with the player', () => {
     expect(Analytics).toBeCalledTimes(1);
+    expect(wrapperConstructor).toHaveBeenCalledWith(player);
   });
 
   it('Will auto load the video based on data attribute on container', () => {
@@ -234,27 +230,6 @@ describe('BoclipsPlayer', () => {
       );
 
       expect(Analytics).toHaveBeenCalledWith(player);
-    });
-
-    it('passes down wrapper options', () => {
-      const options: Partial<PlayerOptions> = {
-        player: {
-          controls: ['captions'],
-        },
-      };
-
-      player = new BoclipsPlayer(
-        wrapperConstructor as WrapperConstructor,
-        container,
-        options,
-      );
-
-      expect(MockWrapper).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.anything(),
-        expect.anything(),
-        expect.objectContaining(options.player),
-      );
     });
   });
 

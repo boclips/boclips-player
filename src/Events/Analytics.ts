@@ -1,4 +1,4 @@
-import { Player } from '..';
+import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { Video } from '../types/Video';
 
 export interface AnalyticsInstance {
@@ -12,7 +12,7 @@ export class Analytics implements AnalyticsInstance {
   private video: Video;
   private segmentPlaybackStartTime: number = -1;
 
-  constructor(private player: Player) {}
+  constructor(private player: PrivatePlayer) {}
 
   public configure = (video: Video) => {
     this.video = video;

@@ -1,7 +1,6 @@
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
-import { Player } from '..';
-import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
+import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import {
@@ -14,11 +13,12 @@ import { AxiosBoclipsClient } from './AxiosBoclipsClient';
 
 jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
-let player: MaybeMocked<Player>;
+let player: MaybeMocked<PrivatePlayer>;
 let boclipsClient: AxiosBoclipsClient;
 
 beforeEach(() => {
-  player = mocked(new BoclipsPlayer(null, null, null));
+  // @ts-ignore
+  player = mocked(new BoclipsPlayer());
   boclipsClient = new AxiosBoclipsClient(player);
 });
 

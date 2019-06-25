@@ -1,40 +1,35 @@
 import Hls from 'hls.js';
 import Plyr from 'plyr';
 import { mocked } from 'ts-jest/utils';
-import { Player } from '../..';
-import { AxiosBoclipsClient } from '../../BoclipsClient/AxiosBoclipsClient';
-import { BoclipsPlayer } from '../../BoclipsPlayer/BoclipsPlayer';
-import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
-import { Analytics } from '../../Events/Analytics';
+import {
+  BoclipsPlayer,
+  PrivatePlayer,
+} from '../../BoclipsPlayer/BoclipsPlayer';
+import { MockWrapper } from '../../test-support/MockWrapper';
 import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { StreamPlayback } from '../../types/Playback';
 import { Wrapper } from '../Wrapper';
-import { defaultOptions, WrapperOptions } from '../WrapperOptions';
 import PlyrWrapper from './PlyrWrapper';
 
-jest.mock('../../Events/Analytics');
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
+jest.mock('../../Events/Analytics');
 
 const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
-let player: Player;
+let player: PrivatePlayer;
 let wrapper: Wrapper = null;
-let tracker: Analytics = null;
-let errorHandler: ErrorHandler = null;
 
 beforeEach(() => {
   Hls.mockClear();
   Plyr.mockClear();
 
   container = document.createElement('div');
-  player = new BoclipsPlayer(null, null, null);
-  tracker = new Analytics(new AxiosBoclipsClient(player));
-  errorHandler = new ErrorHandler(player);
-  wrapper = new PlyrWrapper(container, tracker, errorHandler);
+  player = new BoclipsPlayer(MockWrapper, container);
+  wrapper = new PlyrWrapper(player);
 });
 
 it('Constructs a Plyr given an element a video element within container', () => {
@@ -64,7 +59,7 @@ describe('When a new video is configured', () => {
     it('does not instantiate Hls if there is no playback', () => {
       Hls.mockClear();
       // tslint:disable-next-line:no-unused-expression
-      new PlyrWrapper(container, tracker, errorHandler);
+      new PlyrWrapper(player);
       expect(Hls).not.toHaveBeenCalled();
     });
 
@@ -173,7 +168,7 @@ describe('Event Tracking', () => {
       },
     });
 
-    expect(tracker.handlePlay).toHaveBeenCalledWith(10);
+    expect(player.getAnalytics().handlePlay).toHaveBeenCalledWith(10);
   });
 
   it('will add an on pause event listener that delegates to the Analytics', () => {
@@ -185,7 +180,7 @@ describe('Event Tracking', () => {
       },
     });
 
-    expect(tracker.handlePause).toHaveBeenCalledWith(15);
+    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(15);
   });
 
   it('will call on pause when the navigation is about to change', () => {
@@ -199,7 +194,7 @@ describe('Event Tracking', () => {
 
     callback();
 
-    expect(tracker.handlePause).toHaveBeenCalledWith(25);
+    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(25);
   });
 
   it('will remove an unload event listener on destruction', () => {
@@ -209,7 +204,7 @@ describe('Event Tracking', () => {
 
     wrapper.destroy();
 
-    expect(tracker.handlePause).toHaveBeenCalledWith(15);
+    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(15);
 
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
   });
@@ -288,28 +283,20 @@ describe('when asked to destroy', () => {
 
     wrapper.destroy();
 
-    expect(tracker.handlePause).toHaveBeenCalledWith(50);
+    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(50);
   });
 });
 
 describe('option configuration', () => {
-  it('will use default controls if omitted', () => {
-    expect(Plyr).toHaveBeenCalledWith(
-      expect.anything(),
-      expect.objectContaining({
-        controls: defaultOptions.controls,
-      }),
-    );
-  });
-
   it('will pass through the control options', () => {
-    const options: WrapperOptions = {
-      controls: ['play-large'],
-    };
-    // tslint:disable-next-line:no-unused-expression
-    new PlyrWrapper(container, tracker, errorHandler, options);
+    player = new BoclipsPlayer(PlyrWrapper, container, {
+      player: { controls: ['play-large'] },
+    });
+
+    wrapper = new PlyrWrapper(player);
+
     const actualOptions = mocked(Plyr).mock.calls[1][1];
-    expect(actualOptions.controls).toEqual(options.controls);
+    expect(actualOptions.controls).toEqual(['play-large']);
   });
 });
 

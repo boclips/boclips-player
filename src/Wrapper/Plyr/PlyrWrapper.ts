@@ -1,10 +1,6 @@
-import Plyr from 'plyr';
-import { Wrapper } from '../Wrapper';
-import './PlyrWrapper.less';
-
 import Hls from 'hls.js';
-import { ErrorHandlerInstance } from '../../ErrorHandler/ErrorHandler';
-import { AnalyticsInstance } from '../../Events/Analytics';
+import Plyr from 'plyr';
+import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
 import {
   isStreamPlayback,
   Playback,
@@ -12,37 +8,32 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { defaultWrapperOptions, WrapperOptions } from '../WrapperOptions';
+import { Wrapper } from '../Wrapper';
+import './PlyrWrapper.less';
+
+jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 
 export default class PlyrWrapper implements Wrapper {
   private plyr;
   private hls = null;
-  private options: WrapperOptions;
   private hasBeenDestroyed: boolean = false;
 
   // @ts-ignore
-  constructor(
-    private readonly container: HTMLElement,
-    private readonly analytics: AnalyticsInstance,
-    private readonly errorHandler: ErrorHandlerInstance,
-    options: Partial<WrapperOptions> = {},
-  ) {
-    this.options = { ...defaultWrapperOptions, ...options };
-
+  constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
 
     window.addEventListener('beforeunload', this.handleBeforeUnload);
 
     if (
-      this.options.controls.indexOf('mute') !== -1 &&
-      this.options.controls.indexOf('volume') === -1
+      this.getOptions().controls.indexOf('mute') !== -1 &&
+      this.getOptions().controls.indexOf('volume') === -1
     ) {
-      this.container.classList.add('plyr--only-mute');
+      this.player.getContainer().classList.add('plyr--only-mute');
     }
   }
 
   private createStreamPlyr = (playback?: StreamPlayback) => {
-    this.container.innerHTML = '';
+    this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('video');
 
@@ -54,7 +45,7 @@ export default class PlyrWrapper implements Wrapper {
       media.setAttribute('poster', playback.thumbnailUrl);
     }
 
-    this.container.appendChild(media);
+    this.player.getContainer().appendChild(media);
 
     this.resetPlyrInstance(media, playback);
 
@@ -67,7 +58,7 @@ export default class PlyrWrapper implements Wrapper {
         this.hls.loadSource(playback.streamUrl);
       });
       this.hls.on(Hls.Events.ERROR, (_, data) => {
-        this.errorHandler.handleError({
+        this.player.getErrorHandler().handleError({
           fatal: data.fatal,
           type: data.type,
           payload: data,
@@ -78,14 +69,14 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   private createYoutubePlyr = (playback: YoutubePlayback) => {
-    this.container.innerHTML = '';
+    this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('div');
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('data-plyr-provider', 'youtube');
     media.setAttribute('data-plyr-embed-id', playback.id);
 
-    this.container.appendChild(media);
+    this.player.getContainer().appendChild(media);
 
     this.resetPlyrInstance(media, playback);
   };
@@ -110,18 +101,18 @@ export default class PlyrWrapper implements Wrapper {
     });
 
     this.plyr.on('playing', event => {
-      this.analytics.handlePlay(event.detail.plyr.currentTime);
+      this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
     });
 
     this.plyr.on('pause', event => {
-      this.analytics.handlePause(event.detail.plyr.currentTime);
+      this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
     this.plyr.on('error', event => {
       const mediaError = event.detail.plyr.media.error;
 
       if (mediaError.code && mediaError.message) {
-        this.errorHandler.handleError({
+        this.player.getErrorHandler().handleError({
           fatal: true,
           type: 'PLAYBACK_ERROR',
           payload: {
@@ -150,11 +141,11 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   private handleEnterFullscreen = () => {
-    this.container.classList.add('plyr--fullscreen');
+    this.player.getContainer().classList.add('plyr--fullscreen');
   };
 
   private handleExitFullscreen = () => {
-    this.container.classList.remove('plyr--fullscreen');
+    this.player.getContainer().classList.remove('plyr--fullscreen');
   };
 
   public play = (): Promise<void> => {
@@ -201,7 +192,7 @@ export default class PlyrWrapper implements Wrapper {
   private handleBeforeUnload = () => {
     if (this.plyr) {
       const currentTime = this.plyr.currentTime;
-      this.analytics.handlePause(currentTime);
+      this.player.getAnalytics().handlePause(currentTime);
     }
   };
 
@@ -216,10 +207,12 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr = new Plyr(media, {
       debug: process.env.NODE_ENV !== 'production',
       captions: { active: false, language: 'en', update: true },
-      controls: this.options.controls,
+      controls: this.getOptions().controls,
       duration: playback ? playback.duration : null,
     });
 
     this.installPlyrEventListeners();
   };
+
+  private getOptions = () => this.player.getOptions().player;
 }

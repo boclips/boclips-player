@@ -1,10 +1,10 @@
-import { BoclipsPlayer, Player } from '../BoclipsPlayer/BoclipsPlayer';
+import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { MockWrapper } from '../test-support/MockWrapper';
 import { Error, ErrorHandler } from './ErrorHandler';
 
 describe('error message handling', () => {
   let container: HTMLElement;
-  let player: Player;
+  let player: PrivatePlayer;
   let errorHandler;
   beforeEach(() => {
     container = document.createElement('section');

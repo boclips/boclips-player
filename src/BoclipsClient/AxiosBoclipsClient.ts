@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { Player } from '..';
+import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { APIError } from '../ErrorHandler/ErrorHandler';
 import { PlaybackEvent } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
@@ -7,11 +7,9 @@ import convertVideoResource from '../utils/convertVideoResource';
 import { BoclipsClient } from './BoclipsClient';
 
 export class AxiosBoclipsClient implements BoclipsClient {
-  private readonly player: Player;
   private readonly axios;
 
-  public constructor(player: Player) {
-    this.player = player;
+  public constructor(private readonly player: PrivatePlayer) {
     this.axios = axios.create();
   }
 

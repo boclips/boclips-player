@@ -1,4 +1,4 @@
-import { Player } from '..';
+import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import './ErrorHandler.less';
 import ErrorIcon from './ErrorIcon';
 
@@ -42,7 +42,7 @@ export type Error = APIError | PlaybackError | HLSError | UnknownError;
 export class ErrorHandler implements ErrorHandlerInstance {
   public static readonly CONTAINER_CLASS = 'error';
 
-  public constructor(private player: Player) {}
+  public constructor(private player: PrivatePlayer) {}
 
   public clearError = () => {
     const errorContainer = this.player

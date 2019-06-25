@@ -2,6 +2,7 @@ import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { VideoFactory } from '../test-support/TestFactories';
+import { noop } from '../utils';
 import { Analytics } from './Analytics';
 
 jest.mock('../BoclipsClient/AxiosBoclipsClient');
@@ -53,8 +54,9 @@ describe('will emit a playback event on pause after a play event', () => {
     boclipsPlayer.getOptions.mockReturnValue({
       analytics: {
         metadata,
+        handleOnSegmentPlayback: noop,
       },
-    });
+    } as any);
 
     analytics = new Analytics(boclipsPlayer);
     analytics.configure(video);
@@ -78,7 +80,7 @@ describe('handleOnSegmentPlayback', () => {
       analytics: {
         handleOnSegmentPlayback: spy,
       },
-    });
+    } as any);
 
     analytics = new Analytics(boclipsPlayer);
     analytics.configure(video);

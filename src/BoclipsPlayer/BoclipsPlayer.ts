@@ -17,11 +17,16 @@ export interface Player {
   destroy: () => void;
   getPlayerId: () => string;
   getOptions: () => Partial<PlayerOptions>;
-  getContainer: () => HTMLElement;
-  getClient: () => BoclipsClient;
 }
 
-export class BoclipsPlayer implements Player {
+export interface PrivatePlayer extends Player {
+  getContainer: () => HTMLElement;
+  getClient: () => BoclipsClient;
+  getAnalytics: () => Analytics;
+  getErrorHandler: () => ErrorHandler;
+}
+
+export class BoclipsPlayer implements PrivatePlayer {
   private readonly options: PlayerOptions;
   private readonly wrapper: Wrapper;
   private readonly analytics: Analytics;
@@ -69,12 +74,7 @@ export class BoclipsPlayer implements Player {
 
     this.analytics = new Analytics(this);
 
-    this.wrapper = new this.wrapperConstructor(
-      container,
-      this.analytics,
-      this.errorHandler,
-      this.options.player,
-    );
+    this.wrapper = new this.wrapperConstructor(this);
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
     if (videoUriAttribute) {
@@ -163,6 +163,8 @@ export class BoclipsPlayer implements Player {
   public getWrapper = () => this.wrapper;
 
   public getAnalytics = () => this.analytics;
+
+  public getErrorHandler = () => this.errorHandler;
 
   public getClient = () => this.boclipsClient;
 

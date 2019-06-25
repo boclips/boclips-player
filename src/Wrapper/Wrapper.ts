@@ -1,14 +1,7 @@
-import { ErrorHandlerInstance } from '../ErrorHandler/ErrorHandler';
-import { AnalyticsInstance } from '../Events/Analytics';
+import { Player } from '..';
 import { Video } from '../types/Video';
-import { WrapperOptions } from './WrapperOptions';
 
-export type WrapperConstructor = new (
-  container: HTMLElement,
-  analytics: AnalyticsInstance,
-  errorHandler: ErrorHandlerInstance,
-  options: Partial<WrapperOptions>,
-) => Wrapper;
+export type WrapperConstructor = new (player: Player) => Wrapper;
 
 export interface Wrapper {
   play: () => Promise<void>;
