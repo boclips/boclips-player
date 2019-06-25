@@ -1,6 +1,12 @@
 import { Video } from '../types/Video';
 
 export interface ApiOptions {
+  /**
+   * This callback should return a Promise which resolves a string to be used as the users authentication token.
+   * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#overview-authentication
+   *
+   * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
+   */
   tokenFactory?: () => Promise<string>;
 }
 

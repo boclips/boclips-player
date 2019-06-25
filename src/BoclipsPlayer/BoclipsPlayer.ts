@@ -16,8 +16,6 @@ export interface Player {
   pause: () => void;
   loadVideo: (videoUri: string) => Promise<void>;
   destroy: () => void;
-  getPlayerId: () => string;
-  getOptions: () => Partial<PlayerOptions>;
 }
 
 export interface PrivatePlayer extends Player {
@@ -25,6 +23,8 @@ export interface PrivatePlayer extends Player {
   getClient: () => BoclipsApiClient;
   getAnalytics: () => Analytics;
   getErrorHandler: () => ErrorHandler;
+  getPlayerId: () => string;
+  getOptions: () => Partial<PlayerOptions>;
 }
 
 export class BoclipsPlayer implements PrivatePlayer {
