@@ -1,13 +1,11 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
-import { WrapperFactory } from '../Wrapper/WrapperFactory';
 
 export class BoclipsPlayerFactory {
   public static get(
     container: HTMLElement | string,
     options: Partial<PlayerOptions> = {},
   ): BoclipsPlayer {
-    const Wrapper = WrapperFactory.get();
     if (typeof container === 'string') {
       container = document.querySelector(container) as HTMLElement;
     }
@@ -21,7 +19,7 @@ export class BoclipsPlayerFactory {
 
     container.setAttribute('data-boclips-player-initialised', 'true');
 
-    return new BoclipsPlayer(Wrapper, container, options);
+    return new BoclipsPlayer(container, options);
   }
 
   public static getSeveral(

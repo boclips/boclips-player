@@ -5,7 +5,6 @@ import {
   BoclipsPlayer,
   PrivatePlayer,
 } from '../../BoclipsPlayer/BoclipsPlayer';
-import { MockWrapper } from '../../test-support/MockWrapper';
 import {
   PlaybackFactory,
   VideoFactory,
@@ -28,7 +27,7 @@ beforeEach(() => {
   Plyr.mockClear();
 
   container = document.createElement('div');
-  player = new BoclipsPlayer(MockWrapper, container);
+  player = new BoclipsPlayer(container);
   wrapper = new PlyrWrapper(player);
 });
 
@@ -289,7 +288,7 @@ describe('when asked to destroy', () => {
 
 describe('option configuration', () => {
   it('will pass through the control options', () => {
-    player = new BoclipsPlayer(PlyrWrapper, container, {
+    player = new BoclipsPlayer(container, {
       player: { controls: ['play-large'] },
     });
 

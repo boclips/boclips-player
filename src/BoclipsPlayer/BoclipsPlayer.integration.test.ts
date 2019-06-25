@@ -1,10 +1,7 @@
 import MockFetchVerify from '../test-support/MockFetchVerify';
-import { MockWrapper } from '../test-support/MockWrapper';
 import { VideoResourceFactory } from '../test-support/TestFactories';
-import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
-const wrapperConstructor = MockWrapper;
 let container: HTMLElement;
 let player: BoclipsPlayer;
 
@@ -12,7 +9,6 @@ beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
   player = new BoclipsPlayer(
-    wrapperConstructor as WrapperConstructor,
     container,
   );
 });

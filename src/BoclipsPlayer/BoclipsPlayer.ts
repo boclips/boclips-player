@@ -6,7 +6,8 @@ import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
-import { Wrapper, WrapperConstructor } from '../Wrapper/Wrapper';
+import { Wrapper } from '../Wrapper/Wrapper';
+import { WrapperFactory } from '../Wrapper/WrapperFactory';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 
@@ -36,15 +37,9 @@ export class BoclipsPlayer implements PrivatePlayer {
   private playerId: string = uuid();
 
   constructor(
-    private readonly wrapperConstructor: WrapperConstructor,
     private readonly container: HTMLElement,
     options: Partial<PlayerOptions> = {},
   ) {
-    if (!wrapperConstructor) {
-      throw Error(
-        `IllegalArgument: Expected a valid WrapperConstructor. Given ${wrapperConstructor}`,
-      );
-    }
     if (false === container instanceof Node) {
       throw Error(
         `IllegalArgument: Container element ${container} must be a node`,
@@ -67,7 +62,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     this.errorHandler = new ErrorHandler(this);
     this.boclipsClient = new AxiosBoclipsClient(this);
     this.analytics = new Analytics(this);
-    this.wrapper = new this.wrapperConstructor(this);
+    this.wrapper = new (WrapperFactory.get())(this);
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
     if (videoUriAttribute) {

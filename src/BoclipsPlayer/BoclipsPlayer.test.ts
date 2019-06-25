@@ -5,20 +5,19 @@ import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
 import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
-import { MockWrapper } from '../test-support/MockWrapper';
 import { VideoFactory } from '../test-support/TestFactories';
 import { Video } from '../types/Video';
-import { WrapperConstructor } from '../Wrapper/Wrapper';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
+import { WrapperFactory } from '../Wrapper/WrapperFactory';
 
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
 jest.mock('../ErrorHandler/ErrorHandler');
 jest.mock('../BoclipsClient/AxiosBoclipsClient.ts');
+jest.mock('../Wrapper/WrapperFactory.ts');
 
 describe('BoclipsPlayer', () => {
-  const wrapperConstructor = MockWrapper;
   let container: HTMLElement;
   let player: BoclipsPlayer;
   let boclipsClient: MaybeMocked<BoclipsClient>;
@@ -26,10 +25,7 @@ describe('BoclipsPlayer', () => {
   beforeEach(() => {
     container = document.createElement('div');
     document.body.appendChild(container);
-    player = new BoclipsPlayer(
-      wrapperConstructor as WrapperConstructor,
-      container,
-    );
+    player = new BoclipsPlayer(container);
     boclipsClient = mocked(AxiosBoclipsClient).mock.results[0].value;
   });
 
@@ -46,13 +42,13 @@ describe('BoclipsPlayer', () => {
   });
 
   it('Will initialise the wrapper with the player', () => {
-    expect(wrapperConstructor).toBeCalledTimes(1);
-    expect(wrapperConstructor).toHaveBeenCalledWith(player);
+    expect(WrapperFactory.get()).toBeCalledTimes(1);
+    expect(WrapperFactory.get()).toHaveBeenCalledWith(player);
   });
 
   it('Will initialise the event tracker with the player', () => {
     expect(Analytics).toBeCalledTimes(1);
-    expect(wrapperConstructor).toHaveBeenCalledWith(player);
+    expect(WrapperFactory.get()).toHaveBeenCalledWith(player);
   });
 
   it('Will auto load the video based on data attribute on container', () => {
@@ -62,7 +58,7 @@ describe('BoclipsPlayer', () => {
     autoContainer.setAttribute('data-boplayer-video-uri', uri);
     document.body.appendChild(autoContainer);
 
-    player = new BoclipsPlayer(wrapperConstructor, autoContainer);
+    player = new BoclipsPlayer(autoContainer);
 
     expect(player.getClient().retrieveVideo).toHaveBeenCalledWith(uri);
   });
@@ -89,16 +85,9 @@ describe('BoclipsPlayer', () => {
     it('Will throw an exception if the container ' + message, () => {
       expect(() => {
         // tslint:disable-next-line:no-unused-expression
-        new BoclipsPlayer(wrapperConstructor, illegalContainer);
+        new BoclipsPlayer(illegalContainer);
       }).toThrow(Error);
     });
-  });
-
-  it('Will throw an exception if the wrapperConstructor is null', () => {
-    expect(() => {
-      // tslint:disable-next-line: no-unused-expression
-      new BoclipsPlayer(null, container);
-    }).toThrow(Error);
   });
 
   it('Will retrieve details from the Playback endpoint', () => {
@@ -223,11 +212,7 @@ describe('BoclipsPlayer', () => {
         },
       };
 
-      player = new BoclipsPlayer(
-        wrapperConstructor as WrapperConstructor,
-        container,
-        options,
-      );
+      player = new BoclipsPlayer(container, options);
 
       expect(Analytics).toHaveBeenCalledWith(player);
     });

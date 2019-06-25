@@ -1,5 +1,4 @@
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { MockWrapper } from '../test-support/MockWrapper';
 import { Error, ErrorHandler } from './ErrorHandler';
 
 describe('error message handling', () => {
@@ -8,7 +7,7 @@ describe('error message handling', () => {
   let errorHandler;
   beforeEach(() => {
     container = document.createElement('section');
-    player = new BoclipsPlayer(MockWrapper, container);
+    player = new BoclipsPlayer(container);
     errorHandler = new ErrorHandler(player);
   });
 
