@@ -1,11 +1,15 @@
+import { BoclipsPlayer, Player } from '../BoclipsPlayer/BoclipsPlayer';
+import { MockWrapper } from '../test-support/MockWrapper';
 import { Error, ErrorHandler } from './ErrorHandler';
 
 describe('error message handling', () => {
-  let container;
+  let container: HTMLElement;
+  let player: Player;
   let errorHandler;
   beforeEach(() => {
     container = document.createElement('section');
-    errorHandler = new ErrorHandler(container);
+    player = new BoclipsPlayer(MockWrapper, container);
+    errorHandler = new ErrorHandler(player);
   });
 
   const testData: Array<{
@@ -67,7 +71,7 @@ describe('error message handling', () => {
     it('will render an error message ' + when, async () => {
       errorHandler.handleError(error);
 
-      expectError(container, expectTitle, expectBody);
+      expectError(expectTitle, expectBody);
     });
   });
 
@@ -103,12 +107,8 @@ describe('error message handling', () => {
     expect(errorContainers).toHaveLength(1);
   });
 
-  const expectError = (
-    containerElement: HTMLElement,
-    title: string,
-    body: string,
-  ) => {
-    const errorContainer = containerElement.querySelector('.error');
+  const expectError = (title: string, body: string) => {
+    const errorContainer = container.querySelector('.error');
     expect(errorContainer).toBeTruthy();
 
     const titleElement = errorContainer.querySelector('.title');

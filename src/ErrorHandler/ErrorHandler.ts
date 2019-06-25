@@ -1,3 +1,4 @@
+import { Player } from '..';
 import './ErrorHandler.less';
 import ErrorIcon from './ErrorIcon';
 
@@ -41,14 +42,14 @@ export type Error = APIError | PlaybackError | HLSError | UnknownError;
 export class ErrorHandler implements ErrorHandlerInstance {
   public static readonly CONTAINER_CLASS = 'error';
 
-  public constructor(private container: HTMLElement) {}
+  public constructor(private player: Player) {}
 
   public clearError = () => {
-    const errorContainer = this.container.querySelector(
-      `.${ErrorHandler.CONTAINER_CLASS}`,
-    );
+    const errorContainer = this.player
+      .getContainer()
+      .querySelector(`.${ErrorHandler.CONTAINER_CLASS}`);
     if (errorContainer) {
-      this.container.removeChild(errorContainer);
+      this.player.getContainer().removeChild(errorContainer);
     }
   };
 
@@ -108,6 +109,6 @@ export class ErrorHandler implements ErrorHandlerInstance {
     errorContainer.appendChild(text);
 
     this.clearError();
-    this.container.appendChild(errorContainer);
+    this.player.getContainer().appendChild(errorContainer);
   };
 }

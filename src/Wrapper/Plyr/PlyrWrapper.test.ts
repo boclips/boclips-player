@@ -33,7 +33,7 @@ beforeEach(() => {
   container = document.createElement('div');
   player = new BoclipsPlayer(null, null, null);
   tracker = new Analytics(new AxiosBoclipsClient(player));
-  errorHandler = new ErrorHandler(container);
+  errorHandler = new ErrorHandler(player);
   wrapper = new PlyrWrapper(container, tracker, errorHandler);
 });
 

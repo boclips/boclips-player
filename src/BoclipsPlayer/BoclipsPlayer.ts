@@ -17,6 +17,7 @@ export interface Player {
   destroy: () => void;
   getPlayerId: () => string;
   getOptions: () => Partial<PlayerOptions>;
+  getContainer: () => HTMLElement;
 }
 
 export class BoclipsPlayer implements Player {
@@ -61,7 +62,7 @@ export class BoclipsPlayer implements Player {
 
     container.classList.add('boclips-player-container');
 
-    this.errorHandler = new ErrorHandler(this.container);
+    this.errorHandler = new ErrorHandler(this);
     this.boclipsClient = new AxiosBoclipsClient(this);
 
     if (!this.options.analytics.metadata) {
