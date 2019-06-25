@@ -1,4 +1,4 @@
-import deepmerge = require('deepmerge');
+import deepmerge from 'deepmerge';
 import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
 import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
