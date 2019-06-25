@@ -68,7 +68,7 @@ describe('BoclipsPlayer', () => {
 
     player = new BoclipsPlayer(wrapperConstructor, autoContainer);
 
-    expect(player.getBoclipsClient().retrieveVideo).toHaveBeenCalledWith(uri);
+    expect(player.getClient().retrieveVideo).toHaveBeenCalledWith(uri);
   });
 
   const illegalContainers: Array<{
@@ -233,10 +233,7 @@ describe('BoclipsPlayer', () => {
         options,
       );
 
-      expect(Analytics).toHaveBeenCalledWith(
-        expect.anything(),
-        expect.objectContaining(options.analytics),
-      );
+      expect(Analytics).toHaveBeenCalledWith(player);
     });
 
     it('passes down wrapper options', () => {

@@ -1,21 +1,20 @@
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
-import { AxiosBoclipsClient } from '../BoclipsClient/AxiosBoclipsClient';
-import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
+import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { VideoFactory } from '../test-support/TestFactories';
 import { Analytics } from './Analytics';
-import { AnalyticsOptions } from './AnalyticsOptions';
 
 jest.mock('../BoclipsClient/AxiosBoclipsClient');
+jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
 let analytics: Analytics;
 const video = VideoFactory.sample();
 
-let boclipsClient: MaybeMocked<BoclipsClient>;
+let boclipsPlayer: MaybeMocked<BoclipsPlayer>;
 
 beforeEach(() => {
-  boclipsClient = mocked(new AxiosBoclipsClient());
-  analytics = new Analytics(boclipsClient);
+  boclipsPlayer = mocked(new BoclipsPlayer(null, null));
+  analytics = new Analytics(boclipsPlayer);
   analytics.configure(video);
 });
 
@@ -28,7 +27,7 @@ it('can handle play events', () => {
 it('does nothing on pause events before a play event', () => {
   analytics.handlePause(20);
 
-  expect(boclipsClient.emitPlaybackEvent).not.toHaveBeenCalled();
+  expect(boclipsPlayer.getClient().emitPlaybackEvent).not.toHaveBeenCalled();
 });
 
 describe('will emit a playback event on pause after a play event', () => {
@@ -38,40 +37,50 @@ describe('will emit a playback event on pause after a play event', () => {
     analytics.handlePlay(5);
     analytics.handlePause(20);
 
-    expect(boclipsClient.emitPlaybackEvent).toHaveBeenCalled();
+    expect(boclipsPlayer.getClient().emitPlaybackEvent).toHaveBeenCalled();
 
-    const call = boclipsClient.emitPlaybackEvent.mock.calls[0];
+    const call = mocked(boclipsPlayer.getClient().emitPlaybackEvent).mock
+      .calls[0];
     expect(call).toEqual([video, 5, 20, {}]);
   });
 
   it('will pass through the metadata to the endpoint', () => {
-    const options: Partial<AnalyticsOptions> = {
-      metadata: {
-        testing: '123',
-        someId: 'abc',
-      },
+    const metadata = {
+      testing: '123',
+      someId: 'abc',
     };
-    analytics = new Analytics(boclipsClient, options);
+
+    boclipsPlayer.getOptions.mockReturnValue({
+      analytics: {
+        metadata,
+      },
+    });
+
+    analytics = new Analytics(boclipsPlayer);
     analytics.configure(video);
 
     analytics.handlePlay(10);
     analytics.handlePause(25);
 
-    expect(boclipsClient.emitPlaybackEvent).toHaveBeenCalled();
+    expect(boclipsPlayer.getClient().emitPlaybackEvent).toHaveBeenCalled();
 
-    const call = boclipsClient.emitPlaybackEvent.mock.calls[0];
-    expect(call).toEqual([video, 10, 25, options.metadata]);
+    const call = mocked(boclipsPlayer.getClient().emitPlaybackEvent).mock
+      .calls[0];
+    expect(call).toEqual([video, 10, 25, metadata]);
   });
 });
 
 describe('handleOnSegmentPlayback', () => {
   it('does emit an event to the callback', () => {
     const spy = jest.fn();
-    const options: Partial<AnalyticsOptions> = {
-      handleOnSegmentPlayback: spy,
-    };
 
-    analytics = new Analytics(new AxiosBoclipsClient(), options);
+    boclipsPlayer.getOptions.mockReturnValue({
+      analytics: {
+        handleOnSegmentPlayback: spy,
+      },
+    });
+
+    analytics = new Analytics(boclipsPlayer);
     analytics.configure(video);
 
     analytics.handlePlay(15);

@@ -18,6 +18,7 @@ export interface Player {
   getPlayerId: () => string;
   getOptions: () => Partial<PlayerOptions>;
   getContainer: () => HTMLElement;
+  getClient: () => BoclipsClient;
 }
 
 export class BoclipsPlayer implements Player {
@@ -69,7 +70,7 @@ export class BoclipsPlayer implements Player {
       this.options.analytics.metadata = {};
     }
     this.options.analytics.metadata.playerId = this.playerId;
-    this.analytics = new Analytics(this.boclipsClient, this.options.analytics);
+    this.analytics = new Analytics(this);
 
     this.wrapper = new this.wrapperConstructor(
       container,
@@ -166,7 +167,7 @@ export class BoclipsPlayer implements Player {
 
   public getAnalytics = () => this.analytics;
 
-  public getBoclipsClient = () => this.boclipsClient;
+  public getClient = () => this.boclipsClient;
 
   public getVideo = (): Video => this.video;
 

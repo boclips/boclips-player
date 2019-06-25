@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
-import { BoclipsClient } from '../BoclipsClient/BoclipsClient';
+import { Player } from '..';
 import { Video } from '../types/Video';
-import { AnalyticsOptions, defaultOptions } from './AnalyticsOptions';
+import { defaultOptions } from './AnalyticsOptions';
 
 export interface AnalyticsInstance {
   configure: (video: Video) => void;
@@ -11,18 +11,13 @@ export interface AnalyticsInstance {
 }
 
 export class Analytics implements AnalyticsInstance {
-  private readonly boclipsClient: BoclipsClient;
   private video: Video;
   private segmentPlaybackStartTime: number = -1;
-  private options: AnalyticsOptions;
 
-  constructor(
-    boclipsClient: BoclipsClient,
-    options: Partial<AnalyticsOptions> = {},
-  ) {
-    this.boclipsClient = boclipsClient;
-    this.options = deepmerge(defaultOptions, options);
-  }
+  constructor(private player: Player) {}
+
+  private getOptions = () =>
+    deepmerge(defaultOptions, this.player.getOptions().analytics);
 
   public configure = (video: Video) => {
     this.video = video;
@@ -46,13 +41,10 @@ export class Analytics implements AnalyticsInstance {
 
   private emitPlaybackEvent = (start: number, end: number) => {
     // noinspection JSIgnoredPromiseFromCall
-    this.boclipsClient.emitPlaybackEvent(
-      this.video,
-      start,
-      end,
-      this.options.metadata,
-    );
+    this.player
+      .getClient()
+      .emitPlaybackEvent(this.video, start, end, this.getOptions().metadata);
 
-    this.options.handleOnSegmentPlayback(this.video, start, end);
+    this.getOptions().handleOnSegmentPlayback(this.video, start, end);
   };
 }
