@@ -15,13 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```typescript
   options.analytics.handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
   ```
-
+- Added several functions to public Player API
+  ```typescript
+  destroy: () => void;
+  getPlayerId: () => string;
+  getOptions: () => Partial<PlayerOptions>;
+  ```
 ### Changed
-- Significant refactor of API calls into BoclipsClient module
-- BREAKING: Change to signature of callback function `handleOnPlayback` to simplify code paths 
+- Significant refactor of several internal modules
   
 ### Removed
-- Removed `options.analytics.handleOnPlayback` - replaced with `options.analytics.handleOnSegmentPlayback`
+- *BREAKING:* Removed `options.analytics.handleOnPlayback` - replaced with `options.analytics.handleOnSegmentPlayback`
 
 ### Fixed
 - Minor documentation fixes
