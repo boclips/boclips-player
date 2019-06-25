@@ -15,7 +15,7 @@ export const BoclipsPlayer = jest
         loadVideo: jest.fn(),
         pause: jest.fn(),
         play: jest.fn(),
-        getPlayerId: jest.fn(),
+        getPlayerId: jest.fn().mockReturnValue('player-id'),
         getOptions: jest.fn().mockReturnValue(options),
         getContainer: jest.fn().mockReturnValue(container),
         getClient: null,

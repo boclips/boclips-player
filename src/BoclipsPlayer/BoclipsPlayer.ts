@@ -62,18 +62,11 @@ export class BoclipsPlayer implements PrivatePlayer {
 
     container.classList.add('boclips-player-container');
 
-    this.errorHandler = new ErrorHandler(this);
-    this.boclipsClient = new AxiosBoclipsClient(this);
-
     this.options = deepmerge(defaultOptions, options);
 
-    if (!this.options.analytics.metadata) {
-      this.options.analytics.metadata = {};
-    }
-    this.options.analytics.metadata.playerId = this.playerId;
-
+    this.errorHandler = new ErrorHandler(this);
+    this.boclipsClient = new AxiosBoclipsClient(this);
     this.analytics = new Analytics(this);
-
     this.wrapper = new this.wrapperConstructor(this);
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');

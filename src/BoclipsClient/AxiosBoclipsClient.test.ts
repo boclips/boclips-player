@@ -93,8 +93,8 @@ describe('Creating a playback event', () => {
       segmentStartSeconds: 15,
       segmentEndSeconds: 30,
       captureTime: expect.anything(),
-      videoDurationSeconds: expect.anything(),
-      // playerId: expect.anything(),
+      videoDurationSeconds: 60,
+      playerId: 'player-id',
     };
 
     return boclipsClient.emitPlaybackEvent(video, 15, 30).then(() => {
@@ -102,7 +102,7 @@ describe('Creating a playback event', () => {
       expect(requests).toHaveLength(1);
 
       const request = requests[0];
-      expect(JSON.parse(request.data)).toMatchObject(expectedEvent);
+      expect(JSON.parse(request.data)).toEqual(expectedEvent);
     });
   });
 
