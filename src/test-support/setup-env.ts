@@ -1,5 +1,4 @@
-// @ts-ignore
-window.TextTrack = jest.fn();
+(window as any).TextTrack = jest.fn();
 
 Object.defineProperty(HTMLElement.prototype, 'insertAdjacentElement', {
   configurable: true,

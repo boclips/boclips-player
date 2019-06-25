@@ -18,12 +18,12 @@ jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient.ts');
 jest.mock('../Wrapper/WrapperFactory.ts');
 
 describe('BoclipsPlayer', () => {
-  let container: HTMLElement;
+  let container: HTMLElement & { __jsdomMockClientHeight: number };
   let player: BoclipsPlayer;
   let boclipsClient: MaybeMocked<BoclipsApiClient>;
 
   beforeEach(() => {
-    container = document.createElement('div');
+    container = document.createElement('div') as any;
     document.body.appendChild(container);
     player = new BoclipsPlayer(container);
     boclipsClient = mocked(AxiosBoclipsApiClient).mock.results[0].value;
@@ -270,19 +270,16 @@ describe('BoclipsPlayer', () => {
     it('sets the fontsize to be 4% of the height', () => {
       const callback = mocked(addListener).mock.calls[0][1];
 
-      // @ts-ignore
       container.__jsdomMockClientHeight = 10;
       callback();
 
       expect(container.style.fontSize).toEqual(12 + 'px');
 
-      // @ts-ignore
       container.__jsdomMockClientHeight = 700;
       callback();
 
       expect(container.style.fontSize).toEqual(700 * 0.04 + 'px');
 
-      // @ts-ignore
       container.__jsdomMockClientHeight = 1200;
       callback();
 

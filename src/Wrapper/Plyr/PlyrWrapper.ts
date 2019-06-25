@@ -18,7 +18,6 @@ export default class PlyrWrapper implements Wrapper {
   private hls = null;
   private hasBeenDestroyed: boolean = false;
 
-  // @ts-ignore
   constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
 

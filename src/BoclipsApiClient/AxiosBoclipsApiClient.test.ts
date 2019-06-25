@@ -17,8 +17,7 @@ let player: MaybeMocked<PrivatePlayer>;
 let boclipsClient: AxiosBoclipsApiClient;
 
 beforeEach(() => {
-  // @ts-ignore
-  player = mocked(new BoclipsPlayer());
+  player = mocked(new BoclipsPlayer(null));
   boclipsClient = new AxiosBoclipsApiClient(player);
 });
 
