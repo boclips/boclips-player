@@ -176,6 +176,62 @@ interface AnalyticsOptions {
 }
 ----
 
+[[authentication]]
+== Authentication
+
+The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
+
+The Player allows the users token to be passed in as a `Promise<string>` in order to generate a valid token
+for the user at the time that the player calls to the API. This is important as tokens do expire, it is your
+responsibility to ensure that the token that is returned by `options.boclips.tokenFactory` is a valid token --
+failure to do so may result in a poor experience for the user.
+
+An example tokenFactory, using `boclips-js-security@2.0.1`:
+```typescript
+import { authenticate } from 'boclips-js-security';
+import { isAuthenticated } from 'boclips-js-security/dist/src/authenticate';
+import getGlobalKeycloak from 'boclips-js-security/dist/src/helpers/getGlobalKeycloak';
+
+authenticate({
+  onLogin: () => {
+    console.log('Successfully authenticated');
+    renderPlayer();
+  },
+  realm: 'boclips',
+  clientId: 'teachers',
+  mode: 'login-required',
+  authEndpoint: 'https://login.staging-boclips.com/auth',
+});
+
+function tokenFactory() {
+  return new Promise<string>(resolve => {
+    return getGlobalKeycloak()
+      .updateToken(5)
+      .success(() => {
+        if (isAuthenticated()) {
+          resolve(getGlobalKeycloak().token);
+        } else {
+          throw new Error('Oh no - not authenticated!');
+        }
+      })
+      .error(() => {
+        throw new Error('Fatal authentication error occurred.');
+      });
+  });
+
+function renderPlayer() {
+  const player = PlayerFactory.get(playerContainer, {
+    boclips: { tokenFactory },
+  });
+};
+```
+
+[WARNING]
+====
+`options.boclips.tokenFactory` is currently optional. In the v3.0.0 it will become mandatory.
+====
+
+
 [[analytics]]
 == Analytics
 
