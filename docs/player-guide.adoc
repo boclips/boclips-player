@@ -121,8 +121,8 @@ interface Player {
 
 interface PlayerOptions {
     analytics: Partial<AnalyticsOptions>;
-    api: Partial<BoclipsOptions>;
-    player: Partial<WrapperOptions>;
+    api: Partial<ApiOptions>;
+    interface: Partial<InterfaceOptions>;
 }
 ----
 
@@ -134,7 +134,7 @@ The various modules within the player accept optional parameters to drive the be
 
 [source,typescript]
 ----
-interface WrapperOptions {
+interface InterfaceOptions {
     controls: Controls[];
 }
 
@@ -161,8 +161,14 @@ type Controls =
 
 [source,typescript]
 ----
-interface BoclipsOptions {
-    tokenFactory?: () => string;
+interface ApiOptions {
+    /**
+     * This callback should return a Promise which resolves a string to be used as the users authentication token.
+     * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#overview-authentication
+     *
+     * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
+     */
+    tokenFactory?: () => Promise<string>;
 }
 ----
 
@@ -228,7 +234,7 @@ function renderPlayer() {
 
 [WARNING]
 ====
-`options.api.tokenFactory` is currently optional. In the v3.0.0 it will become mandatory.
+`options.api.tokenFactory` is currently optional. In v3.0.0 it will become mandatory.
 ====
 
 

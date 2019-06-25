@@ -214,5 +214,5 @@ export default class PlyrWrapper implements Wrapper {
     this.installPlyrEventListeners();
   };
 
-  private getOptions = () => this.player.getOptions().player;
+  private getOptions = () => this.player.getOptions().interface;
 }

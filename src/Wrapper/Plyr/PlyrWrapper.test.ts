@@ -289,7 +289,7 @@ describe('when asked to destroy', () => {
 describe('option configuration', () => {
   it('will pass through the control options', () => {
     player = new BoclipsPlayer(container, {
-      player: { controls: ['play-large'] },
+      interface: { controls: ['play-large'] },
     });
 
     wrapper = new PlyrWrapper(player);

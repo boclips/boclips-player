@@ -7,18 +7,18 @@ import {
   defaultAnalyticsOptions,
 } from '../Events/AnalyticsOptions';
 import {
-  defaultWrapperOptions,
-  WrapperOptions,
-} from '../Wrapper/WrapperOptions';
+  defaultInterfaceOptions,
+  InterfaceOptions,
+} from '../Wrapper/InterfaceOptions';
 
 export interface PlayerOptions {
   analytics: Partial<AnalyticsOptions>;
   api: Partial<ApiOptions>;
-  player: Partial<WrapperOptions>;
+  interface: Partial<InterfaceOptions>;
 }
 
 export const defaultOptions: PlayerOptions = Object.freeze({
   analytics: defaultAnalyticsOptions,
   api: defaultApiOptions,
-  player: defaultWrapperOptions,
+  interface: defaultInterfaceOptions,
 });

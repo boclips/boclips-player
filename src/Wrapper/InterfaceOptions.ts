@@ -16,11 +16,11 @@ type Controls =
   | 'download'
   | 'fullscreen';
 
-export interface WrapperOptions {
+export interface InterfaceOptions {
   controls: Controls[];
 }
 
-export const defaultWrapperOptions: WrapperOptions = {
+export const defaultInterfaceOptions: InterfaceOptions = {
   controls: [
     'play-large',
     'play',

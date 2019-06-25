@@ -23,6 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```
 ### Changed
 - Significant refactor of several internal modules
+- *BREAKING:* `options.player` has been replaced by `options.interface`
   
 ### Removed
 - *BREAKING:* Removed `options.analytics.handleOnPlayback` - replaced with `options.analytics.handleOnSegmentPlayback`
