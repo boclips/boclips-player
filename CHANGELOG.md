@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.0.0] - 2019-06-25
+
 ### Added
 - Added an option to pass an authenticated bearer token to the API
   ```typescript
@@ -21,10 +23,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```
 ### Changed
 - Significant refactor of several internal modules
-- *BREAKING:* `options.player` has been replaced by `options.interface`
+- *BREAKING:* [`options.player` renamed to `options.interface`](./UPGRADING.md#optionsplayer-renamed-to-optionsinterface)
+- *BREAKING:* [Internal Axios Instance](./UPGRADING.md#internal-axios-instance) - API calls will use an internal axios instance. Any external interceptors will have no affect on API
+calls made by the player.
   
 ### Removed
-- *BREAKING:* Removed `options.analytics.handleOnPlayback` - replaced with `options.analytics.handleOnSegmentPlayback`
+- *BREAKING:* [Removed `options.analytics.handleOnPlayback`](./UPGRADING.md#removed-optionsanalyticshandleonplayback) - replaced with `options.analytics.handleOnSegmentPlayback`
 
 ### Fixed
 - Minor documentation fixes
