@@ -9,7 +9,6 @@ fly --target ci \
     --pipeline boclips-player \
     --config "$cwd/pipeline.yml" \
     --var boclips-player-repo-key="$(lpass show concourse-boclips-player-repo-key --notes)" \
-    --var versions-repo-key="$(lpass show concourse-versions-repo-key --notes)" \
     --var npm-username="$(lpass show npmjs --username)" \
     --var npm-password="$(lpass show npmjs --password)" \
     --var github-access-token="$(lpass show boclips-player-github-access-token --notes)" \
