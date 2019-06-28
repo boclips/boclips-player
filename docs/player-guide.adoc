@@ -234,7 +234,7 @@ function renderPlayer() {
 
 [WARNING]
 ====
-`options.api.tokenFactory` is currently optional. In v3.0.0 it will become mandatory.
+`options.api.tokenFactory` is currently optional, however in a future release it will become mandatory.
 ====
 
 
