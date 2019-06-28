@@ -11,8 +11,6 @@ import { Video } from '../../types/Video';
 import { Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
 
-jest.mock('../../BoclipsPlayer/BoclipsPlayer');
-
 export default class PlyrWrapper implements Wrapper {
   private plyr;
   private hls = null;
