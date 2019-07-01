@@ -155,21 +155,41 @@ describe('BoclipsPlayer', () => {
     expect(calls).toHaveLength(2);
   });
 
-  it('Will configure the wrapper with the video', () => {
+  describe('Configuring the wrapper with a video', () => {
     const uri = '/v1/videos/177';
 
     const video = VideoFactory.sample();
 
-    boclipsClient.retrieveVideo.mockReturnValue(
-      new Promise(resolve => resolve(video)),
-    );
+    beforeEach(() => {
+      boclipsClient.retrieveVideo.mockReturnValue(
+        new Promise(resolve => resolve(video)),
+      );
+    });
 
-    return player.loadVideo(uri).then(() => {
-      const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
-      expect(calls).toHaveLength(1);
-      const actualVideo = calls[0][0] as Video;
-      expect(actualVideo).toBeTruthy();
-      expect(actualVideo).toEqual(video);
+    it('Will configure the wrapper with the video', () => {
+      return player.loadVideo(uri).then(() => {
+        const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+        expect(calls).toHaveLength(1);
+        const actualVideo = calls[0][0] as Video;
+        expect(actualVideo).toBeTruthy();
+        expect(actualVideo).toEqual(video);
+      });
+    });
+
+    it('Will configure the wrapper with a video and soft playback restriction', () => {
+      const playbackSegment: PlaybackSegment = {
+        start: 10,
+        end: 30,
+      };
+      return player.loadVideo(uri, playbackSegment).then(() => {
+        const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+        expect(calls).toHaveLength(1);
+        const actualVideo = calls[0][0] as Video;
+        expect(actualVideo).toBeTruthy();
+        expect(actualVideo).toEqual(video);
+        const actualSegment = calls[0][1];
+        expect(actualSegment).toEqual(playbackSegment);
+      });
     });
   });
 

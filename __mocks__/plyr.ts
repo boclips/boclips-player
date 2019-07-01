@@ -17,6 +17,10 @@ function on(event, callback) {
   callbacksMap[event].push(callback);
 }
 
+function __destroy() {
+  Object.keys(callbacksMap).forEach(key => delete callbacksMap[key]);
+}
+
 const media = {
   addEventListener: jest.fn(),
 };
@@ -25,5 +29,6 @@ Plyr.prototype.on = on;
 Plyr.prototype.__callEventCallback = __callEventCallback;
 Plyr.prototype.media = media;
 Plyr.prototype.play = jest.fn().mockReturnValue(new Promise(noop));
+Plyr.prototype.destroy = __destroy;
 
 module.exports = Plyr;

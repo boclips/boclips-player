@@ -6,7 +6,7 @@ import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { Video } from '../types/Video';
-import { Wrapper } from '../Wrapper/Wrapper';
+import { PlaybackSegment, Wrapper } from '../Wrapper/Wrapper';
 import { WrapperFactory } from '../Wrapper/WrapperFactory';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
@@ -14,7 +14,7 @@ import { defaultOptions, PlayerOptions } from './PlayerOptions';
 export interface Player {
   play: () => Promise<any>;
   pause: () => void;
-  loadVideo: (videoUri: string) => Promise<void>;
+  loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
   destroy: () => void;
 }
 
@@ -93,7 +93,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     }
   };
 
-  public loadVideo = async (videoUri: string) => {
+  public loadVideo = async (videoUri: string, segment?: PlaybackSegment) => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
       return;
     }
@@ -107,7 +107,7 @@ export class BoclipsPlayer implements PrivatePlayer {
 
         this.video = video;
         this.analytics.configure(video);
-        this.wrapper.configureWithVideo(video);
+        this.wrapper.configureWithVideo(video, segment);
       })
       .catch(error => {
         if (this.errorHandler.isDefinedError(error)) {

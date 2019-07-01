@@ -8,7 +8,7 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { Wrapper } from '../Wrapper';
+import { PlaybackSegment, Wrapper } from '../Wrapper';
 import './PlyrWrapper.less';
 
 export default class PlyrWrapper implements Wrapper {
@@ -29,7 +29,10 @@ export default class PlyrWrapper implements Wrapper {
     }
   }
 
-  private createStreamPlyr = (playback?: StreamPlayback) => {
+  private createStreamPlyr = (
+    playback?: StreamPlayback,
+    segmentStart: number = -1,
+  ) => {
     this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('video');
@@ -46,14 +49,21 @@ export default class PlyrWrapper implements Wrapper {
 
     this.resetPlyrInstance(media, playback);
 
-    if (playback && Hls.isSupported()) {
+    if (!playback) {
+      return;
+    }
+
+    if (Hls.isSupported()) {
       this.hls = new Hls({
         debug: process.env.NODE_ENV !== 'production',
         autoStartLoad: false,
+        startPosition: segmentStart,
       });
+
       this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
         this.hls.loadSource(playback.streamUrl);
       });
+
       this.hls.on(Hls.Events.ERROR, (_, data) => {
         this.player.getErrorHandler().handleError({
           fatal: data.fatal,
@@ -61,17 +71,37 @@ export default class PlyrWrapper implements Wrapper {
           payload: data,
         });
       });
+
       this.hls.attachMedia(this.plyr.media);
+
+      this.plyr.on('play', () => {
+        if (!this.hasBeenDestroyed && this.hls) {
+          this.hls.startLoad(this.plyr.currentTime);
+        }
+      });
     }
   };
 
-  private createYoutubePlyr = (playback: YoutubePlayback) => {
+  private createYoutubePlyr = (
+    playback: YoutubePlayback,
+    segmentStart?: number,
+  ) => {
     this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('div');
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('data-plyr-provider', 'youtube');
     media.setAttribute('data-plyr-embed-id', playback.id);
+    if (segmentStart) {
+      media.setAttribute(
+        'data-plyr-config',
+        JSON.stringify({
+          youtube: {
+            start: segmentStart,
+          },
+        }),
+      );
+    }
 
     this.player.getContainer().appendChild(media);
 
@@ -79,12 +109,6 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   private installPlyrEventListeners() {
-    this.plyr.on('play', () => {
-      if (!this.hasBeenDestroyed && this.hls) {
-        this.hls.startLoad();
-      }
-    });
-
     this.plyr.on('enterfullscreen', () => {
       this.handleEnterFullscreen();
     });
@@ -121,7 +145,10 @@ export default class PlyrWrapper implements Wrapper {
     });
   }
 
-  public configureWithVideo = ({ playback }: Video) => {
+  public configureWithVideo = (
+    { playback }: Video,
+    segment?: PlaybackSegment,
+  ) => {
     if (this.hasBeenDestroyed) {
       return;
     }
@@ -131,9 +158,27 @@ export default class PlyrWrapper implements Wrapper {
     }
 
     if (isStreamPlayback(playback)) {
-      this.createStreamPlyr(playback);
+      this.createStreamPlyr(playback, segment && segment.start);
     } else {
-      this.createYoutubePlyr(playback);
+      this.createYoutubePlyr(playback, segment && segment.start);
+    }
+
+    if (segment) {
+      const segmentStart = segment.start || 0;
+
+      if (segment.start) {
+        this.plyr.currentTime = segmentStart;
+      }
+
+      if (segment.end) {
+        const segmentEnd = Math.max(segment.end, segmentStart + 10);
+        // const segmentEnd = segment.end;
+        this.plyr.on('timeupdate', () => {
+          if (this.plyr.currentTime >= segmentEnd) {
+            this.plyr.pause();
+          }
+        });
+      }
     }
   };
 
@@ -154,7 +199,7 @@ export default class PlyrWrapper implements Wrapper {
 
     if (maybePromise) {
       return maybePromise.catch(error => {
-        console.log('Unable to Play.', error);
+        console.error('Unable to Play.', error, JSON.stringify(error));
       });
     }
 

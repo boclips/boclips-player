@@ -98,6 +98,56 @@ describe('When a new video is configured', () => {
       const hlsMockInstance = Hls.mock.instances[0];
       expect(hlsMockInstance.destroy).toHaveBeenCalled();
     });
+
+    describe('with a playback segment', () => {
+      beforeEach(() => {
+        Hls.mockClear();
+        Plyr.mockClear();
+        Hls.isSupported.mockReturnValue(true);
+      });
+      it('does not restrict HLS load when there is no start time', () => {
+        const segment = {
+          end: 60,
+        };
+
+        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+
+        expect(Hls).toHaveBeenCalledWith(
+          expect.objectContaining({
+            autoStartLoad: false,
+            startPosition: -1,
+          }),
+        );
+
+        const plyrInstance = Plyr.mock.instances[0];
+        plyrInstance.__callEventCallback('play');
+
+        const hlsMockInstance = Hls.mock.instances[0];
+        expect(hlsMockInstance.startLoad).toHaveBeenCalled();
+      });
+
+      it('restricts the initial HLS load when a playback segment is provided', () => {
+        const segment = {
+          start: 30,
+          end: 60,
+        };
+
+        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+
+        expect(Hls).toHaveBeenCalledWith(
+          expect.objectContaining({
+            autoStartLoad: false,
+            startPosition: segment.start,
+          }),
+        );
+
+        const plyrInstance = Plyr.mock.instances[0];
+        plyrInstance.__callEventCallback('play');
+
+        const hlsMockInstance = Hls.mock.instances[0];
+        expect(hlsMockInstance.startLoad).toHaveBeenCalledWith(segment.start);
+      });
+    });
   });
 
   describe('When Hls is not supported with STREAM', () => {
@@ -133,6 +183,103 @@ describe('When a new video is configured', () => {
     });
   });
 });
+
+const testData = [
+  { type: 'stream', segmentedVideo: VideoFactory.sample() },
+  {
+    type: 'youtube',
+    segmentedVideo: VideoFactory.sample(PlaybackFactory.youtubeSample()),
+  },
+];
+
+testData.forEach(({ type, segmentedVideo }) =>
+  describe('segment playback restriction for ' + type, () => {
+    beforeEach(() => {
+      Hls.mockClear();
+      Plyr.mockClear();
+      Hls.isSupported.mockReturnValue(true);
+    });
+
+    it(type + ' should start playback at the beginning of the segment', () => {
+      const segment = {
+        start: 30,
+      };
+
+      wrapper.configureWithVideo(segmentedVideo, segment);
+
+      const plyrInstance = Plyr.mock.instances[0];
+      expect(plyrInstance.currentTime).toEqual(segment.start);
+    });
+
+    it(type + ' should pause playback at the end of the segment', () => {
+      const segment = {
+        end: 60,
+      };
+
+      wrapper.configureWithVideo(segmentedVideo, segment);
+
+      const plyrInstance = Plyr.mock.instances[0];
+      plyrInstance.currentTime = 60;
+      plyrInstance.__callEventCallback('timeupdate');
+
+      expect(plyrInstance.pause).toHaveBeenCalled();
+    });
+
+    it(
+      type +
+        ' should not auto pause less than 10 seconds after the segment start',
+      () => {
+        const segment = {
+          start: 30,
+          end: 35,
+        };
+
+        wrapper.configureWithVideo(segmentedVideo, segment);
+
+        const plyrInstance = Plyr.mock.instances[0];
+        plyrInstance.currentTime = 35;
+        plyrInstance.__callEventCallback('timeupdate');
+
+        expect(plyrInstance.pause).not.toHaveBeenCalled();
+
+        plyrInstance.currentTime = 40;
+        plyrInstance.__callEventCallback('timeupdate');
+
+        expect(plyrInstance.pause).toHaveBeenCalled();
+      },
+    );
+
+    it(type + ' should not apply segment limits when video is changed', () => {
+      const segment = {
+        start: 30,
+        end: 60,
+      };
+
+      wrapper.configureWithVideo(segmentedVideo, segment);
+
+      let plyrInstance = Plyr.mock.instances[0];
+      expect(plyrInstance.currentTime).toEqual(30);
+
+      plyrInstance.currentTime = 60;
+      plyrInstance.__callEventCallback('timeupdate');
+
+      expect(plyrInstance.pause).toHaveBeenCalledTimes(1);
+
+      wrapper.configureWithVideo(
+        VideoFactory.sample(PlaybackFactory.youtubeSample()),
+      );
+
+      plyrInstance = Plyr.mock.instances[1];
+
+      expect(plyrInstance.currentTime).toBeUndefined();
+
+      plyrInstance.currentTime = 60;
+      plyrInstance.__callEventCallback('timeupdate');
+
+      expect(plyrInstance.pause).not.toHaveBeenCalled();
+    });
+  }),
+);
 
 it('Will play', () => {
   wrapper.configureWithVideo(video);

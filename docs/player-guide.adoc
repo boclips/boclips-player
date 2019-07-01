@@ -113,7 +113,7 @@ interface PlayerFactory {
 interface Player {
     play: () => Promise<void>;
     pause: () => void;
-    loadVideo: (videoUri: string) => void;
+    loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
     destroy: () => void;
     getPlayerId: () => string;
     getOptions: () => Partial<PlayerOptions>;

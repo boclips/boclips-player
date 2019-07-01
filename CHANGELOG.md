@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Segmented playback for videos, auto starting and pausing at the time specified
+  ```typescript
+  loadVideo: (videoUri: string, segment: PlaybackSegment) => Promise<void>;
+  ```
+
 ## [2.0.0] - 2019-06-25
 
 ### Added
