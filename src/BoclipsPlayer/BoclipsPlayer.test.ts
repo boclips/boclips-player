@@ -7,9 +7,10 @@ import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { VideoFactory } from '../test-support/TestFactories';
 import { Video } from '../types/Video';
+import { PlaybackSegment } from '../Wrapper/Wrapper';
+import { WrapperFactory } from '../Wrapper/WrapperFactory';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
-import { WrapperFactory } from '../Wrapper/WrapperFactory';
 
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');

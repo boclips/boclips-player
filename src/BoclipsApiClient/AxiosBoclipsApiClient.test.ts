@@ -174,7 +174,7 @@ describe('With authorisation', () => {
     });
   });
 
-  it('Will fail gracefully if a token factory throws an exception', (done) => {
+  it('Will fail gracefully if a token factory throws an exception', done => {
     const uri = '/v1/videos/177';
 
     const videoResource = VideoResourceFactory.youtubeSample();

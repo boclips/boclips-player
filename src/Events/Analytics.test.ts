@@ -14,7 +14,7 @@ const video = VideoFactory.sample();
 let boclipsPlayer: MaybeMocked<BoclipsPlayer>;
 
 beforeEach(() => {
-  boclipsPlayer = mocked(new BoclipsPlayer( null));
+  boclipsPlayer = mocked(new BoclipsPlayer(null));
   analytics = new Analytics(boclipsPlayer);
   analytics.configure(video);
 });

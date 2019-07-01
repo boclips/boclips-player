@@ -8,9 +8,7 @@ let player: BoclipsPlayer;
 beforeEach(() => {
   container = document.createElement('div');
   document.body.appendChild(container);
-  player = new BoclipsPlayer(
-    container,
-  );
+  player = new BoclipsPlayer(container);
 });
 
 it('remove an error when reloading a good video', async () => {

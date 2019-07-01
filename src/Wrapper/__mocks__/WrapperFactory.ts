@@ -1,5 +1,5 @@
-import { Wrapper } from '../Wrapper';
 import { noop } from '../../utils';
+import { Wrapper } from '../Wrapper';
 
 export const MockWrapper = jest.fn<Wrapper, any>().mockImplementation(
   (): Wrapper => {

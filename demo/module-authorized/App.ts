@@ -22,17 +22,17 @@ authenticate({
 function tokenFactory() {
   return new Promise<string>(resolve => {
     return getGlobalKeycloak()
-        .updateToken(5)
-        .success(() => {
-          if (isAuthenticated()) {
-            resolve(getGlobalKeycloak().token);
-          } else {
-            throw new Error('Oh no - not authenticated!');
-          }
-        })
-        .error(() => {
-          throw new Error('Fatal authentication error occurred.');
-        });
+      .updateToken(5)
+      .success(() => {
+        if (isAuthenticated()) {
+          resolve(getGlobalKeycloak().token);
+        } else {
+          throw new Error('Oh no - not authenticated!');
+        }
+      })
+      .error(() => {
+        throw new Error('Fatal authentication error occurred.');
+      });
   });
 }
 
