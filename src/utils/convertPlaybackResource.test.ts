@@ -20,6 +20,9 @@ it('Can map the response to a StreamPlayback object', () => {
   expect(playback.links.createPlaybackEvent.getOriginalLink()).toEqual(
     'create/playback/event',
   );
+  expect(
+    playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
+  ).toEqual('create/interaction/event');
 });
 
 it('Can map the response to a YoutubePlayback object', () => {
@@ -34,6 +37,9 @@ it('Can map the response to a YoutubePlayback object', () => {
   expect(playback.links.createPlaybackEvent.getOriginalLink()).toEqual(
     'create/playback/event',
   );
+  expect(
+    playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
+  ).toEqual('create/interaction/event');
 });
 
 it('will throw an exception if the type is not YOUTUBE or STREAM', () => {

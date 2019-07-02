@@ -14,13 +14,13 @@ const convertPlaybackResource = (
     id: rawPlayback.id,
     thumbnailUrl: rawPlayback.thumbnailUrl,
     duration: toSeconds(parse(rawPlayback.duration)),
-    links: {},
+    links: {
+      createPlaybackEvent: new Link(rawPlayback._links.createPlaybackEvent),
+      createPlayerInteractedWithEvent: new Link(
+        rawPlayback._links.createPlayerInteractedWithEvent,
+      ),
+    },
   };
-  if (rawPlayback._links) {
-    playback.links.createPlaybackEvent = new Link(
-      rawPlayback._links.createPlaybackEvent,
-    );
-  }
 
   if (rawPlayback.type === 'STREAM') {
     (playback as StreamPlayback).streamUrl = rawPlayback.streamUrl;
