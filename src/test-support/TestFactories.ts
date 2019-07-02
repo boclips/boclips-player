@@ -12,6 +12,9 @@ export class PlaybackFactory {
       createPlaybackEvent: new Link({
         href: 'create/playback/event',
       }),
+      createPlayerInteractedWithEvent: new Link({
+        href: 'create/interaction/event',
+      }),
     },
   });
 
@@ -23,6 +26,9 @@ export class PlaybackFactory {
     links: {
       createPlaybackEvent: new Link({
         href: 'create/playback/event',
+      }),
+      createPlayerInteractedWithEvent: new Link({
+        href: 'create/interaction/event',
       }),
     },
   });
@@ -55,6 +61,9 @@ export class VideoResourceFactory {
         createPlaybackEvent: {
           href: 'create/playback/event',
         },
+        createPlayerInteractedWithEvent: {
+          href: 'create/interaction/event',
+        },
       },
     },
     _links: {
@@ -74,6 +83,9 @@ export class VideoResourceFactory {
       _links: {
         createPlaybackEvent: {
           href: 'create/playback/event',
+        },
+        createPlayerInteractedWithEvent: {
+          href: 'create/interaction/event',
         },
       },
     },
