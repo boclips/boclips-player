@@ -1,7 +1,11 @@
 import axios from 'axios';
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { APIError } from '../ErrorHandler/ErrorHandler';
-import { PlaybackEvent } from '../Events/AnalyticsEvents';
+import {
+  InteractionEventPayload,
+  PlaybackEvent,
+  PlayerInteractedWithEvent,
+} from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 import convertVideoResource from '../utils/convertVideoResource';
 import { BoclipsApiClient } from './BoclipsApiClient';
@@ -33,7 +37,6 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     const event: PlaybackEvent = {
       ...metadata,
       playerId: this.player.getPlayerId(),
-      captureTime: new Date(),
       videoId: video.id,
       videoDurationSeconds: video.playback.duration,
       segmentStartSeconds,
@@ -44,6 +47,36 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
       .post(video.playback.links.createPlaybackEvent.getOriginalLink(), event, {
         headers,
       })
+      .catch(error => {
+        console.error(error);
+      });
+  };
+
+  public emitPlayerInteractionEvent = async <
+    T extends keyof InteractionEventPayload
+  >(
+    video: Video,
+    currentTime: number,
+    type: T,
+    payload: InteractionEventPayload[T],
+  ): Promise<void> => {
+    const headers = await this.buildHeaders();
+
+    const event: PlayerInteractedWithEvent<T> = {
+      playerId: this.player.getPlayerId(),
+      videoId: video.id,
+      videoDurationSeconds: video.playback.duration,
+      currentTime,
+      subtype: type,
+      payload,
+    };
+
+    return this.axios
+      .post(
+        video.playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
+        event,
+        { headers },
+      )
       .catch(error => {
         console.error(error);
       });

@@ -354,6 +354,17 @@ describe('Event Tracking', () => {
 
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
   });
+
+  it('sends an interaction event when the plyr goes fullscreen', () => {
+    plyrInstance.currentTime = 124;
+    plyrInstance.__callEventCallback('enterfullscreen');
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      124,
+      'fullscreen-on',
+      {},
+    );
+  });
 });
 
 describe('is listening for plyr events', () => {

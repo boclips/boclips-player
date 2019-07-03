@@ -1,3 +1,4 @@
+import { InteractionEventPayload } from '../Events/AnalyticsEvents';
 import { Video } from '../types/Video';
 
 export interface ApiOptions {
@@ -21,5 +22,11 @@ export interface BoclipsApiClient {
     segmentStartSeconds: number,
     segmentEndSeconds: number,
     metadata: { [key: string]: any },
+  ) => Promise<void>;
+  emitPlayerInteractionEvent: <T extends keyof InteractionEventPayload>(
+    video: Video,
+    currentTime: number,
+    type: T,
+    payload: InteractionEventPayload[T],
   ) => Promise<void>;
 }
