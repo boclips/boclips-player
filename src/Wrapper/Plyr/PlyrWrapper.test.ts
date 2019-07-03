@@ -257,26 +257,21 @@ testData.forEach(({ type, segmentedVideo }) =>
     });
 
     it(
-      type +
-        ' should not auto pause less than 10 seconds after the segment start',
+      type + ' should not pause if the segment end is earlier than the start',
       () => {
         const segment = {
-          start: 30,
-          end: 35,
+          start: 45,
+          end: 20,
         };
 
         wrapper.configureWithVideo(segmentedVideo, segment);
 
         const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.currentTime = 35;
-        plyrInstance.__callEventCallback('timeupdate');
 
-        expect(plyrInstance.pause).not.toHaveBeenCalled();
-
-        plyrInstance.currentTime = 40;
-        plyrInstance.__callEventCallback('timeupdate');
-
-        expect(plyrInstance.pause).toHaveBeenCalled();
+        expect(plyrInstance.on).not.toHaveBeenCalledWith(
+          'timeupdate',
+          expect.anything(),
+        );
       },
     );
 

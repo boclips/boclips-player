@@ -262,12 +262,11 @@ export default class PlyrWrapper implements Wrapper {
         this.plyr.currentTime = segmentStart;
       }
 
-      if (segment.end) {
-        const segmentEnd = Math.max(segment.end, segmentStart + 10);
+      if (segment.end && segment.end > segmentStart) {
         this.plyr.on('timeupdate', event => {
           const plyr = event.detail.plyr;
 
-          if (plyr.currentTime >= segmentEnd) {
+          if (plyr.currentTime >= segment.end) {
             plyr.pause();
 
             if (this.hls) {
