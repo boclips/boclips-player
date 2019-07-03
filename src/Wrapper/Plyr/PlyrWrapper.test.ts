@@ -256,6 +256,29 @@ testData.forEach(({ type, segmentedVideo }) =>
       expect(plyrInstance.pause).toHaveBeenCalled();
     });
 
+    it(type + ' should not auto pause again after it has paused once', () => {
+      const segment = {
+        end: 60,
+      };
+
+      wrapper.configureWithVideo(segmentedVideo, segment);
+
+      const plyrInstance = Plyr.mock.instances[0];
+      plyrInstance.currentTime = 60;
+      plyrInstance.__callEventCallback('timeupdate', {
+        detail: { plyr: plyrInstance },
+      });
+
+      expect(plyrInstance.pause).toBeCalledTimes(1);
+
+      plyrInstance.currentTime = 65;
+      plyrInstance.__callEventCallback('timeupdate', {
+        detail: { plyr: plyrInstance },
+      });
+
+      expect(plyrInstance.pause).toBeCalledTimes(1);
+    });
+
     it(
       type + ' should not pause if the segment end is earlier than the start',
       () => {

@@ -263,7 +263,7 @@ export default class PlyrWrapper implements Wrapper {
       }
 
       if (segment.end && segment.end > segmentStart) {
-        this.plyr.on('timeupdate', event => {
+        const autoStop = event => {
           const plyr = event.detail.plyr;
 
           if (plyr.currentTime >= segment.end) {
@@ -272,8 +272,11 @@ export default class PlyrWrapper implements Wrapper {
             if (this.hls) {
               this.hls.stopLoad();
             }
+
+            plyr.off('timeupdate', autoStop);
           }
-        });
+        };
+        this.plyr.on('timeupdate', autoStop);
       }
     }
   };
