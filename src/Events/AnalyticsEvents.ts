@@ -37,6 +37,7 @@ export interface InteractionEventPayload {
   'speed-change': {
     speed: number;
   };
+  'fast-forward': EmptyObject;
 }
 
 interface EmptyObject {

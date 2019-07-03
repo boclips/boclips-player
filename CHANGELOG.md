@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fullscreen enabled/disabled
   - Captions enabled/disabled/changed
   - Speed change
+  - Fast forward
   
 ## [2.0.0] - 2019-06-25
 

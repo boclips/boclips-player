@@ -193,6 +193,18 @@ export default class PlyrWrapper implements Wrapper {
         });
       }
     });
+
+    const fastForward: HTMLButtonElement = this.player
+      .getContainer()
+      .querySelector('[data-plyr="fast-forward"]');
+
+    if (fastForward) {
+      fastForward.addEventListener('click', () => {
+        this.player
+          .getAnalytics()
+          .handleInteraction(this.plyr.currentTime, 'fast-forward', {});
+      });
+    }
   }
 
   public configureWithVideo = (
