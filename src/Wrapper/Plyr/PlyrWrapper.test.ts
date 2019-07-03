@@ -365,6 +365,68 @@ describe('Event Tracking', () => {
       {},
     );
   });
+
+  it('sends an interaction event when the captions are turned on', () => {
+    plyrInstance.currentTime = 124;
+    plyrInstance.captions = {
+      currentTrackNode: {
+        kind: 'Captions',
+        label: 'English',
+        language: 'en',
+        id: '',
+      },
+    };
+
+    plyrInstance.__callEventCallback('captionsenabled');
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      124,
+      'captions-on',
+      {
+        kind: 'Captions',
+        label: 'English',
+        language: 'en',
+        id: '',
+      },
+    );
+  });
+
+  it('sends an interaction event when the captions change language', () => {
+    plyrInstance.currentTime = 125;
+    plyrInstance.captions = {
+      currentTrackNode: {
+        kind: 'Captions',
+        label: 'Dutch',
+        language: 'nl',
+        id: '123',
+      },
+    };
+
+    plyrInstance.__callEventCallback('languagechange');
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      125,
+      'captions-change',
+      {
+        kind: 'Captions',
+        label: 'Dutch',
+        language: 'nl',
+        id: '123',
+      },
+    );
+  });
+
+  it('sends an interaction event when the captions are turned off', () => {
+    plyrInstance.currentTime = 125;
+
+    plyrInstance.__callEventCallback('captionsdisabled');
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      125,
+      'captions-off',
+      {},
+    );
+  });
 });
 
 describe('is listening for plyr events', () => {

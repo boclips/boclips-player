@@ -133,6 +133,34 @@ export default class PlyrWrapper implements Wrapper {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
+    this.plyr.on('captionsenabled', () => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(this.plyr.currentTime, 'captions-on', {
+          id: this.plyr.captions.currentTrackNode.id,
+          kind: this.plyr.captions.currentTrackNode.kind,
+          label: this.plyr.captions.currentTrackNode.label,
+          language: this.plyr.captions.currentTrackNode.language,
+        });
+    });
+
+    this.plyr.on('languagechange', () => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(this.plyr.currentTime, 'captions-change', {
+          id: this.plyr.captions.currentTrackNode.id,
+          kind: this.plyr.captions.currentTrackNode.kind,
+          label: this.plyr.captions.currentTrackNode.label,
+          language: this.plyr.captions.currentTrackNode.language,
+        });
+    });
+
+    this.plyr.on('captionsdisabled', () => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(this.plyr.currentTime, 'captions-off', {});
+    });
+
     this.plyr.on('error', event => {
       const mediaError = event.detail.plyr.media.error;
 

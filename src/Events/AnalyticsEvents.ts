@@ -19,6 +19,19 @@ export interface PlayerInteractedWithEvent<
 }
 
 export interface InteractionEventPayload {
+  'captions-on': {
+    id: string;
+    kind: string;
+    language: string;
+    label: string;
+  };
+  'captions-change': {
+    id: string;
+    kind: string;
+    language: string;
+    label: string;
+  };
+  'captions-off': EmptyObject;
   'fullscreen-on': EmptyObject;
 }
 

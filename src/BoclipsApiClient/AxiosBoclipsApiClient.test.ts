@@ -163,6 +163,44 @@ describe('Creating a player interaction event ', () => {
     );
   });
 
+  it('maps a captions-on event correctly', () => {
+    const expectedEvent: PlayerInteractedWithEvent<'captions-on'> = {
+      playerId: 'player-id',
+      videoId: video.id,
+      videoDurationSeconds: 60,
+      currentTime: 30,
+      subtype: 'captions-on',
+      payload: {
+        id: 'caption-id',
+        kind: 'caption-kind',
+        label: 'caption-label',
+        language: 'caption-language',
+      },
+    };
+
+    return boclipsClient
+      .emitPlayerInteractionEvent(video, 30, 'captions-on', {
+        id: 'caption-id',
+        kind: 'caption-kind',
+        label: 'caption-label',
+        language: 'caption-language',
+      })
+      .then(() => {
+        const requests = MockFetchVerify.getHistory().post;
+        expect(requests).toHaveLength(1);
+
+        const request = requests[0];
+        expect(JSON.parse(request.data)).toEqual(expectedEvent);
+        expect(JSON.parse(request.data).subtype).toEqual('captions-on');
+        expect(JSON.parse(request.data).payload.id).toEqual('caption-id');
+        expect(JSON.parse(request.data).payload.kind).toEqual('caption-kind');
+        expect(JSON.parse(request.data).payload.label).toEqual('caption-label');
+        expect(JSON.parse(request.data).payload.language).toEqual(
+          'caption-language',
+        );
+      });
+  });
+
   it('maps a fullscreen-on event correctly', () => {
     const expectedEvent: PlayerInteractedWithEvent<'fullscreen-on'> = {
       playerId: 'player-id',
