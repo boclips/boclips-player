@@ -11,7 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   ```typescript
   loadVideo: (videoUri: string, segment: PlaybackSegment) => Promise<void>;
   ```
-
+- User interaction event emitted for internal analytics when:
+  - Fullscreen enabled/disabled
+  - Captions enabled/disabled/changed
+  
 ## [2.0.0] - 2019-06-25
 
 ### Added
