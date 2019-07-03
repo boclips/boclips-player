@@ -6,6 +6,7 @@ export const Analytics = jest.fn().mockImplementation(() => {
     configure: jest.fn(),
     handlePlay: jest.fn(),
     handlePause: jest.fn(),
+    handleInteraction: jest.fn(),
     getSegmentPlaybackStartTime: jest.fn(),
   } as AnalyticsInstance;
 });

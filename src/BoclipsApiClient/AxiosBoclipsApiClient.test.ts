@@ -1,7 +1,10 @@
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { PlaybackEvent } from '../Events/AnalyticsEvents';
+import {
+  PlaybackEvent,
+  PlayerInteractedWithEvent,
+} from '../Events/AnalyticsEvents';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import {
   VideoFactory,
@@ -91,7 +94,6 @@ describe('Creating a playback event', () => {
       videoId: video.id,
       segmentStartSeconds: 15,
       segmentEndSeconds: 30,
-      captureTime: expect.anything(),
       videoDurationSeconds: 60,
       playerId: 'player-id',
     };
@@ -146,6 +148,42 @@ describe('Creating a playback event', () => {
     );
 
     return boclipsClient.emitPlaybackEvent(video, 15, 30);
+  });
+});
+
+describe('Creating a player interaction event ', () => {
+  let video: Video;
+
+  beforeEach(() => {
+    video = VideoFactory.sample();
+    MockFetchVerify.post(
+      video.playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
+      undefined,
+      201,
+    );
+  });
+
+  it('maps a fullscreen-on event correctly', () => {
+    const expectedEvent: PlayerInteractedWithEvent<'fullscreen-on'> = {
+      playerId: 'player-id',
+      videoId: video.id,
+      videoDurationSeconds: 60,
+      currentTime: 30,
+      subtype: 'fullscreen-on',
+      payload: {},
+    };
+
+    return boclipsClient
+      .emitPlayerInteractionEvent(video, 30, 'fullscreen-on', {})
+      .then(() => {
+        const requests = MockFetchVerify.getHistory().post;
+        expect(requests).toHaveLength(1);
+
+        const request = requests[0];
+        expect(JSON.parse(request.data)).toEqual(expectedEvent);
+        expect(JSON.parse(request.data).subtype).toEqual('fullscreen-on');
+        expect(JSON.parse(request.data).payload).toEqual({});
+      });
   });
 });
 

@@ -111,6 +111,10 @@ export default class PlyrWrapper implements Wrapper {
   private installPlyrEventListeners() {
     this.plyr.on('enterfullscreen', () => {
       this.handleEnterFullscreen();
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(this.plyr.currentTime, 'fullscreen-on', {});
     });
 
     this.plyr.on('exitfullscreen', () => {
