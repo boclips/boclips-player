@@ -151,6 +151,31 @@ describe('When a new video is configured', () => {
         const hlsMockInstance = Hls.mock.instances[0];
         expect(hlsMockInstance.startLoad).toHaveBeenCalledWith(segment.start);
       });
+
+      it('stops hls loading when it is automatically paused', () => {
+        const segment = {
+          start: 30,
+          end: 60,
+        };
+
+        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+
+        expect(Hls).toHaveBeenCalledWith(
+          expect.objectContaining({
+            autoStartLoad: false,
+            startPosition: segment.start,
+          }),
+        );
+
+        const plyrInstance = Plyr.mock.instances[0];
+        plyrInstance.currentTime = 60;
+        plyrInstance.__callEventCallback('timeupdate', {
+          detail: { plyr: plyrInstance },
+        });
+
+        const hlsMockInstance = Hls.mock.instances[0];
+        expect(hlsMockInstance.stopLoad).toHaveBeenCalledWith();
+      });
     });
   });
 

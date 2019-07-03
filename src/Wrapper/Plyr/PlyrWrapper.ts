@@ -269,6 +269,10 @@ export default class PlyrWrapper implements Wrapper {
 
           if (plyr.currentTime >= segmentEnd) {
             plyr.pause();
+
+            if (this.hls) {
+              this.hls.stopLoad();
+            }
           }
         });
       }
