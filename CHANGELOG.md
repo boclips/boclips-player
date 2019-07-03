@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Captions enabled/disabled/changed
   - Speed change
   - Fast forward
+  - Mute / Unmute
   
 ## [2.0.0] - 2019-06-25
 

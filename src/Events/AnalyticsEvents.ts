@@ -39,6 +39,8 @@ export interface InteractionEventPayload {
   };
   'fast-forward': EmptyObject;
   rewind: EmptyObject;
+  'mute-on': EmptyObject;
+  'mute-off': EmptyObject;
 }
 
 interface EmptyObject {

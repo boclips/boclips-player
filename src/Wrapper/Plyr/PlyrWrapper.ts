@@ -217,6 +217,22 @@ export default class PlyrWrapper implements Wrapper {
           .handleInteraction(this.plyr.currentTime, 'rewind', {});
       });
     }
+
+    const mute: HTMLButtonElement = this.player
+      .getContainer()
+      .querySelector('[data-plyr="mute"]');
+
+    if (mute) {
+      mute.addEventListener('click', () => {
+        this.player
+          .getAnalytics()
+          .handleInteraction(
+            this.plyr.currentTime,
+            this.plyr.muted ? 'mute-on' : 'mute-off',
+            {},
+          );
+      });
+    }
   }
 
   public configureWithVideo = (

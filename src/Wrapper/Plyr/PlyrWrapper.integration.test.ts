@@ -53,4 +53,51 @@ describe('Emitting interaction events', () => {
       );
     });
   });
+
+  it(`emits an interaction event when muted`, () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    player = new BoclipsPlayer(container, {
+      interface: { controls: ['mute'] },
+    });
+
+    expect(container.children.length).toEqual(1);
+
+    const mute: HTMLElement = container.querySelector(`[data-plyr="mute"]`);
+
+    expect(mute).toBeTruthy();
+
+    mute.click();
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      0,
+      'mute-on',
+      {},
+    );
+  });
+
+  it(`emits an interaction event when unmuted`, () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    player = new BoclipsPlayer(container, {
+      interface: { controls: ['mute'] },
+    });
+
+    expect(container.children.length).toEqual(1);
+
+    const mute: HTMLElement = container.querySelector(`[data-plyr="mute"]`);
+
+    expect(mute).toBeTruthy();
+
+    mute.click();
+    mute.click();
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      0,
+      'mute-off',
+      {},
+    );
+  });
 });
