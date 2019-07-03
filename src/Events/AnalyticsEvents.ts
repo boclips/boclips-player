@@ -20,6 +20,7 @@ export interface PlayerInteractedWithEvent<
 
 export interface InteractionEventPayload {
   'fullscreen-on': EmptyObject;
+  'fullscreen-off': EmptyObject;
 }
 
 interface EmptyObject {

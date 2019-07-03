@@ -355,13 +355,24 @@ describe('Event Tracking', () => {
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
   });
 
-  it('sends an interaction event when the plyr goes fullscreen', () => {
+  it('sends an interaction event when the plyr enters fullscreen', () => {
     plyrInstance.currentTime = 124;
     plyrInstance.__callEventCallback('enterfullscreen');
 
     expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
       124,
       'fullscreen-on',
+      {},
+    );
+  });
+
+  it('sends an interaction event when the plyr leaves fullscreen', () => {
+    plyrInstance.currentTime = 127;
+    plyrInstance.__callEventCallback('exitfullscreen');
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      127,
+      'fullscreen-off',
       {},
     );
   });
