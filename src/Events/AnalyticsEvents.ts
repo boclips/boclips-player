@@ -34,6 +34,9 @@ export interface InteractionEventPayload {
   'captions-off': EmptyObject;
   'fullscreen-on': EmptyObject;
   'fullscreen-off': EmptyObject;
+  'speed-change': {
+    speed: number;
+  };
 }
 
 interface EmptyObject {

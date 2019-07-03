@@ -455,6 +455,22 @@ describe('Event Tracking', () => {
         {},
       );
     });
+
+    it('sends an interaction event when the speed of the playback changes', () => {
+      const plyr = { currentTime: 125, speed: 1.25 };
+
+      plyrInstance.__callEventCallback('ratechange', {
+        detail: { plyr },
+      });
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        125,
+        'speed-change',
+        {
+          speed: 1.25,
+        },
+      );
+    });
   });
 });
 

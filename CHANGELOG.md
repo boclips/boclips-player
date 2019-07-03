@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - User interaction event emitted for internal analytics when:
   - Fullscreen enabled/disabled
   - Captions enabled/disabled/changed
+  - Speed change
   
 ## [2.0.0] - 2019-06-25
 

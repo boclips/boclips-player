@@ -169,6 +169,16 @@ export default class PlyrWrapper implements Wrapper {
         .handleInteraction(event.detail.plyr.currentTime, 'captions-off', {});
     });
 
+    this.plyr.on('ratechange', event => {
+      const plyr = event.detail.plyr;
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(plyr.currentTime, 'speed-change', {
+          speed: plyr.speed,
+        });
+    });
+
     this.plyr.on('error', event => {
       const mediaError = event.detail.plyr.media.error;
 
