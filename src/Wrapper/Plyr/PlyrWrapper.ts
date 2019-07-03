@@ -109,20 +109,20 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   private installPlyrEventListeners() {
-    this.plyr.on('enterfullscreen', () => {
+    this.plyr.on('enterfullscreen', event => {
       this.handleEnterFullscreen();
 
       this.player
         .getAnalytics()
-        .handleInteraction(this.plyr.currentTime, 'fullscreen-on', {});
+        .handleInteraction(event.detail.plyr.currentTime, 'fullscreen-on', {});
     });
 
-    this.plyr.on('exitfullscreen', () => {
+    this.plyr.on('exitfullscreen', event => {
       this.handleExitFullscreen();
 
       this.player
         .getAnalytics()
-        .handleInteraction(this.plyr.currentTime, 'fullscreen-off', {});
+        .handleInteraction(event.detail.plyr.currentTime, 'fullscreen-off', {});
     });
 
     this.plyr.on('ready', () => {
@@ -135,6 +135,38 @@ export default class PlyrWrapper implements Wrapper {
 
     this.plyr.on('pause', event => {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
+    });
+
+    this.plyr.on('captionsenabled', event => {
+      const plyr = event.detail.plyr;
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(plyr.currentTime, 'captions-on', {
+          id: plyr.captions.currentTrackNode.id,
+          kind: plyr.captions.currentTrackNode.kind,
+          label: plyr.captions.currentTrackNode.label,
+          language: plyr.captions.currentTrackNode.language,
+        });
+    });
+
+    this.plyr.on('languagechange', event => {
+      const plyr = event.detail.plyr;
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(plyr.currentTime, 'captions-change', {
+          id: plyr.captions.currentTrackNode.id,
+          kind: plyr.captions.currentTrackNode.kind,
+          label: plyr.captions.currentTrackNode.label,
+          language: plyr.captions.currentTrackNode.language,
+        });
+    });
+
+    this.plyr.on('captionsdisabled', event => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(event.detail.plyr.currentTime, 'captions-off', {});
     });
 
     this.plyr.on('error', event => {

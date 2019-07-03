@@ -355,26 +355,106 @@ describe('Event Tracking', () => {
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
   });
 
-  it('sends an interaction event when the plyr enters fullscreen', () => {
-    plyrInstance.currentTime = 124;
-    plyrInstance.__callEventCallback('enterfullscreen');
+  describe('interaction events', () => {
+    it('sends an interaction event when the plyr enters fullscreen', () => {
+      const plyr = {
+        currentTime: 124,
+      };
 
-    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-      124,
-      'fullscreen-on',
-      {},
-    );
-  });
+      plyrInstance.__callEventCallback('enterfullscreen', {
+        detail: { plyr },
+      });
 
-  it('sends an interaction event when the plyr leaves fullscreen', () => {
-    plyrInstance.currentTime = 127;
-    plyrInstance.__callEventCallback('exitfullscreen');
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        124,
+        'fullscreen-on',
+        {},
+      );
+    });
 
-    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-      127,
-      'fullscreen-off',
-      {},
-    );
+    it('sends an interaction event when the plyr leaves fullscreen', () => {
+      const plyr = {
+        currentTime: 127,
+      };
+
+      plyrInstance.__callEventCallback('exitfullscreen', { detail: { plyr } });
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        127,
+        'fullscreen-off',
+        {},
+      );
+    });
+
+    it('sends an interaction event when the captions are turned on', () => {
+      const plyr = {
+        currentTime: 124,
+        captions: {
+          currentTrackNode: {
+            kind: 'Captions',
+            label: 'English',
+            language: 'en',
+            id: '',
+          },
+        },
+      };
+
+      plyrInstance.__callEventCallback('captionsenabled', {
+        detail: { plyr },
+      });
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        124,
+        'captions-on',
+        {
+          kind: 'Captions',
+          label: 'English',
+          language: 'en',
+          id: '',
+        },
+      );
+    });
+
+    it('sends an interaction event when the captions change language', () => {
+      const plyr = {
+        currentTime: 125,
+        captions: {
+          currentTrackNode: {
+            kind: 'Captions',
+            label: 'Dutch',
+            language: 'nl',
+            id: '123',
+          },
+        },
+      };
+
+      plyrInstance.__callEventCallback('languagechange', { detail: { plyr } });
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        125,
+        'captions-change',
+        {
+          kind: 'Captions',
+          label: 'Dutch',
+          language: 'nl',
+          id: '123',
+        },
+      );
+    });
+
+    it('sends an interaction event when the captions are turned off', () => {
+      const plyr = { currentTime: 125 };
+
+      plyrInstance.__callEventCallback('captionsdisabled', {
+        detail: { plyr },
+      });
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        125,
+        'captions-off',
+        {},
+      );
+    });
   });
 });
 
@@ -387,13 +467,17 @@ describe('is listening for plyr events', () => {
 
   it('adds a --fullscreen class to the container on enterfullscreen', () => {
     expect(container.classList).not.toContain('plyr--fullscreen');
-    plyrInstance.__callEventCallback('enterfullscreen');
+    plyrInstance.__callEventCallback('enterfullscreen', {
+      detail: { plyr: { currentTime: 0 } },
+    });
     expect(container.classList).toContain('plyr--fullscreen');
   });
 
   it('removes a --fullscreen class to the container on exitfullscreen', () => {
     container.classList.add('plyr--fullscreen');
-    plyrInstance.__callEventCallback('exitfullscreen');
+    plyrInstance.__callEventCallback('exitfullscreen', {
+      detail: { plyr: { currentTime: 0 } },
+    });
     expect(container.classList).not.toContain('plyr--fullscreen');
   });
 });
