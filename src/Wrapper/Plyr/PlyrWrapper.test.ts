@@ -120,7 +120,9 @@ describe('When a new video is configured', () => {
         );
 
         const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.__callEventCallback('play');
+        plyrInstance.__callEventCallback('play', {
+          detail: { plyr: plyrInstance },
+        });
 
         const hlsMockInstance = Hls.mock.instances[0];
         expect(hlsMockInstance.startLoad).toHaveBeenCalled();
@@ -142,7 +144,9 @@ describe('When a new video is configured', () => {
         );
 
         const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.__callEventCallback('play');
+        plyrInstance.__callEventCallback('play', {
+          detail: { plyr: plyrInstance },
+        });
 
         const hlsMockInstance = Hls.mock.instances[0];
         expect(hlsMockInstance.startLoad).toHaveBeenCalledWith(segment.start);
@@ -220,7 +224,9 @@ testData.forEach(({ type, segmentedVideo }) =>
 
       const plyrInstance = Plyr.mock.instances[0];
       plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate');
+      plyrInstance.__callEventCallback('timeupdate', {
+        detail: { plyr: plyrInstance },
+      });
 
       expect(plyrInstance.pause).toHaveBeenCalled();
     });
@@ -261,7 +267,9 @@ testData.forEach(({ type, segmentedVideo }) =>
       expect(plyrInstance.currentTime).toEqual(30);
 
       plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate');
+      plyrInstance.__callEventCallback('timeupdate', {
+        detail: { plyr: plyrInstance },
+      });
 
       expect(plyrInstance.pause).toHaveBeenCalledTimes(1);
 
@@ -274,7 +282,9 @@ testData.forEach(({ type, segmentedVideo }) =>
       expect(plyrInstance.currentTime).toBeUndefined();
 
       plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate');
+      plyrInstance.__callEventCallback('timeupdate', {
+        detail: { plyr: plyrInstance },
+      });
 
       expect(plyrInstance.pause).not.toHaveBeenCalled();
     });

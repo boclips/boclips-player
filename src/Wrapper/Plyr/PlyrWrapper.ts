@@ -74,9 +74,11 @@ export default class PlyrWrapper implements Wrapper {
 
       this.hls.attachMedia(this.plyr.media);
 
-      this.plyr.on('play', () => {
+      this.plyr.on('play', event => {
+        const plyr = event.detail.plyr;
+
         if (!this.hasBeenDestroyed && this.hls) {
-          this.hls.startLoad(this.plyr.currentTime);
+          this.hls.startLoad(plyr.currentTime);
         }
       });
     }
@@ -262,10 +264,11 @@ export default class PlyrWrapper implements Wrapper {
 
       if (segment.end) {
         const segmentEnd = Math.max(segment.end, segmentStart + 10);
-        // const segmentEnd = segment.end;
-        this.plyr.on('timeupdate', () => {
-          if (this.plyr.currentTime >= segmentEnd) {
-            this.plyr.pause();
+        this.plyr.on('timeupdate', event => {
+          const plyr = event.detail.plyr;
+
+          if (plyr.currentTime >= segmentEnd) {
+            plyr.pause();
           }
         });
       }
