@@ -38,6 +38,7 @@ export interface InteractionEventPayload {
     speed: number;
   };
   'fast-forward': EmptyObject;
+  rewind: EmptyObject;
 }
 
 interface EmptyObject {

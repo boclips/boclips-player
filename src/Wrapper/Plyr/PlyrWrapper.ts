@@ -205,6 +205,18 @@ export default class PlyrWrapper implements Wrapper {
           .handleInteraction(this.plyr.currentTime, 'fast-forward', {});
       });
     }
+
+    const rewind: HTMLButtonElement = this.player
+      .getContainer()
+      .querySelector('[data-plyr="rewind"]');
+
+    if (rewind) {
+      rewind.addEventListener('click', () => {
+        this.player
+          .getAnalytics()
+          .handleInteraction(this.plyr.currentTime, 'rewind', {});
+      });
+    }
   }
 
   public configureWithVideo = (

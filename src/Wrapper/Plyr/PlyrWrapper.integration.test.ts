@@ -9,28 +9,48 @@ jest.unmock('plyr');
 let container: HTMLElement = null;
 let player: PrivatePlayer;
 
-it('Emits an interaction event when fast forward is pressed', () => {
-  container = document.createElement('div');
-  document.body.appendChild(container);
+describe('Emitting interaction events', () => {
+  const testData = [
+    {
+      when: 'fast forward is pressed',
+      controls: ['fast-forward'],
+      dataAttribute: 'fast-forward',
+      expectedType: 'fast-forward',
+      expectedPayload: {},
+    },
+    {
+      when: 'rewind is pressed',
+      controls: ['rewind'],
+      dataAttribute: 'rewind',
+      expectedType: 'rewind',
+      expectedPayload: {},
+    },
+  ];
 
-  player = new BoclipsPlayer(container, {
-    interface: { controls: ['fast-forward'] },
+  testData.forEach(data => {
+    it(`emits an interaction event when ${data.when}`, () => {
+      container = document.createElement('div');
+      document.body.appendChild(container);
+
+      player = new BoclipsPlayer(container, {
+        interface: { controls: data.controls as any },
+      });
+
+      expect(container.children.length).toEqual(1);
+
+      const button: HTMLElement = container.querySelector(
+        `[data-plyr="${data.dataAttribute}"]`,
+      );
+
+      expect(button).toBeTruthy();
+
+      button.click();
+
+      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        0,
+        data.expectedType,
+        data.expectedPayload,
+      );
+    });
   });
-
-  expect(container.children.length).toEqual(1);
-
-  const fastForward: HTMLElement = container.querySelector(
-    '[data-plyr="fast-forward"]',
-  );
-
-  expect(fastForward).toBeTruthy();
-
-  fastForward.click();
-
-  expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-    0,
-    'fast-forward',
-    {},
-  );
 });
-
