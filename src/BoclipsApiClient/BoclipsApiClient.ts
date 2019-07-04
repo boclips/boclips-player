@@ -18,13 +18,11 @@ export const defaultApiOptions: ApiOptions = Object.freeze({
 export interface BoclipsApiClient {
   retrieveVideo: (uri: string) => Promise<Video>;
   emitPlaybackEvent: (
-    video: Video,
     segmentStartSeconds: number,
     segmentEndSeconds: number,
     metadata: { [key: string]: any },
   ) => Promise<void>;
   emitPlayerInteractionEvent: <T extends keyof InteractionEventPayload>(
-    video: Video,
     currentTime: number,
     type: T,
     payload: InteractionEventPayload[T],

@@ -1,9 +1,7 @@
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { Video } from '../types/Video';
 import { InteractionEventPayload } from './AnalyticsEvents';
 
 export interface AnalyticsInstance {
-  configure: (video: Video) => void;
   handlePlay: (currentTime: number) => void;
   handlePause: (currentTime: number) => void;
   handleInteraction: <T extends keyof InteractionEventPayload>(
@@ -15,14 +13,9 @@ export interface AnalyticsInstance {
 }
 
 export class Analytics implements AnalyticsInstance {
-  private video: Video;
   private segmentPlaybackStartTime: number = -1;
 
   constructor(private player: PrivatePlayer) {}
-
-  public configure = (video: Video) => {
-    this.video = video;
-  };
 
   public handlePlay = (currentTime: number) => {
     this.segmentPlaybackStartTime = currentTime;
@@ -44,9 +37,13 @@ export class Analytics implements AnalyticsInstance {
     // noinspection JSIgnoredPromiseFromCall
     this.player
       .getClient()
-      .emitPlaybackEvent(this.video, start, end, this.getOptions().metadata);
+      .emitPlaybackEvent(start, end, this.getOptions().metadata);
 
-    this.getOptions().handleOnSegmentPlayback(this.video, start, end);
+    this.getOptions().handleOnSegmentPlayback(
+      this.player.getVideo(),
+      start,
+      end,
+    );
   };
 
   public handleInteraction = <T extends keyof InteractionEventPayload>(
@@ -57,7 +54,7 @@ export class Analytics implements AnalyticsInstance {
     // noinspection JSIgnoredPromiseFromCall
     this.player
       .getClient()
-      .emitPlayerInteractionEvent(this.video, currentTime, type, payload);
+      .emitPlayerInteractionEvent(currentTime, type, payload);
   };
 
   private getOptions = () => this.player.getOptions().analytics;

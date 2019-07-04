@@ -82,11 +82,21 @@ describe('Creating a playback event', () => {
 
   beforeEach(() => {
     video = VideoFactory.sample();
+    player.getVideo.mockReturnValue(video);
     MockFetchVerify.post(
       video.playback.links.createPlaybackEvent.getOriginalLink(),
       undefined,
       201,
     );
+  });
+
+  it('Will not emit an event if there is no video', () => {
+    player.getVideo.mockReturnValue(undefined);
+
+    return boclipsClient.emitPlaybackEvent(15, 30).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(0);
+    });
   });
 
   it('Will create a playback event', () => {
@@ -98,7 +108,7 @@ describe('Creating a playback event', () => {
       playerId: 'player-id',
     };
 
-    return boclipsClient.emitPlaybackEvent(video, 15, 30).then(() => {
+    return boclipsClient.emitPlaybackEvent(15, 30).then(() => {
       const requests = MockFetchVerify.getHistory().post;
       expect(requests).toHaveLength(1);
 
@@ -113,7 +123,7 @@ describe('Creating a playback event', () => {
       someId: 'abc',
     };
 
-    return boclipsClient.emitPlaybackEvent(video, 15, 30, metadata).then(() => {
+    return boclipsClient.emitPlaybackEvent(15, 30, metadata).then(() => {
       const requests = MockFetchVerify.getHistory().post;
       expect(requests).toHaveLength(1);
 
@@ -127,7 +137,7 @@ describe('Creating a playback event', () => {
       segmentStartSeconds: 100000000,
     };
 
-    return boclipsClient.emitPlaybackEvent(video, 15, 30, metadata).then(() => {
+    return boclipsClient.emitPlaybackEvent(15, 30, metadata).then(() => {
       const requests = MockFetchVerify.getHistory().post;
       expect(requests).toHaveLength(1);
 
@@ -147,7 +157,7 @@ describe('Creating a playback event', () => {
       500,
     );
 
-    return boclipsClient.emitPlaybackEvent(video, 15, 30);
+    return boclipsClient.emitPlaybackEvent(15, 30);
   });
 });
 
@@ -156,6 +166,7 @@ describe('Creating a player interaction event ', () => {
 
   beforeEach(() => {
     video = VideoFactory.sample();
+    player.getVideo.mockReturnValue(video);
     MockFetchVerify.post(
       video.playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
       undefined,
@@ -179,7 +190,7 @@ describe('Creating a player interaction event ', () => {
     };
 
     return boclipsClient
-      .emitPlayerInteractionEvent(video, 30, 'captions-on', {
+      .emitPlayerInteractionEvent(30, 'captions-on', {
         id: 'caption-id',
         kind: 'caption-kind',
         label: 'caption-label',
@@ -205,7 +216,7 @@ describe('Creating a player interaction event ', () => {
     };
 
     return boclipsClient
-      .emitPlayerInteractionEvent(video, 30, 'fullscreen-on', {})
+      .emitPlayerInteractionEvent(30, 'fullscreen-on', {})
       .then(() => {
         const requests = MockFetchVerify.getHistory().post;
         expect(requests).toHaveLength(1);

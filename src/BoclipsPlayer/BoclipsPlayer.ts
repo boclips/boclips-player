@@ -25,6 +25,7 @@ export interface PrivatePlayer extends Player {
   getErrorHandler: () => ErrorHandler;
   getPlayerId: () => string;
   getOptions: () => Partial<PlayerOptions>;
+  getVideo: () => Video | undefined;
 }
 
 export class BoclipsPlayer implements PrivatePlayer {
@@ -106,8 +107,6 @@ export class BoclipsPlayer implements PrivatePlayer {
         this.errorHandler.clearError();
 
         this.video = video;
-        // TODO: Refactor, analytics should receive video from player
-        this.analytics.configure(video);
         this.wrapper.configureWithVideo(video, segment);
       })
       .catch(error => {

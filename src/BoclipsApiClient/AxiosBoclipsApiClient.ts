@@ -27,12 +27,17 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
   };
 
   public emitPlaybackEvent = async (
-    video: Video,
     segmentStartSeconds: number,
     segmentEndSeconds: number,
     metadata: { [key: string]: any } = {},
   ): Promise<void> => {
     const headers = await this.buildHeaders();
+
+    const video = this.player.getVideo();
+
+    if (!video) {
+      return Promise.resolve();
+    }
 
     const event: PlaybackEvent = {
       ...metadata,
@@ -55,12 +60,17 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
   public emitPlayerInteractionEvent = async <
     T extends keyof InteractionEventPayload
   >(
-    video: Video,
     currentTime: number,
     type: T,
     payload: InteractionEventPayload[T],
   ): Promise<void> => {
     const headers = await this.buildHeaders();
+
+    const video = this.player.getVideo();
+
+    if (!video) {
+      return Promise.resolve();
+    }
 
     const event: PlayerInteractedWithEvent<T> = {
       playerId: this.player.getPlayerId(),

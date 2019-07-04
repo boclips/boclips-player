@@ -15,8 +15,8 @@ let boclipsPlayer: MaybeMocked<BoclipsPlayer>;
 
 beforeEach(() => {
   boclipsPlayer = mocked(new BoclipsPlayer(null));
+  boclipsPlayer.getVideo.mockReturnValue(video);
   analytics = new Analytics(boclipsPlayer);
-  analytics.configure(video);
 });
 
 it('can handle play events', () => {
@@ -33,8 +33,6 @@ it('does nothing on pause events before a play event', () => {
 
 describe('will emit a playback event on pause after a play event', () => {
   it('can handle pause events once a play event has been handled', () => {
-    analytics.configure(video);
-
     analytics.handlePlay(5);
     analytics.handlePause(20);
 
@@ -42,7 +40,7 @@ describe('will emit a playback event on pause after a play event', () => {
 
     const call = mocked(boclipsPlayer.getClient().emitPlaybackEvent).mock
       .calls[0];
-    expect(call).toEqual([video, 5, 20, {}]);
+    expect(call).toEqual([5, 20, {}]);
   });
 
   it('will pass through the metadata to the endpoint', () => {
@@ -59,7 +57,6 @@ describe('will emit a playback event on pause after a play event', () => {
     } as any);
 
     analytics = new Analytics(boclipsPlayer);
-    analytics.configure(video);
 
     analytics.handlePlay(10);
     analytics.handlePause(25);
@@ -68,7 +65,7 @@ describe('will emit a playback event on pause after a play event', () => {
 
     const call = mocked(boclipsPlayer.getClient().emitPlaybackEvent).mock
       .calls[0];
-    expect(call).toEqual([video, 10, 25, metadata]);
+    expect(call).toEqual([10, 25, metadata]);
   });
 });
 
@@ -83,7 +80,6 @@ describe('handleOnSegmentPlayback', () => {
     } as any);
 
     analytics = new Analytics(boclipsPlayer);
-    analytics.configure(video);
 
     analytics.handlePlay(15);
     analytics.handlePause(30);

@@ -194,22 +194,6 @@ describe('BoclipsPlayer', () => {
     });
   });
 
-  it('Will install event tracking when a video is loaded', () => {
-    const uri = '/v1/videos/177';
-
-    const video = VideoFactory.sample();
-
-    boclipsClient.retrieveVideo.mockReturnValue(
-      new Promise(resolve => resolve(video)),
-    );
-
-    return player.loadVideo(uri).then(() => {
-      const analytics = player.getAnalytics();
-
-      expect(analytics.configure).toHaveBeenCalledWith(video);
-    });
-  });
-
   describe('passes through wrapper methods', () => {
     const passThroughMethods = ['destroy', 'play', 'pause'];
 
