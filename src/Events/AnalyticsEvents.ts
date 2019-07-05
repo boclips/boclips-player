@@ -19,28 +19,28 @@ export interface PlayerInteractedWithEvent<
 }
 
 export interface InteractionEventPayload {
-  'captions-on': {
+  captionsEnabled: {
     id: string;
     kind: string;
     language: string;
     label: string;
   };
-  'captions-change': {
+  captionsChanged: {
     id: string;
     kind: string;
     language: string;
     label: string;
   };
-  'captions-off': EmptyObject;
-  'fullscreen-on': EmptyObject;
-  'fullscreen-off': EmptyObject;
-  'speed-change': {
+  captionsDisabled: EmptyObject;
+  fullscreenEnabled: EmptyObject;
+  fullscreenDisabled: EmptyObject;
+  speedChanged: {
     speed: number;
   };
-  'fast-forward': EmptyObject;
-  rewind: EmptyObject;
-  'mute-on': EmptyObject;
-  'mute-off': EmptyObject;
+  jumpedForward: EmptyObject;
+  jumpedBackward: EmptyObject;
+  muted: EmptyObject;
+  unmuted: EmptyObject;
 }
 
 interface EmptyObject {

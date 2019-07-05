@@ -15,14 +15,14 @@ describe('Emitting interaction events', () => {
       when: 'fast forward is pressed',
       controls: ['fast-forward'],
       dataAttribute: 'fast-forward',
-      expectedType: 'fast-forward',
+      expectedType: 'jumpedForward',
       expectedPayload: {},
     },
     {
       when: 'rewind is pressed',
       controls: ['rewind'],
       dataAttribute: 'rewind',
-      expectedType: 'rewind',
+      expectedType: 'jumpedBackward',
       expectedPayload: {},
     },
   ];
@@ -72,7 +72,7 @@ describe('Emitting interaction events', () => {
 
     expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
       0,
-      'mute-on',
+      'muted',
       {},
     );
   });
@@ -96,7 +96,7 @@ describe('Emitting interaction events', () => {
 
     expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
       0,
-      'mute-off',
+      'unmuted',
       {},
     );
   });

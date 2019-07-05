@@ -116,7 +116,11 @@ export default class PlyrWrapper implements Wrapper {
 
       this.player
         .getAnalytics()
-        .handleInteraction(event.detail.plyr.currentTime, 'fullscreen-on', {});
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'fullscreenEnabled',
+          {},
+        );
     });
 
     this.plyr.on('exitfullscreen', event => {
@@ -124,7 +128,11 @@ export default class PlyrWrapper implements Wrapper {
 
       this.player
         .getAnalytics()
-        .handleInteraction(event.detail.plyr.currentTime, 'fullscreen-off', {});
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'fullscreenDisabled',
+          {},
+        );
     });
 
     this.plyr.on('ready', () => {
@@ -144,7 +152,7 @@ export default class PlyrWrapper implements Wrapper {
 
       this.player
         .getAnalytics()
-        .handleInteraction(plyr.currentTime, 'captions-on', {
+        .handleInteraction(plyr.currentTime, 'captionsEnabled', {
           id: plyr.captions.currentTrackNode.id,
           kind: plyr.captions.currentTrackNode.kind,
           label: plyr.captions.currentTrackNode.label,
@@ -157,7 +165,7 @@ export default class PlyrWrapper implements Wrapper {
 
       this.player
         .getAnalytics()
-        .handleInteraction(plyr.currentTime, 'captions-change', {
+        .handleInteraction(plyr.currentTime, 'captionsChanged', {
           id: plyr.captions.currentTrackNode.id,
           kind: plyr.captions.currentTrackNode.kind,
           label: plyr.captions.currentTrackNode.label,
@@ -168,7 +176,11 @@ export default class PlyrWrapper implements Wrapper {
     this.plyr.on('captionsdisabled', event => {
       this.player
         .getAnalytics()
-        .handleInteraction(event.detail.plyr.currentTime, 'captions-off', {});
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'captionsDisabled',
+          {},
+        );
     });
 
     this.plyr.on('ratechange', event => {
@@ -176,7 +188,7 @@ export default class PlyrWrapper implements Wrapper {
 
       this.player
         .getAnalytics()
-        .handleInteraction(plyr.currentTime, 'speed-change', {
+        .handleInteraction(plyr.currentTime, 'speedChanged', {
           speed: plyr.speed,
         });
     });
@@ -195,46 +207,6 @@ export default class PlyrWrapper implements Wrapper {
         });
       }
     });
-
-    const fastForward: HTMLButtonElement = this.player
-      .getContainer()
-      .querySelector('[data-plyr="fast-forward"]');
-
-    if (fastForward) {
-      fastForward.addEventListener('click', () => {
-        this.player
-          .getAnalytics()
-          .handleInteraction(this.plyr.currentTime, 'fast-forward', {});
-      });
-    }
-
-    const rewind: HTMLButtonElement = this.player
-      .getContainer()
-      .querySelector('[data-plyr="rewind"]');
-
-    if (rewind) {
-      rewind.addEventListener('click', () => {
-        this.player
-          .getAnalytics()
-          .handleInteraction(this.plyr.currentTime, 'rewind', {});
-      });
-    }
-
-    const mute: HTMLButtonElement = this.player
-      .getContainer()
-      .querySelector('[data-plyr="mute"]');
-
-    if (mute) {
-      mute.addEventListener('click', () => {
-        this.player
-          .getAnalytics()
-          .handleInteraction(
-            this.plyr.currentTime,
-            this.plyr.muted ? 'mute-on' : 'mute-off',
-            {},
-          );
-      });
-    }
   }
 
   public configureWithVideo = (
@@ -350,6 +322,30 @@ export default class PlyrWrapper implements Wrapper {
       captions: { active: false, language: 'en', update: true },
       controls: this.getOptions().controls,
       duration: playback ? playback.duration : null,
+      listeners: {
+        fastForward: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(this.plyr.currentTime, 'jumpedForward', {});
+          return true;
+        },
+        rewind: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(this.plyr.currentTime, 'jumpedBackward', {});
+          return true;
+        },
+        mute: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(
+              this.plyr.currentTime,
+              this.plyr.muted ? 'unmuted' : 'muted',
+              {},
+            );
+          return true;
+        },
+      },
     });
 
     this.installPlyrEventListeners();

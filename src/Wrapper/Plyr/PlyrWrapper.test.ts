@@ -420,7 +420,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         124,
-        'fullscreen-on',
+        'fullscreenEnabled',
         {},
       );
     });
@@ -434,7 +434,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         127,
-        'fullscreen-off',
+        'fullscreenDisabled',
         {},
       );
     });
@@ -458,7 +458,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         124,
-        'captions-on',
+        'captionsEnabled',
         {
           kind: 'Captions',
           label: 'English',
@@ -485,7 +485,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         125,
-        'captions-change',
+        'captionsChanged',
         {
           kind: 'Captions',
           label: 'Dutch',
@@ -504,7 +504,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         125,
-        'captions-off',
+        'captionsDisabled',
         {},
       );
     });
@@ -518,7 +518,7 @@ describe('Event Tracking', () => {
 
       expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         125,
-        'speed-change',
+        'speedChanged',
         {
           speed: 1.25,
         },
