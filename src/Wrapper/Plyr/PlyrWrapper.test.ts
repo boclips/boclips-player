@@ -439,7 +439,7 @@ describe('Event Tracking', () => {
       );
     });
 
-    it('sends an interaction event when the captions are turned on', () => {
+    it.skip('sends an interaction event when the captions are turned on', () => {
       const plyr = {
         currentTime: 124,
         captions: {
@@ -468,7 +468,7 @@ describe('Event Tracking', () => {
       );
     });
 
-    it('sends an interaction event when the captions change language', () => {
+    it.skip('sends an interaction event when the captions change language', () => {
       const plyr = {
         currentTime: 125,
         captions: {
@@ -495,7 +495,7 @@ describe('Event Tracking', () => {
       );
     });
 
-    it('sends an interaction event when the captions are turned off', () => {
+    it.skip('sends an interaction event when the captions are turned off', () => {
       const plyr = { currentTime: 125 };
 
       plyrInstance.__callEventCallback('captionsdisabled', {

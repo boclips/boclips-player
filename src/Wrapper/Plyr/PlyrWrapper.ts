@@ -147,41 +147,48 @@ export default class PlyrWrapper implements Wrapper {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
-    this.plyr.on('captionsenabled', event => {
-      const plyr = event.detail.plyr;
-
-      this.player
-        .getAnalytics()
-        .handleInteraction(plyr.currentTime, 'captionsEnabled', {
-          id: plyr.captions.currentTrackNode.id,
-          kind: plyr.captions.currentTrackNode.kind,
-          label: plyr.captions.currentTrackNode.label,
-          language: plyr.captions.currentTrackNode.language,
-        });
-    });
-
-    this.plyr.on('languagechange', event => {
-      const plyr = event.detail.plyr;
-
-      this.player
-        .getAnalytics()
-        .handleInteraction(plyr.currentTime, 'captionsChanged', {
-          id: plyr.captions.currentTrackNode.id,
-          kind: plyr.captions.currentTrackNode.kind,
-          label: plyr.captions.currentTrackNode.label,
-          language: plyr.captions.currentTrackNode.language,
-        });
-    });
-
-    this.plyr.on('captionsdisabled', event => {
-      this.player
-        .getAnalytics()
-        .handleInteraction(
-          event.detail.plyr.currentTime,
-          'captionsDisabled',
-          {},
-        );
-    });
+    /**
+     * These events occur automatically without user intervention when the streams
+     * are loaded. It's currently not possible to determine whether a user caused
+     * this to happen
+     *
+     * @see https://github.com/sampotts/plyr/issues/1491
+     */
+    // this.plyr.on('captionsenabled', event => {
+    //   const plyr = event.detail.plyr;
+    //
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(plyr.currentTime, 'captionsEnabled', {
+    //       id: plyr.captions.currentTrackNode.id,
+    //       kind: plyr.captions.currentTrackNode.kind,
+    //       label: plyr.captions.currentTrackNode.label,
+    //       language: plyr.captions.currentTrackNode.language,
+    //     });
+    // });
+    //
+    // this.plyr.on('languagechange', event => {
+    //   const plyr = event.detail.plyr;
+    //
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(plyr.currentTime, 'captionsChanged', {
+    //       id: plyr.captions.currentTrackNode.id,
+    //       kind: plyr.captions.currentTrackNode.kind,
+    //       label: plyr.captions.currentTrackNode.label,
+    //       language: plyr.captions.currentTrackNode.language,
+    //     });
+    // });
+    //
+    // this.plyr.on('captionsdisabled', event => {
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(
+    //       event.detail.plyr.currentTime,
+    //       'captionsDisabled',
+    //       {},
+    //     );
+    // });
 
     this.plyr.on('ratechange', event => {
       const plyr = event.detail.plyr;
