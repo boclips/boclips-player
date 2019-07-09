@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.1] - 2019-07-09
+
+### Fixed
+- Allow the `options.api.tokenFactory` to return null, and not affect the Authorization header.
+
 ## [2.1.0] - 2019-07-05
 
 ### Added
@@ -18,7 +23,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Speed change
   - Fast forward
   - Mute / Unmute
-  
+
 ## [2.0.0] - 2019-06-25
 
 ### Added

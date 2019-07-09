@@ -272,4 +272,26 @@ describe('With authorisation', () => {
       done();
     });
   });
+
+  it('Will not add authorization headers if the token factory returns null', () => {
+    const uri = '/v1/videos/177';
+
+    const videoResource = VideoResourceFactory.youtubeSample();
+
+    MockFetchVerify.get(uri, JSON.stringify(videoResource));
+
+    player.getOptions.mockReturnValue({
+      api: {
+        tokenFactory: jest.fn().mockResolvedValue(null)
+      },
+    });
+
+    return boclipsClient.retrieveVideo(uri).then(() => {
+      const requests = MockFetchVerify.getHistory().get;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.headers).toMatchObject({});
+    });
+  })
 });

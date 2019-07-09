@@ -108,6 +108,10 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
         } as APIError;
       });
 
+    if (token === null) {
+      return {};
+    }
+
     return { Authorization: `Bearer ${token}` };
   };
 
