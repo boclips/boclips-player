@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.2] - 2019-07-11
+
+### Fixed
+- Non-fatal `fragParseErrors` in HLS cause the player to render the error splash.
+
 ## [2.1.1] - 2019-07-09
 
 ### Fixed

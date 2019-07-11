@@ -65,11 +65,46 @@ export default class PlyrWrapper implements Wrapper {
       });
 
       this.hls.on(Hls.Events.ERROR, (_, data) => {
-        this.player.getErrorHandler().handleError({
-          fatal: data.fatal,
-          type: data.type,
-          payload: data,
-        });
+        let fatal = data.fatal;
+
+        if (
+          data.type === Hls.ErrorTypes.MEDIA_ERROR &&
+          data.details === 'fragParsingError'
+        ) {
+          // A fragParsingError is usually recoverable, even if fatal is true.
+          fatal = false;
+        }
+
+        if (fatal) {
+          switch (data.type) {
+            case Hls.ErrorTypes.NETWORK_ERROR:
+              console.warn(
+                'fatal network error encountered, try to recover',
+                data,
+              );
+              this.hls.startLoad(this.plyr.currentTime);
+              break;
+            case Hls.ErrorTypes.MEDIA_ERROR:
+              console.warn('fatal media error encountered', data);
+              break;
+            default:
+              // cannot recover
+              this.destroy();
+
+              this.player.getErrorHandler().handleError({
+                fatal: data.fatal,
+                type: data.type,
+                payload: data,
+              });
+              break;
+          }
+        }
+
+        throw new Error(
+          `A ${fatal ? '' : 'non-'}fatal playback error occurred: ${
+            data.type
+          }: ${data.details} - ${data.reason}`,
+        );
       });
 
       this.hls.attachMedia(this.plyr.media);
