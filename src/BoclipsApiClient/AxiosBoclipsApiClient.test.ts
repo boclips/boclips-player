@@ -282,7 +282,7 @@ describe('With authorisation', () => {
 
     player.getOptions.mockReturnValue({
       api: {
-        tokenFactory: jest.fn().mockResolvedValue(null)
+        tokenFactory: jest.fn().mockResolvedValue(null),
       },
     });
 
@@ -293,5 +293,5 @@ describe('With authorisation', () => {
       const request = requests[0];
       expect(request.headers).toMatchObject({});
     });
-  })
+  });
 });

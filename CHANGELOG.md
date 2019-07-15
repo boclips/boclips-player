@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.1.3] - 2019-07-15
+
+### Security
+- Bump `mixin-deep` for https://www.npmjs.com/advisories/1013 - only `package-lock.json`
+- Bump `set-value` for https://www.npmjs.com/advisories/1012 - only `package-lock.json`
+
 ## [2.1.2] - 2019-07-11
 
 ### Fixed
