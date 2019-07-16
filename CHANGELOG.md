@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Non-fatal playback Errors
 
+### Security
+- Bump `lodash` for https://www.npmjs.com/advisories/1065 - only `package-lock.json`
+
 ## [2.1.3] - 2019-07-15
 
 ### Security
