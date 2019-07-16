@@ -122,6 +122,7 @@ interface Player {
 interface PlayerOptions {
     analytics: Partial<AnalyticsOptions>;
     api: Partial<ApiOptions>;
+    debug: boolean;
     interface: Partial<InterfaceOptions>;
 }
 ----

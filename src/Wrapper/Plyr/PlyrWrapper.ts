@@ -55,7 +55,7 @@ export default class PlyrWrapper implements Wrapper {
 
     if (Hls.isSupported()) {
       this.hls = new Hls({
-        debug: process.env.NODE_ENV !== 'production',
+        debug: this.player.getOptions().debug,
         autoStartLoad: false,
         startPosition: segmentStart,
       });
@@ -366,7 +366,7 @@ export default class PlyrWrapper implements Wrapper {
     }
 
     this.plyr = new Plyr(media, {
-      debug: process.env.NODE_ENV !== 'production',
+      debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
       controls: this.getOptions().controls,
       duration: playback ? playback.duration : null,
