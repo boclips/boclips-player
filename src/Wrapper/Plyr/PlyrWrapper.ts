@@ -75,35 +75,41 @@ export default class PlyrWrapper implements Wrapper {
           fatal = false;
         }
 
-        if (fatal) {
-          switch (data.type) {
-            case Hls.ErrorTypes.NETWORK_ERROR:
-              console.warn(
-                'fatal network error encountered, try to recover',
-                data,
-              );
-              this.hls.startLoad(this.plyr.currentTime);
-              break;
-            case Hls.ErrorTypes.MEDIA_ERROR:
-              console.warn('fatal media error encountered', data);
-              break;
-            default:
-              // cannot recover
-              this.destroy();
-
-              this.player.getErrorHandler().handleError({
-                fatal: data.fatal,
-                type: data.type,
-                payload: data,
-              });
-              break;
-          }
+        if (!fatal) {
+          console.warn('A non-fatal playback error occurred', data);
         }
 
+        switch (data.type) {
+          case Hls.ErrorTypes.NETWORK_ERROR:
+            console.warn(
+              'fatal network error encountered, try to recover',
+              data,
+            );
+            this.hls.startLoad(this.plyr.currentTime);
+            break;
+          case Hls.ErrorTypes.MEDIA_ERROR:
+            console.warn('fatal media error encountered', data);
+            break;
+          default:
+            // cannot recover
+            this.destroy();
+
+            this.player.getErrorHandler().handleError({
+              fatal: data.fatal,
+              type: data.type,
+              payload: data,
+            });
+            break;
+        }
+
+        const video = this.player.getVideo();
+
         throw new Error(
-          `A ${fatal ? '' : 'non-'}fatal playback error occurred: ${
-            data.type
-          }: ${data.details} - ${data.reason}`,
+          `A fatal playback error occurred: VideoId: ${
+            video ? video.id : '-'
+          }. Type: ${data.type}. Details: ${data.details}. Reason: ${
+            data.reason
+          }.`,
         );
       });
 
