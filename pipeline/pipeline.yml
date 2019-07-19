@@ -2,20 +2,20 @@
 groups:
 - name: all
   jobs:
-    - test
-    - pre-release
-    - major
-    - minor
-    - release
+  - test
+  - pre-release
+  - major
+  - minor
+  - release
 - name: develop
   jobs:
-    - test
-    - pre-release
+  - test
+  - pre-release
 - name: release
   jobs:
-    - major
-    - minor
-    - release
+  - major
+  - minor
+  - release
 
 jobs:
 - name: test
