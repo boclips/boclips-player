@@ -39,8 +39,8 @@ jobs:
     file: source/pipeline/release.yml
   - put: npm-registry
     params:
-      username: ((npm-username))
-      password: ((npm-password))
+      username: ((npm.username))
+      password: ((npm.password))
       email: engineering@boclips.com
       path: dist
       tag: dev
@@ -71,8 +71,8 @@ jobs:
     file: source/pipeline/release.yml
   - put: npm-registry
     params:
-      username: ((npm-username))
-      password: ((npm-password))
+      username: ((npm.username))
+      password: ((npm.password))
       email: engineering@boclips.com
       path: dist
   - put: github-release
@@ -121,7 +121,7 @@ resources:
   source:
     owner: boclips
     repository: boclips-player
-    access_token: ((github-access-token))
+    access_token: ((boclips-player.github-access-token))
 
 resource_types:
 - name: npm-resource

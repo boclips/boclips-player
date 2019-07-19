@@ -7,7 +7,4 @@ cwd="$(cd "$(dirname "$0")" && pwd)"
 fly --target ci \
     set-pipeline \
     --pipeline boclips-player \
-    --config "$cwd/pipeline.yml" \
-    --var npm-username="$(lpass show npmjs --username)" \
-    --var npm-password="$(lpass show npmjs --password)" \
-    --var github-access-token="$(lpass show boclips-player-github-access-token --notes)"
+    --config "$cwd/pipeline.yml"
