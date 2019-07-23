@@ -279,6 +279,14 @@ export default class PlyrWrapper implements Wrapper {
       const segmentStart = segment.start || 0;
 
       if (segment.start) {
+        const skipToStart = event => {
+          event.detail.plyr.currentTime = segmentStart;
+          event.detail.plyr.off('loadedmetadata', skipToStart);
+        };
+
+        this.plyr.on('loadedmetadata', skipToStart);
+        // Some browsers won't let you set the currentTime before the metadata
+        // has loaded, but it gives a slightly better experience on Chrome
         this.plyr.currentTime = segmentStart;
       }
 

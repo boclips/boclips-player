@@ -229,16 +229,41 @@ testData.forEach(({ type, segmentedVideo }) =>
       Hls.isSupported.mockReturnValue(true);
     });
 
-    it(type + ' should start playback at the beginning of the segment', () => {
-      const segment = {
-        start: 30,
-      };
+    it(
+      type + ' should set the currentTime at the beginning of the segment',
+      () => {
+        const segment = {
+          start: 30,
+        };
 
-      wrapper.configureWithVideo(segmentedVideo, segment);
+        wrapper.configureWithVideo(segmentedVideo, segment);
 
-      const plyrInstance = Plyr.mock.instances[0];
-      expect(plyrInstance.currentTime).toEqual(segment.start);
-    });
+        const plyrInstance = Plyr.mock.instances[0];
+        expect(plyrInstance.currentTime).toEqual(segment.start);
+      },
+    );
+
+    it(
+      type +
+        ' should add a loadedmetadata event to set seek to the beginning of the segment',
+      () => {
+        const segment = {
+          start: 30,
+        };
+
+        wrapper.configureWithVideo(segmentedVideo, segment);
+
+        const plyrInstance = Plyr.mock.instances[0];
+        // Some browsers won't set currentTime if it hasn't loaded the data
+        plyrInstance.currentTime = 0;
+
+        plyrInstance.__callEventCallback('loadedmetadata', {
+          detail: { plyr: plyrInstance },
+        });
+
+        expect(plyrInstance.currentTime).toEqual(segment.start);
+      },
+    );
 
     it(type + ' should pause playback at the end of the segment', () => {
       const segment = {
