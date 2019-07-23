@@ -245,7 +245,7 @@ testData.forEach(({ type, segmentedVideo }) =>
 
     it(
       type +
-        ' should add a loadedmetadata event to set seek to the beginning of the segment',
+        ' should add a playing event to set seek to the beginning of the segment',
       () => {
         const segment = {
           start: 30,
@@ -257,7 +257,7 @@ testData.forEach(({ type, segmentedVideo }) =>
         // Some browsers won't set currentTime if it hasn't loaded the data
         plyrInstance.currentTime = 0;
 
-        plyrInstance.__callEventCallback('loadedmetadata', {
+        plyrInstance.__callEventCallback('playing', {
           detail: { plyr: plyrInstance },
         });
 
