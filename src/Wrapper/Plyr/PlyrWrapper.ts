@@ -339,6 +339,12 @@ export default class PlyrWrapper implements Wrapper {
   };
 
   public destroy = () => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
+
+    this.hasBeenDestroyed = true;
+
     this.handleBeforeUnload();
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
 
@@ -355,8 +361,6 @@ export default class PlyrWrapper implements Wrapper {
     } catch (error) {
       console.warn('Error occurred while destroying plyr', error);
     }
-
-    this.hasBeenDestroyed = true;
   };
 
   private handleBeforeUnload = () => {
