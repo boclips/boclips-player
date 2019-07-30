@@ -109,7 +109,7 @@ export default class PlyrWrapper implements Wrapper {
             video ? video.id : '-'
           }. Type: ${data.type}. Details: ${data.details}. Reason: ${
             data.reason
-          }.`,
+          }. Error: ${data.err}`,
         );
       });
 
