@@ -221,6 +221,19 @@ describe('BoclipsPlayer', () => {
 
       expect(Analytics).toHaveBeenCalledWith(player);
     });
+
+    it('does not wreck interface.controls', () => {
+      const options: Partial<PlayerOptions> = {
+        interface: { controls: ['captions', 'duration'] },
+      };
+
+      player = new BoclipsPlayer(container, options);
+
+      expect(player.getOptions().interface.controls).toEqual([
+        'captions',
+        'duration',
+      ]);
+    });
   });
 
   it('will delegate axios error handling to the module', async () => {

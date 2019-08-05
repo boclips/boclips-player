@@ -58,7 +58,9 @@ export class BoclipsPlayer implements PrivatePlayer {
 
     container.classList.add('boclips-player-container');
 
-    this.options = deepmerge(defaultOptions, options);
+    this.options = deepmerge.all([defaultOptions, options], {
+      arrayMerge: (_, source) => source,
+    }) as PlayerOptions;
 
     this.errorHandler = new ErrorHandler(this);
     this.boclipsClient = new AxiosBoclipsApiClient(this);
