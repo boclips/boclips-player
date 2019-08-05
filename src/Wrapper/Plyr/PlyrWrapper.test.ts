@@ -10,6 +10,7 @@ import {
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { StreamPlayback } from '../../types/Playback';
+import { Video } from '../../types/Video';
 import { Wrapper } from '../Wrapper';
 import PlyrWrapper from './PlyrWrapper';
 
@@ -28,6 +29,9 @@ beforeEach(() => {
 
   container = document.createElement('div');
   player = new BoclipsPlayer(container);
+  mocked(player).getVideo.mockReturnValue({
+    id: 'video-id-123',
+  } as Video);
   wrapper = new PlyrWrapper(player);
 });
 
@@ -175,6 +179,20 @@ describe('When a new video is configured', () => {
 
         const hlsMockInstance = Hls.mock.instances[0];
         expect(hlsMockInstance.stopLoad).toHaveBeenCalledWith();
+      });
+    });
+
+    describe('When HLS has an error', () => {
+      it('gracefully handles non-fatal errors', () => {
+        const hlsMockInstance = Hls.mock.instances[0];
+
+        expect(() => {
+          hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
+            type: 'any type',
+            details: 'any details',
+            fatal: false,
+          });
+        }).not.toThrow();
       });
     });
   });

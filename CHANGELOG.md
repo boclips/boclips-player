@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ### Fixed
 - `options.interface.controls` was previously being appended to the default controls
+- Non-fatal HLS errors threw exceptions, preventing automatic recovery
 
 ## [2.1.6] - 2019-07-29
 

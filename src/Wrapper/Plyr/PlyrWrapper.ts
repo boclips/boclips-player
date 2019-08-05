@@ -54,75 +54,90 @@ export default class PlyrWrapper implements Wrapper {
     }
 
     if (Hls.isSupported()) {
-      this.hls = new Hls({
-        debug: this.player.getOptions().debug,
-        autoStartLoad: false,
-        startPosition: segmentStart,
-      });
-
-      this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-        this.hls.loadSource(playback.streamUrl);
-      });
-
-      this.hls.on(Hls.Events.ERROR, (_, data) => {
-        let fatal = data.fatal;
-
-        if (
-          data.type === Hls.ErrorTypes.MEDIA_ERROR &&
-          data.details === 'fragParsingError'
-        ) {
-          // A fragParsingError is usually recoverable, even if fatal is true.
-          fatal = false;
-        }
-
-        if (!fatal) {
-          console.warn('A non-fatal playback error occurred', data);
-        }
-
-        switch (data.type) {
-          case Hls.ErrorTypes.NETWORK_ERROR:
-            console.warn(
-              'fatal network error encountered, try to recover',
-              data,
-            );
-            this.hls.startLoad(this.plyr.currentTime);
-            break;
-          case Hls.ErrorTypes.MEDIA_ERROR:
-            console.warn('fatal media error encountered', data);
-            break;
-          default:
-            // cannot recover
-            this.destroy();
-
-            this.player.getErrorHandler().handleError({
-              fatal: data.fatal,
-              type: data.type,
-              payload: data,
-            });
-            break;
-        }
-
-        const video = this.player.getVideo();
-
-        throw new Error(
-          `A fatal playback error occurred: VideoId: ${
-            video ? video.id : '-'
-          }. Type: ${data.type}. Details: ${data.details}. Reason: ${
-            data.reason
-          }. Error: ${data.err}`,
-        );
-      });
-
-      this.hls.attachMedia(this.plyr.media);
-
-      this.plyr.on('play', event => {
-        const plyr = event.detail.plyr;
-
-        if (!this.hasBeenDestroyed && this.hls) {
-          this.hls.startLoad(plyr.currentTime);
-        }
-      });
+      this.initialiseHls(playback, segmentStart);
     }
+  };
+
+  private initialiseHls = (playback: StreamPlayback, segmentStart: number) => {
+    this.hls = new Hls({
+      debug: this.player.getOptions().debug,
+      autoStartLoad: false,
+      startPosition: segmentStart,
+    });
+
+    this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
+      this.hls.loadSource(playback.streamUrl);
+    });
+
+    this.hls.on(Hls.Events.ERROR, (_, data) => {
+      const video = this.player.getVideo();
+
+      let fatal = data.fatal;
+
+      if (
+        data.type === Hls.ErrorTypes.MEDIA_ERROR &&
+        data.details === 'fragParsingError'
+      ) {
+        // A fragParsingError is usually recoverable, even if fatal is true.
+        fatal = false;
+      }
+
+      if (!fatal) {
+        console.warn(
+          `A non-fatal playback error occurred during playback of ${video.id}.`,
+          data,
+        );
+        return;
+      }
+
+      switch (data.type) {
+        case Hls.ErrorTypes.NETWORK_ERROR:
+          console.warn(
+            `A fatal network error encountered during playback of ${
+              video.id
+            }, try to recover.`,
+            data,
+          );
+          this.hls.startLoad(this.plyr.currentTime);
+          break;
+        case Hls.ErrorTypes.MEDIA_ERROR:
+          console.warn(
+            `A fatal media error encountered during playback of ${
+              video.id
+            }, try to recover.`,
+            data,
+          );
+          break;
+        default:
+          // cannot recover
+          this.destroy();
+
+          this.player.getErrorHandler().handleError({
+            fatal: data.fatal,
+            type: data.type,
+            payload: data,
+          });
+          break;
+      }
+
+      throw new Error(
+        `A fatal playback error occurred: VideoId: ${
+          video ? video.id : '-'
+        }. Type: ${data.type}. Details: ${data.details}. Reason: ${
+          data.reason
+        }. Error: ${data.err}`,
+      );
+    });
+
+    this.hls.attachMedia(this.plyr.media);
+
+    this.plyr.on('play', event => {
+      const plyr = event.detail.plyr;
+
+      if (!this.hasBeenDestroyed && this.hls) {
+        this.hls.startLoad(plyr.currentTime);
+      }
+    });
   };
 
   private createYoutubePlyr = (
