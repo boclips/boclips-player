@@ -16,6 +16,7 @@ import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
+jest.mock('../../ErrorHandler/ErrorHandler');
 
 const video = VideoFactory.sample();
 
@@ -194,6 +195,22 @@ describe('When a new video is configured', () => {
           });
         }).not.toThrow();
       });
+
+      it('render an error when a manifestLoadError occurs', () => {
+        const hlsMockInstance = Hls.mock.instances[0];
+
+        hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
+          type: Hls.ErrorTypes.NETWORK_ERROR,
+          details: 'manifestLoadError',
+          fatal: true,
+        });
+
+
+        const errorHandler = player.getErrorHandler();
+
+        expect(hlsMockInstance.destroy).toHaveBeenCalled();
+        expect(errorHandler.handleError).toHaveBeenCalled();
+      })
     });
   });
 

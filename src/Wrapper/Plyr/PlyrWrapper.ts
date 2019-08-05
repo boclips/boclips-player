@@ -69,14 +69,14 @@ export default class PlyrWrapper implements Wrapper {
       this.hls.loadSource(playback.streamUrl);
     });
 
-    this.hls.on(Hls.Events.ERROR, (_, data) => {
+    this.hls.on(Hls.Events.ERROR, (_, error) => {
       const video = this.player.getVideo();
 
-      let fatal = data.fatal;
+      let fatal = error.fatal;
 
       if (
-        data.type === Hls.ErrorTypes.MEDIA_ERROR &&
-        data.details === 'fragParsingError'
+        error.type === Hls.ErrorTypes.MEDIA_ERROR &&
+        error.details === 'fragParsingError'
       ) {
         // A fragParsingError is usually recoverable, even if fatal is true.
         fatal = false;
@@ -85,18 +85,24 @@ export default class PlyrWrapper implements Wrapper {
       if (!fatal) {
         console.warn(
           `A non-fatal playback error occurred during playback of ${video.id}.`,
-          data,
+          error,
         );
         return;
       }
 
-      switch (data.type) {
+      switch (error.type) {
         case Hls.ErrorTypes.NETWORK_ERROR:
+          if (error.details === 'manifestLoadError') {
+            this.handleFatalHlsError(error);
+
+            return;
+          }
+
           console.warn(
             `A fatal network error encountered during playback of ${
               video.id
             }, try to recover.`,
-            data,
+            error,
           );
           this.hls.startLoad(this.plyr.currentTime);
           break;
@@ -105,27 +111,21 @@ export default class PlyrWrapper implements Wrapper {
             `A fatal media error encountered during playback of ${
               video.id
             }, try to recover.`,
-            data,
+            error,
           );
           break;
         default:
           // cannot recover
-          this.destroy();
-
-          this.player.getErrorHandler().handleError({
-            fatal: data.fatal,
-            type: data.type,
-            payload: data,
-          });
+          this.handleFatalHlsError(error);
           break;
       }
 
       throw new Error(
         `A fatal playback error occurred: VideoId: ${
           video ? video.id : '-'
-        }. Type: ${data.type}. Details: ${data.details}. Reason: ${
-          data.reason
-        }. Error: ${data.err}`,
+        }. Type: ${error.type}. Details: ${error.details}. Reason: ${
+          error.reason
+        }. Error: ${error.err}`,
       );
     });
 
@@ -139,6 +139,16 @@ export default class PlyrWrapper implements Wrapper {
       }
     });
   };
+
+  private handleFatalHlsError(error) {
+    this.hls.destroy();
+
+    this.player.getErrorHandler().handleError({
+      fatal: error.fatal,
+      type: error.type,
+      payload: error,
+    });
+  }
 
   private createYoutubePlyr = (
     playback: YoutubePlayback,
