@@ -11,7 +11,7 @@ import {
 } from '../../test-support/TestFactories';
 import { StreamPlayback } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { Wrapper } from '../Wrapper';
+import { MediaPlayer } from '../MediaPlayer';
 import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
@@ -22,7 +22,7 @@ const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
 let player: PrivatePlayer;
-let wrapper: Wrapper = null;
+let mediaPlayer: MediaPlayer = null;
 
 beforeEach(() => {
   Hls.mockClear();
@@ -33,7 +33,7 @@ beforeEach(() => {
   mocked(player).getVideo.mockReturnValue({
     id: 'video-id-123',
   } as Video);
-  wrapper = new PlyrWrapper(player);
+  mediaPlayer = new PlyrWrapper(player);
 });
 
 it('Constructs a Plyr given an element a video element within container', () => {
@@ -57,7 +57,7 @@ describe('When a new video is configured', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(true);
 
-      wrapper.configureWithVideo(video);
+      mediaPlayer.configureWithVideo(video);
     });
 
     it('does not instantiate Hls if there is no playback', () => {
@@ -97,7 +97,7 @@ describe('When a new video is configured', () => {
     });
 
     it('destroys HLS before loading another video', () => {
-      wrapper.configureWithVideo(
+      mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
       const hlsMockInstance = Hls.mock.instances[0];
@@ -115,7 +115,7 @@ describe('When a new video is configured', () => {
           end: 60,
         };
 
-        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
         expect(Hls).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -139,7 +139,7 @@ describe('When a new video is configured', () => {
           end: 60,
         };
 
-        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
         expect(Hls).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -163,7 +163,7 @@ describe('When a new video is configured', () => {
           end: 60,
         };
 
-        wrapper.configureWithVideo(VideoFactory.sample(), segment);
+        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
         expect(Hls).toHaveBeenCalledWith(
           expect.objectContaining({
@@ -218,7 +218,7 @@ describe('When a new video is configured', () => {
     beforeEach(() => {
       Hls.mockClear();
       Hls.isSupported.mockReturnValue(false);
-      wrapper.configureWithVideo(video);
+      mediaPlayer.configureWithVideo(video);
     });
 
     it('does not instantiate a Hls', () => {
@@ -229,7 +229,7 @@ describe('When a new video is configured', () => {
   describe('When Hls is supported with YOUTUBE', () => {
     beforeEach(() => {
       Hls.isSupported.mockReturnValue(true);
-      wrapper.configureWithVideo(
+      mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
     });
@@ -271,7 +271,7 @@ testData.forEach(({ type, segmentedVideo }) =>
           start: 30,
         };
 
-        wrapper.configureWithVideo(segmentedVideo, segment);
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
         const plyrInstance = Plyr.mock.instances[0];
         expect(plyrInstance.currentTime).toEqual(segment.start);
@@ -286,7 +286,7 @@ testData.forEach(({ type, segmentedVideo }) =>
           start: 30,
         };
 
-        wrapper.configureWithVideo(segmentedVideo, segment);
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
         const plyrInstance = Plyr.mock.instances[0];
         // Some browsers won't set currentTime if it hasn't loaded the data
@@ -305,7 +305,7 @@ testData.forEach(({ type, segmentedVideo }) =>
         end: 60,
       };
 
-      wrapper.configureWithVideo(segmentedVideo, segment);
+      mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
       const plyrInstance = Plyr.mock.instances[0];
       plyrInstance.currentTime = 60;
@@ -321,7 +321,7 @@ testData.forEach(({ type, segmentedVideo }) =>
         end: 60,
       };
 
-      wrapper.configureWithVideo(segmentedVideo, segment);
+      mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
       const plyrInstance = Plyr.mock.instances[0];
       plyrInstance.currentTime = 60;
@@ -347,7 +347,7 @@ testData.forEach(({ type, segmentedVideo }) =>
           end: 20,
         };
 
-        wrapper.configureWithVideo(segmentedVideo, segment);
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
         const plyrInstance = Plyr.mock.instances[0];
 
@@ -364,7 +364,7 @@ testData.forEach(({ type, segmentedVideo }) =>
         end: 60,
       };
 
-      wrapper.configureWithVideo(segmentedVideo, segment);
+      mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
       let plyrInstance = Plyr.mock.instances[0];
       expect(plyrInstance.currentTime).toEqual(30);
@@ -376,7 +376,7 @@ testData.forEach(({ type, segmentedVideo }) =>
 
       expect(plyrInstance.pause).toHaveBeenCalledTimes(1);
 
-      wrapper.configureWithVideo(
+      mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
 
@@ -395,17 +395,17 @@ testData.forEach(({ type, segmentedVideo }) =>
 );
 
 it('Will play', () => {
-  wrapper.configureWithVideo(video);
+  mediaPlayer.configureWithVideo(video);
 
-  wrapper.play();
+  mediaPlayer.play();
   const plyrInstance = Plyr.mock.instances[1];
   expect(plyrInstance.play).toHaveBeenCalled();
 });
 
 it('Will pause', () => {
-  wrapper.configureWithVideo(video);
+  mediaPlayer.configureWithVideo(video);
 
-  wrapper.pause();
+  mediaPlayer.pause();
   const plyrInstance = Plyr.mock.instances[1];
   expect(plyrInstance.pause).toHaveBeenCalled();
 });
@@ -461,7 +461,7 @@ describe('Event Tracking', () => {
 
     plyrInstance.currentTime = 15;
 
-    wrapper.destroy();
+    mediaPlayer.destroy();
 
     expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(15);
 
@@ -613,7 +613,7 @@ describe('is listening for plyr events', () => {
 
 describe('when asked to destroy', () => {
   it('calls destroy on Plyr', () => {
-    wrapper.destroy();
+    mediaPlayer.destroy();
     const plyrInstance = Plyr.mock.instances[0];
 
     expect(plyrInstance.destroy).toHaveBeenCalled();
@@ -626,17 +626,17 @@ describe('when asked to destroy', () => {
     });
 
     expect(() => {
-      wrapper.destroy();
+      mediaPlayer.destroy();
     }).not.toThrow();
   });
 
   it('calls destroy on Hls', () => {
     Hls.isSupported.mockReturnValue(true);
-    wrapper.configureWithVideo(
+    mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
 
-    wrapper.destroy();
+    mediaPlayer.destroy();
     const hlsMockInstance = Hls.mock.instances[0];
 
     expect(hlsMockInstance.destroy).toHaveBeenCalled();
@@ -644,7 +644,7 @@ describe('when asked to destroy', () => {
 
   it('catches exceptions from the destroy function of hls', () => {
     Hls.isSupported.mockReturnValue(true);
-    wrapper.configureWithVideo(
+    mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
 
@@ -654,7 +654,7 @@ describe('when asked to destroy', () => {
     });
 
     expect(() => {
-      wrapper.destroy();
+      mediaPlayer.destroy();
     }).not.toThrow();
   });
 
@@ -662,7 +662,7 @@ describe('when asked to destroy', () => {
     const plyrInstance = Plyr.mock.instances[0];
     plyrInstance.currentTime = 50;
 
-    wrapper.destroy();
+    mediaPlayer.destroy();
 
     expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(50);
   });
@@ -674,7 +674,7 @@ describe('option configuration', () => {
       interface: { controls: ['play-large'] },
     });
 
-    wrapper = new PlyrWrapper(player);
+    mediaPlayer = new PlyrWrapper(player);
 
     const actualOptions = mocked(Plyr).mock.calls[1][1];
     expect(actualOptions.controls).toEqual(['play-large']);
@@ -688,9 +688,9 @@ it('does not configure video when the Plyr has been destroyed', () => {
     set: sourceSetSpy,
   });
 
-  wrapper.destroy();
+  mediaPlayer.destroy();
 
-  wrapper.configureWithVideo(VideoFactory.sample());
+  mediaPlayer.configureWithVideo(VideoFactory.sample());
 
   expect(sourceSetSpy).not.toHaveBeenCalled();
 });

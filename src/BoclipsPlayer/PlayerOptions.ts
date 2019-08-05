@@ -9,7 +9,7 @@ import {
 import {
   defaultInterfaceOptions,
   InterfaceOptions,
-} from '../Wrapper/InterfaceOptions';
+} from '../MediaPlayer/InterfaceOptions';
 
 export interface PlayerOptions {
   analytics: Partial<AnalyticsOptions>;

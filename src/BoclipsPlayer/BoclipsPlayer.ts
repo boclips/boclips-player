@@ -5,9 +5,9 @@ import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
+import { MediaPlayer, PlaybackSegment } from '../MediaPlayer/MediaPlayer';
+import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
 import { Video } from '../types/Video';
-import { PlaybackSegment, Wrapper } from '../Wrapper/Wrapper';
-import { WrapperFactory } from '../Wrapper/WrapperFactory';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 
@@ -26,11 +26,12 @@ export interface PrivatePlayer extends Player {
   getPlayerId: () => string;
   getOptions: () => Partial<PlayerOptions>;
   getVideo: () => Video | undefined;
+  getMediaPlayer: () => MediaPlayer;
 }
 
 export class BoclipsPlayer implements PrivatePlayer {
   private readonly options: PlayerOptions;
-  private readonly wrapper: Wrapper;
+  private readonly mediaPlayer: MediaPlayer;
   private readonly analytics: Analytics;
   private readonly errorHandler: ErrorHandler;
   private readonly boclipsClient: BoclipsApiClient;
@@ -65,7 +66,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     this.errorHandler = new ErrorHandler(this);
     this.boclipsClient = new AxiosBoclipsApiClient(this);
     this.analytics = new Analytics(this);
-    this.wrapper = new (WrapperFactory.get())(this);
+    this.mediaPlayer = new (MediaPlayerFactory.get())(this);
 
     const videoUriAttribute = container.getAttribute('data-boplayer-video-uri');
     if (videoUriAttribute) {
@@ -109,7 +110,7 @@ export class BoclipsPlayer implements PrivatePlayer {
         this.errorHandler.clearError();
 
         this.video = video;
-        this.wrapper.configureWithVideo(video, segment);
+        this.mediaPlayer.configureWithVideo(video, segment);
       })
       .catch(error => {
         if (this.errorHandler.isDefinedError(error)) {
@@ -146,11 +147,11 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public getPlayerId = () => this.playerId;
 
-  public destroy = () => this.wrapper.destroy();
+  public destroy = () => this.mediaPlayer.destroy();
 
   public getContainer = () => this.container;
 
-  public getWrapper = () => this.wrapper;
+  public getMediaPlayer = () => this.mediaPlayer;
 
   public getAnalytics = () => this.analytics;
 
@@ -160,9 +161,9 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public getVideo = (): Video => this.video;
 
-  public play = (): Promise<void> => this.wrapper.play();
+  public play = (): Promise<void> => this.mediaPlayer.play();
 
-  public pause = (): void => this.wrapper.pause();
+  public pause = (): void => this.mediaPlayer.pause();
 
   public getOptions = () => this.options;
 }

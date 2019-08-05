@@ -7,8 +7,8 @@ import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { VideoFactory } from '../test-support/TestFactories';
 import { Video } from '../types/Video';
-import { PlaybackSegment } from '../Wrapper/Wrapper';
-import { WrapperFactory } from '../Wrapper/WrapperFactory';
+import { PlaybackSegment } from '../MediaPlayer/MediaPlayer';
+import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
 
@@ -16,7 +16,7 @@ jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
 jest.mock('../ErrorHandler/ErrorHandler');
 jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient.ts');
-jest.mock('../Wrapper/WrapperFactory.ts');
+jest.mock('../MediaPlayer/MediaPlayerFactory.ts');
 
 describe('BoclipsPlayer', () => {
   let container: HTMLElement & { __jsdomMockClientHeight: number };
@@ -38,18 +38,18 @@ describe('BoclipsPlayer', () => {
     expect(player.getContainer()).toEqual(container);
   });
 
-  it('Will return the wrapper', () => {
-    expect(player.getWrapper().play).toBeTruthy();
+  it('Will return the media player', () => {
+    expect(player.getMediaPlayer().play).toBeTruthy();
   });
 
-  it('Will initialise the wrapper with the player', () => {
-    expect(WrapperFactory.get()).toBeCalledTimes(1);
-    expect(WrapperFactory.get()).toHaveBeenCalledWith(player);
+  it('Will initialise the media player with the player', () => {
+    expect(MediaPlayerFactory.get()).toBeCalledTimes(1);
+    expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
   });
 
   it('Will initialise the event tracker with the player', () => {
     expect(Analytics).toBeCalledTimes(1);
-    expect(WrapperFactory.get()).toHaveBeenCalledWith(player);
+    expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
   });
 
   it('Will auto load the video based on data attribute on container', () => {
@@ -152,11 +152,11 @@ describe('BoclipsPlayer', () => {
     const errorHandler = mocked(ErrorHandler).mock.results[0].value;
     expect(errorHandler.clearError).toHaveBeenCalledTimes(2);
 
-    const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+    const calls = mocked(player.getMediaPlayer().configureWithVideo).mock.calls;
     expect(calls).toHaveLength(2);
   });
 
-  describe('Configuring the wrapper with a video', () => {
+  describe('Configuring the media player with a video', () => {
     const uri = '/v1/videos/177';
 
     const video = VideoFactory.sample();
@@ -167,9 +167,9 @@ describe('BoclipsPlayer', () => {
       );
     });
 
-    it('Will configure the wrapper with the video', () => {
+    it('Will configure the media player with the video', () => {
       return player.loadVideo(uri).then(() => {
-        const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock.calls;
         expect(calls).toHaveLength(1);
         const actualVideo = calls[0][0] as Video;
         expect(actualVideo).toBeTruthy();
@@ -177,13 +177,13 @@ describe('BoclipsPlayer', () => {
       });
     });
 
-    it('Will configure the wrapper with a video and soft playback restriction', () => {
+    it('Will configure the media player with a video and soft playback restriction', () => {
       const playbackSegment: PlaybackSegment = {
         start: 10,
         end: 30,
       };
       return player.loadVideo(uri, playbackSegment).then(() => {
-        const calls = mocked(player.getWrapper().configureWithVideo).mock.calls;
+        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock.calls;
         expect(calls).toHaveLength(1);
         const actualVideo = calls[0][0] as Video;
         expect(actualVideo).toBeTruthy();
@@ -194,14 +194,14 @@ describe('BoclipsPlayer', () => {
     });
   });
 
-  describe('passes through wrapper methods', () => {
+  describe('passes through media player methods', () => {
     const passThroughMethods = ['destroy', 'play', 'pause'];
 
     passThroughMethods.forEach(method => {
-      it(`Will destroy the wrapper when ${method} is called`, () => {
+      it(`Will destroy the media player when ${method} is called`, () => {
         player[method]();
 
-        expect(player.getWrapper()[method]).toHaveBeenCalled();
+        expect(player.getMediaPlayer()[method]).toHaveBeenCalled();
       });
     });
   });

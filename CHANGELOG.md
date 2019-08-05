@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Non-fatal HLS errors threw exceptions, preventing automatic recovery
 - Render an error when the stream manifest is missing
 
+### Changed
+- Internal representation of `Wrapper` to a better named `MediaPlayer`
+
 ## [2.1.6] - 2019-07-29
 
 ### Fixed

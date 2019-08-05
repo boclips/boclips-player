@@ -33,7 +33,7 @@
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
     "demo:unpkg": "./node_modules/.bin/webpack-dev-server --config demo/unpkg/webpack.config.js",
     "lint": "tslint -c tslint.json -p . && stylelint 'src/**/*.less'",
-    "lint:fix": "prettier-package-json --write && npm run lint -- --fix && stylelint 'src/**/*.less' --fix",
+    "lint:fix": "prettier-package-json --write && tslint --fix -c tslint.json -p . && stylelint 'src/**/*.less' --fix",
     "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest"
   },

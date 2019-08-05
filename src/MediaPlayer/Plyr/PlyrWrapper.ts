@@ -8,10 +8,10 @@ import {
   YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
-import { PlaybackSegment, Wrapper } from '../Wrapper';
+import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import './PlyrWrapper.less';
 
-export default class PlyrWrapper implements Wrapper {
+export default class PlyrWrapper implements MediaPlayer {
   private plyr;
   private hls = null;
   private hasBeenDestroyed: boolean = false;

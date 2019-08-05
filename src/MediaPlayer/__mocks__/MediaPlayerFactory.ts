@@ -1,8 +1,8 @@
 import { noop } from '../../utils';
-import { Wrapper } from '../Wrapper';
+import { MediaPlayer } from '../MediaPlayer';
 
-export const MockWrapper = jest.fn<Wrapper, any>().mockImplementation(
-  (): Wrapper => {
+export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
+  (): MediaPlayer => {
     return {
       configureWithVideo: jest.fn(),
       play: jest.fn().mockReturnValue(new Promise(noop)),
@@ -13,6 +13,6 @@ export const MockWrapper = jest.fn<Wrapper, any>().mockImplementation(
 );
 
 // noinspection JSUnusedGlobalSymbols
-export const WrapperFactory = {
-  get: jest.fn().mockReturnValue(MockWrapper),
+export const MediaPlayerFactory = {
+  get: jest.fn().mockReturnValue(MockMediaPlayer),
 };
