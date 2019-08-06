@@ -469,6 +469,33 @@ describe('UI Events', () => {
   });
 });
 
+describe('Error Handling', () => {
+  it('does nothing when the media has no error', () => {
+    delete mockPlyr.media.error;
+    expect(() => {
+      mockPlyr.__callEventCallback('error');
+    }).not.toThrow();
+  });
+
+  it('passes the media error to the ErrorHandler', () => {
+    mockPlyr.media.error = {
+      code: 44444,
+      message: 'Four Four Four Four Four',
+    };
+
+    mockPlyr.__callEventCallback('error');
+
+    expect(mockPlayer.getErrorHandler().handleError).toHaveBeenCalledWith({
+      fatal: true,
+      type: 'PLAYBACK_ERROR',
+      payload: {
+        code: 44444,
+        message: 'Four Four Four Four Four',
+      },
+    });
+  });
+});
+
 describe('Destruction', () => {
   let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
 

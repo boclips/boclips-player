@@ -186,7 +186,7 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr.on('error', event => {
       const mediaError = event.detail.plyr.media.error;
 
-      if (mediaError.code && mediaError.message) {
+      if (mediaError && mediaError.code && mediaError.message) {
         this.player.getErrorHandler().handleError({
           fatal: true,
           type: 'PLAYBACK_ERROR',
