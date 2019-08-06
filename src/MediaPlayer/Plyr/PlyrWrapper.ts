@@ -285,9 +285,10 @@ export default class PlyrWrapper implements MediaPlayer {
       return;
     }
 
+    this.handleBeforeUnload();
+
     this.hasBeenDestroyed = true;
 
-    this.handleBeforeUnload();
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
 
     try {
@@ -306,7 +307,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private handleBeforeUnload = () => {
-    if (this.plyr) {
+    if (!this.hasBeenDestroyed && this.plyr) {
       const currentTime = this.plyr.currentTime;
       this.player.getAnalytics().handlePause(currentTime);
     }

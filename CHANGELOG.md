@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `options.interface.controls` was previously being appended to the default controls
 - Non-fatal HLS errors threw exceptions, preventing automatic recovery
 - Render an error when the stream manifest is missing
-- TypeError when plyr.media.error is undefined when handling error events
+- TypeError when handling plyr events post destruction
 
 ### Changed
 - Internal representation of `Wrapper` to a better named `MediaPlayer`

@@ -575,4 +575,20 @@ describe('Destruction', () => {
 
     expect((window as any).__callbacks.beforeunload).toHaveLength(0);
   });
+
+  it('does not emit a handlePause event after destruction', () => {
+    const callbacks = (window as any).__callbacks.beforeunload;
+
+    expect(callbacks).toHaveLength(1);
+
+    const beforeunload = callbacks[0];
+
+    mediaPlayer.destroy();
+
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledTimes(1);
+
+    beforeunload();
+
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledTimes(1);
+  });
 });
