@@ -11,7 +11,6 @@ import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
-import { Video } from '../../types/Video';
 import { MediaPlayer } from '../MediaPlayer';
 import PlyrWrapper from './PlyrWrapper';
 
@@ -23,247 +22,229 @@ jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 const video = VideoFactory.sample();
 
 let container: HTMLElement = null;
-let player: PrivatePlayer;
+let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer = null;
+let mockPlyr;
+
+function getLatestMockPlyr() {
+  return Plyr.mock.instances[Plyr.mock.instances.length - 1];
+}
 
 beforeEach(() => {
   Plyr.mockClear();
 
   container = document.createElement('div');
-  player = new BoclipsPlayer(container);
-  mocked(player).getVideo.mockReturnValue({
-    id: 'video-id-123',
-  } as Video);
-  mediaPlayer = new PlyrWrapper(player);
+
+  mockPlayer = mocked(new BoclipsPlayer(container));
+  mediaPlayer = new PlyrWrapper(mockPlayer);
+
+  mockPlyr = getLatestMockPlyr();
 });
 
-it('Constructs a Plyr given an element a video element within container', () => {
-  expect(container.children.length).toEqual(1);
-
-  const videoElement = container.children.item(0);
-  expect(videoElement.tagName).toEqual('VIDEO');
-  expect(videoElement.getAttribute('data-qa')).toEqual('boclips-player');
-  expect(videoElement.getAttribute('preload')).toEqual('metadata');
-
-  expect(Plyr).toHaveBeenCalledWith(
-    videoElement,
-    expect.objectContaining({
-      captions: expect.objectContaining({ update: true }),
-    }),
-  );
-});
-
-describe('When a new video is configured', () => {
-  describe('With Stream (Kaltura)', () => {
-    let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
-
-    beforeEach(() => {
-      mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(player));
+describe('Instantiation', () => {
+  it('Plyr is configured according to the Player options', () => {
+    mockPlayer = new BoclipsPlayer(container, {
+      interface: { controls: ['play-large'] },
     });
 
-    it('it initialises the streamingTechnique', () => {
-      mediaPlayer.configureWithVideo(video);
+    mediaPlayer = new PlyrWrapper(mockPlayer);
+
+    const actualOptions = mocked(Plyr).mock.calls[1][1];
+    expect(actualOptions.controls).toEqual(['play-large']);
+  });
+
+  it('Constructs a Plyr given an element a video element within container', () => {
+    expect(container.children.length).toEqual(1);
+
+    const videoElement = container.children.item(0);
+    expect(videoElement.tagName).toEqual('VIDEO');
+    expect(videoElement.getAttribute('data-qa')).toEqual('boclips-player');
+    expect(videoElement.getAttribute('preload')).toEqual('metadata');
+
+    expect(Plyr).toHaveBeenCalledWith(
+      videoElement,
+      expect.objectContaining({
+        captions: expect.objectContaining({ update: true }),
+      }),
+    );
+  });
+});
+
+describe('Stream Playback', () => {
+  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+
+  beforeEach(() => {
+    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
+  });
+
+  it('initialises the streamingTechnique', () => {
+    mediaPlayer.configureWithVideo(video);
+
+    expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+      video.playback,
+      undefined,
+    );
+  });
+
+  it('adds a play listener to Plyr to startLoad on the streamingTechnique', () => {
+    mediaPlayer.configureWithVideo(video);
+
+    mockPlyr = getLatestMockPlyr();
+    mockPlyr.currentTime = 20;
+    mockPlyr.__callEventCallback('play');
+
+    expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(20);
+  });
+
+  it('destroys the streamingTechnique before loading another video', () => {
+    mediaPlayer.configureWithVideo(video);
+
+    mediaPlayer.configureWithVideo(
+      VideoFactory.sample(PlaybackFactory.youtubeSample()),
+    );
+
+    expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
+  });
+
+  describe('with a playback segment', () => {
+    it('does not restrict streamingTechnique load when there is no start time', () => {
+      const segment = {
+        end: 60,
+      };
+
+      mediaPlayer.configureWithVideo(video, segment);
 
       expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
         video.playback,
         undefined,
       );
+
+      mockPlyr = getLatestMockPlyr();
+      mockPlyr.__callEventCallback('play');
+
+      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(undefined);
     });
 
-    it('adds a play listener to Plyr to startLoad on the streamingTechnique', () => {
-      mediaPlayer.configureWithVideo(video);
+    it('restricts the initial streamingTechnique load when a playback segment is provided', () => {
+      const segment = {
+        start: 30,
+        end: 60,
+      };
 
-      const plyrInstance = Plyr.mock.instances[0];
-      plyrInstance.currentTime = 20;
-      plyrInstance.__callEventCallback('play', {
-        detail: { plyr: plyrInstance },
-      });
+      mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
-      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(20);
-    });
-
-    it('destroys the streamingTechnique before loading another video', () => {
-      mediaPlayer.configureWithVideo(video);
-
-      mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.youtubeSample()),
+      expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+        video.playback,
+        segment.start,
       );
 
-      expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
-    });
+      mockPlyr = getLatestMockPlyr();
+      mockPlyr.__callEventCallback('play');
 
-    describe('with a playback segment', () => {
-      beforeEach(() => {
-        Plyr.mockClear();
-      });
-
-      it('does not restrict streamingTechnique load when there is no start time', () => {
-        const segment = {
-          end: 60,
-        };
-
-        mediaPlayer.configureWithVideo(video, segment);
-
-        expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
-          video.playback,
-          undefined,
-        );
-
-        const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.__callEventCallback('play', {
-          detail: { plyr: plyrInstance },
-        });
-
-        expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
-          undefined,
-        );
-      });
-
-      it('restricts the initial streamingTechnique load when a playback segment is provided', () => {
-        const segment = {
-          start: 30,
-          end: 60,
-        };
-
-        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
-
-        expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
-          video.playback,
-          segment.start,
-        );
-
-        const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.__callEventCallback('play', {
-          detail: { plyr: plyrInstance },
-        });
-
-        expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
-          segment.start,
-        );
-      });
-
-      it('stops streamingTechnique from loading when it is automatically paused', () => {
-        const segment = {
-          start: 30,
-          end: 60,
-        };
-
-        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
-
-        const plyrInstance = Plyr.mock.instances[0];
-        plyrInstance.currentTime = 60;
-        plyrInstance.__callEventCallback('timeupdate', {
-          detail: { plyr: plyrInstance },
-        });
-
-        expect(mockStreamingTechnique.stopLoad).toHaveBeenCalled();
-      });
-    });
-  });
-
-  describe('With YouTube', () => {
-    it('does not get a StreamingTechnique', () => {
-      mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.youtubeSample()),
+      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
+        segment.start,
       );
+    });
 
-      expect(StreamingTechniqueFactory.get).not.toHaveBeenCalled();
+    it('stops streamingTechnique from loading when it is automatically paused', () => {
+      const segment = {
+        start: 30,
+        end: 60,
+      };
+
+      mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
+
+      mockPlyr = getLatestMockPlyr();
+      mockPlyr.currentTime = 60;
+      mockPlyr.__callEventCallback('timeupdate');
+
+      expect(mockStreamingTechnique.stopLoad).toHaveBeenCalled();
     });
   });
 });
 
-const testData = [
-  { type: 'stream', segmentedVideo: VideoFactory.sample() },
-  {
-    type: 'youtube',
-    segmentedVideo: VideoFactory.sample(PlaybackFactory.youtubeSample()),
-  },
-];
-
-testData.forEach(({ type, segmentedVideo }) =>
-  describe('segment playback restriction for ' + type, () => {
-    beforeEach(() => {
-      Plyr.mockClear();
-    });
-
-    it(
-      type + ' should set the currentTime at the beginning of the segment',
-      () => {
-        const segment = {
-          start: 30,
-        };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
-
-        const plyrInstance = Plyr.mock.instances[0];
-        expect(plyrInstance.currentTime).toEqual(segment.start);
-      },
+describe('YouTube Playback', () => {
+  it('does not get a StreamingTechnique', () => {
+    mediaPlayer.configureWithVideo(
+      VideoFactory.sample(PlaybackFactory.youtubeSample()),
     );
 
-    it(
-      type +
-        ' should add a playing event to set seek to the beginning of the segment',
-      () => {
+    expect(StreamingTechniqueFactory.get).not.toHaveBeenCalled();
+  });
+});
+
+describe('Playback restriction', () => {
+  const testData = [
+    { type: 'Stream', segmentedVideo: VideoFactory.sample() },
+    {
+      type: 'Youtube',
+      segmentedVideo: VideoFactory.sample(PlaybackFactory.youtubeSample()),
+    },
+  ];
+
+  testData.forEach(({ type, segmentedVideo }) =>
+    describe('For ' + type, () => {
+      it('should set the currentTime at the beginning of the segment', () => {
         const segment = {
           start: 30,
         };
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        const plyrInstance = Plyr.mock.instances[0];
+        mockPlyr = getLatestMockPlyr();
+        expect(mockPlyr.currentTime).toEqual(segment.start);
+      });
+
+      it('should add a playing event to set seek to the beginning of the segment', () => {
+        const segment = {
+          start: 30,
+        };
+
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+
+        mockPlyr = getLatestMockPlyr();
         // Some browsers won't set currentTime if it hasn't loaded the data
-        plyrInstance.currentTime = 0;
+        mockPlyr.currentTime = 0;
 
-        plyrInstance.__callEventCallback('playing', {
-          detail: { plyr: plyrInstance },
-        });
+        mockPlyr.__callEventCallback('playing');
 
-        expect(plyrInstance.currentTime).toEqual(segment.start);
-      },
-    );
-
-    it(type + ' should pause playback at the end of the segment', () => {
-      const segment = {
-        end: 60,
-      };
-
-      mediaPlayer.configureWithVideo(segmentedVideo, segment);
-
-      const plyrInstance = Plyr.mock.instances[0];
-      plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate', {
-        detail: { plyr: plyrInstance },
+        expect(mockPlyr.currentTime).toEqual(segment.start);
       });
 
-      expect(plyrInstance.pause).toHaveBeenCalled();
-    });
+      it('should pause playback at the end of the segment', () => {
+        const segment = {
+          end: 60,
+        };
 
-    it(type + ' should not auto pause again after it has paused once', () => {
-      const segment = {
-        end: 60,
-      };
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-      mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        mockPlyr = getLatestMockPlyr();
+        mockPlyr.currentTime = 60;
+        mockPlyr.__callEventCallback('timeupdate');
 
-      const plyrInstance = Plyr.mock.instances[0];
-      plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate', {
-        detail: { plyr: plyrInstance },
+        expect(mockPlyr.pause).toHaveBeenCalled();
       });
 
-      expect(plyrInstance.pause).toBeCalledTimes(1);
+      it('should not auto pause again after it has paused once', () => {
+        const segment = {
+          end: 60,
+        };
 
-      plyrInstance.currentTime = 65;
-      plyrInstance.__callEventCallback('timeupdate', {
-        detail: { plyr: plyrInstance },
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+
+        mockPlyr = getLatestMockPlyr();
+        mockPlyr.currentTime = 60;
+        mockPlyr.__callEventCallback('timeupdate');
+
+        expect(mockPlyr.pause).toBeCalledTimes(1);
+
+        mockPlyr.currentTime = 65;
+        mockPlyr.__callEventCallback('timeupdate');
+
+        expect(mockPlyr.pause).toBeCalledTimes(1);
       });
 
-      expect(plyrInstance.pause).toBeCalledTimes(1);
-    });
-
-    it(
-      type + ' should not pause if the segment end is earlier than the start',
-      () => {
+      it('should not pause if the segment end is earlier than the start', () => {
         const segment = {
           start: 45,
           end: 20,
@@ -271,97 +252,86 @@ testData.forEach(({ type, segmentedVideo }) =>
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        const plyrInstance = Plyr.mock.instances[0];
+        mockPlyr = getLatestMockPlyr();
 
-        expect(plyrInstance.on).not.toHaveBeenCalledWith(
+        expect(mockPlyr.on).not.toHaveBeenCalledWith(
           'timeupdate',
           expect.anything(),
         );
-      },
-    );
-
-    it(type + ' should not apply segment limits when video is changed', () => {
-      const segment = {
-        start: 30,
-        end: 60,
-      };
-
-      mediaPlayer.configureWithVideo(segmentedVideo, segment);
-
-      let plyrInstance = Plyr.mock.instances[0];
-      expect(plyrInstance.currentTime).toEqual(30);
-
-      plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate', {
-        detail: { plyr: plyrInstance },
       });
 
-      expect(plyrInstance.pause).toHaveBeenCalledTimes(1);
+      it('should not apply segment limits when video is changed', () => {
+        const segment = {
+          start: 30,
+          end: 60,
+        };
 
-      mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.youtubeSample()),
-      );
+        mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-      plyrInstance = Plyr.mock.instances[1];
+        mockPlyr = getLatestMockPlyr();
+        expect(mockPlyr.currentTime).toEqual(30);
 
-      expect(plyrInstance.currentTime).toBeUndefined();
+        mockPlyr.currentTime = 60;
+        mockPlyr.__callEventCallback('timeupdate');
 
-      plyrInstance.currentTime = 60;
-      plyrInstance.__callEventCallback('timeupdate', {
-        detail: { plyr: plyrInstance },
+        expect(mockPlyr.pause).toHaveBeenCalledTimes(1);
+
+        mediaPlayer.configureWithVideo(
+          VideoFactory.sample(PlaybackFactory.youtubeSample()),
+        );
+
+        mockPlyr = getLatestMockPlyr();
+
+        expect(mockPlyr.currentTime).toBeUndefined();
+
+        mockPlyr.currentTime = 60;
+        mockPlyr.__callEventCallback('timeupdate');
+
+        expect(mockPlyr.pause).not.toHaveBeenCalled();
       });
-
-      expect(plyrInstance.pause).not.toHaveBeenCalled();
-    });
-  }),
-);
-
-it('Will play', () => {
-  mediaPlayer.configureWithVideo(video);
-
-  mediaPlayer.play();
-  const plyrInstance = Plyr.mock.instances[1];
-  expect(plyrInstance.play).toHaveBeenCalled();
+    }),
+  );
 });
 
-it('Will pause', () => {
-  mediaPlayer.configureWithVideo(video);
+describe('Passthrough API', () => {
+  it('Will play', () => {
+    mediaPlayer.configureWithVideo(video);
 
-  mediaPlayer.pause();
-  const plyrInstance = Plyr.mock.instances[1];
-  expect(plyrInstance.pause).toHaveBeenCalled();
-});
-
-describe('Event Tracking', () => {
-  let plyrInstance;
-
-  beforeEach(() => {
-    plyrInstance = Plyr.mock.instances[0];
-    plyrInstance.on.mockClear();
+    mediaPlayer.play();
+    mockPlyr = getLatestMockPlyr();
+    expect(mockPlyr.play).toHaveBeenCalled();
   });
 
+  it('Will pause', () => {
+    mediaPlayer.configureWithVideo(video);
+
+    mediaPlayer.pause();
+    mockPlyr = getLatestMockPlyr();
+    expect(mockPlyr.pause).toHaveBeenCalled();
+  });
+});
+
+describe('Playback Tracking', () => {
   it('will add an on playing event listener that delegates to the Analytics', () => {
-    plyrInstance.__callEventCallback('playing', {
+    mockPlyr.currentTime = 10;
+    mockPlyr.__callEventCallback('playing', {
       detail: {
-        plyr: {
-          currentTime: 10,
-        },
+        plyr: mockPlyr,
       },
     });
 
-    expect(player.getAnalytics().handlePlay).toHaveBeenCalledWith(10);
+    expect(mockPlayer.getAnalytics().handlePlay).toHaveBeenCalledWith(10);
   });
 
   it('will add an on pause event listener that delegates to the Analytics', () => {
-    plyrInstance.__callEventCallback('pause', {
+    mockPlyr.currentTime = 15;
+    mockPlyr.__callEventCallback('pause', {
       detail: {
-        plyr: {
-          currentTime: 15,
-        },
+        plyr: mockPlyr,
       },
     });
 
-    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(15);
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(15);
   });
 
   it('will call on pause when the navigation is about to change', () => {
@@ -369,187 +339,151 @@ describe('Event Tracking', () => {
 
     expect(callbacks).toHaveLength(1);
 
-    plyrInstance.currentTime = 25;
+    mockPlyr.currentTime = 25;
 
     const callback = callbacks[0];
 
     callback();
 
-    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(25);
-  });
-
-  it('will remove an unload event listener on destruction', () => {
-    expect((window as any).__callbacks.beforeunload).toHaveLength(1);
-
-    plyrInstance.currentTime = 15;
-
-    mediaPlayer.destroy();
-
-    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(15);
-
-    expect((window as any).__callbacks.beforeunload).toHaveLength(0);
-  });
-
-  describe('interaction events', () => {
-    it('sends an interaction event when the plyr enters fullscreen', () => {
-      const plyr = {
-        currentTime: 124,
-      };
-
-      plyrInstance.__callEventCallback('enterfullscreen', {
-        detail: { plyr },
-      });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        124,
-        'fullscreenEnabled',
-        {},
-      );
-    });
-
-    it('sends an interaction event when the plyr leaves fullscreen', () => {
-      const plyr = {
-        currentTime: 127,
-      };
-
-      plyrInstance.__callEventCallback('exitfullscreen', { detail: { plyr } });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        127,
-        'fullscreenDisabled',
-        {},
-      );
-    });
-
-    it.skip('sends an interaction event when the captions are turned on', () => {
-      const plyr = {
-        currentTime: 124,
-        captions: {
-          currentTrackNode: {
-            kind: 'Captions',
-            label: 'English',
-            language: 'en',
-            id: '',
-          },
-        },
-      };
-
-      plyrInstance.__callEventCallback('captionsenabled', {
-        detail: { plyr },
-      });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        124,
-        'captionsEnabled',
-        {
-          kind: 'Captions',
-          label: 'English',
-          language: 'en',
-          id: '',
-        },
-      );
-    });
-
-    it.skip('sends an interaction event when the captions change language', () => {
-      const plyr = {
-        currentTime: 125,
-        captions: {
-          currentTrackNode: {
-            kind: 'Captions',
-            label: 'Dutch',
-            language: 'nl',
-            id: '123',
-          },
-        },
-      };
-
-      plyrInstance.__callEventCallback('languagechange', { detail: { plyr } });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        125,
-        'captionsChanged',
-        {
-          kind: 'Captions',
-          label: 'Dutch',
-          language: 'nl',
-          id: '123',
-        },
-      );
-    });
-
-    it.skip('sends an interaction event when the captions are turned off', () => {
-      const plyr = { currentTime: 125 };
-
-      plyrInstance.__callEventCallback('captionsdisabled', {
-        detail: { plyr },
-      });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        125,
-        'captionsDisabled',
-        {},
-      );
-    });
-
-    it('sends an interaction event when the speed of the playback changes', () => {
-      const plyr = { currentTime: 125, speed: 1.25 };
-
-      plyrInstance.__callEventCallback('ratechange', {
-        detail: { plyr },
-      });
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        125,
-        'speedChanged',
-        {
-          speed: 1.25,
-        },
-      );
-    });
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(25);
   });
 });
 
-describe('is listening for plyr events', () => {
-  let plyrInstance;
+describe('Interaction events', () => {
+  it('Plyr entering fullscreen', () => {
+    mockPlyr.currentTime = 124;
+    mockPlyr.__callEventCallback('enterfullscreen');
 
-  beforeEach(() => {
-    plyrInstance = Plyr.mock.instances[0];
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      124,
+      'fullscreenEnabled',
+      {},
+    );
   });
 
+  it('Plyr exiting fullscreen', () => {
+    mockPlyr.currentTime = 127;
+
+    mockPlyr.__callEventCallback('exitfullscreen');
+
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      127,
+      'fullscreenDisabled',
+      {},
+    );
+  });
+
+  it.skip('Captions are turned on', () => {
+    mockPlyr.currentTime = 124;
+    mockPlyr.captions = {
+      currentTrackNode: {
+        kind: 'Captions',
+        label: 'English',
+        language: 'en',
+        id: '',
+      },
+    };
+
+    mockPlyr.__callEventCallback('captionsenabled');
+
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      124,
+      'captionsEnabled',
+      {
+        kind: 'Captions',
+        label: 'English',
+        language: 'en',
+        id: '',
+      },
+    );
+  });
+
+  it.skip('Captions change language', () => {
+    mockPlyr.currentTime = 124;
+    mockPlyr.captions = {
+      currentTrackNode: {
+        kind: 'Captions',
+        label: 'Dutch',
+        language: 'nl',
+        id: '123',
+      },
+    };
+
+    mockPlyr.__callEventCallback('languagechange');
+
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      125,
+      'captionsChanged',
+      {
+        kind: 'Captions',
+        label: 'Dutch',
+        language: 'nl',
+        id: '123',
+      },
+    );
+  });
+
+  it.skip('Captions are turned off', () => {
+    mockPlyr.currentTime = 125;
+
+    mockPlyr.__callEventCallback('captionsdisabled');
+
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      125,
+      'captionsDisabled',
+      {},
+    );
+  });
+
+  it('Speed of the playback changes', () => {
+    mockPlyr.currentTime = 125;
+    mockPlyr.speed = 1.25;
+
+    mockPlyr.__callEventCallback('ratechange');
+
+    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      125,
+      'speedChanged',
+      {
+        speed: 1.25,
+      },
+    );
+  });
+});
+
+describe('UI Events', () => {
   it('adds a --fullscreen class to the container on enterfullscreen', () => {
     expect(container.classList).not.toContain('plyr--fullscreen');
-    plyrInstance.__callEventCallback('enterfullscreen', {
-      detail: { plyr: { currentTime: 0 } },
-    });
+
+    mockPlyr.__callEventCallback('enterfullscreen');
+
     expect(container.classList).toContain('plyr--fullscreen');
   });
 
   it('removes a --fullscreen class to the container on exitfullscreen', () => {
     container.classList.add('plyr--fullscreen');
-    plyrInstance.__callEventCallback('exitfullscreen', {
-      detail: { plyr: { currentTime: 0 } },
-    });
+
+    mockPlyr.__callEventCallback('exitfullscreen');
+
     expect(container.classList).not.toContain('plyr--fullscreen');
   });
 });
 
-describe('when asked to destroy', () => {
+describe('Destruction', () => {
   let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
 
   beforeEach(() => {
-    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(player));
+    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
   });
 
-  it('calls destroy on Plyr', () => {
+  it('destroys the Plyr instance', () => {
     mediaPlayer.destroy();
-    const plyrInstance = Plyr.mock.instances[0];
 
-    expect(plyrInstance.destroy).toHaveBeenCalled();
+    expect(mockPlyr.destroy).toHaveBeenCalled();
   });
 
-  it('catches exceptions from the destroy function of plyr', () => {
-    const plyrInstance = Plyr.mock.instances[0];
-    plyrInstance.destroy.mockImplementation(() => {
+  it('catches exceptions from Plyr destruction', () => {
+    mockPlyr.destroy.mockImplementation(() => {
       throw Error('This should not bubble');
     });
 
@@ -558,7 +492,7 @@ describe('when asked to destroy', () => {
     }).not.toThrow();
   });
 
-  it('calls destroy on streamingTechnique', () => {
+  it('destroys the streamingTechnique', () => {
     mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
@@ -568,7 +502,7 @@ describe('when asked to destroy', () => {
     expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
   });
 
-  it('catches exceptions from the destroy function of streamingTechnique', () => {
+  it('catches exceptions from streamingTechnique destruction', () => {
     mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
@@ -582,39 +516,36 @@ describe('when asked to destroy', () => {
     }).not.toThrow();
   });
 
-  it('sends a pause event on destruction', () => {
-    const plyrInstance = Plyr.mock.instances[0];
-    plyrInstance.currentTime = 50;
+  it('sends a pause event', () => {
+    mockPlyr.currentTime = 50;
 
     mediaPlayer.destroy();
 
-    expect(player.getAnalytics().handlePause).toHaveBeenCalledWith(50);
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(50);
   });
-});
 
-describe('option configuration', () => {
-  it('will pass through the control options', () => {
-    player = new BoclipsPlayer(container, {
-      interface: { controls: ['play-large'] },
+  it('does not configure video once the Plyr has been destroyed', () => {
+    const sourceSetSpy = jest.fn();
+    Object.defineProperty(mockPlyr, 'source', {
+      set: sourceSetSpy,
     });
 
-    mediaPlayer = new PlyrWrapper(player);
+    mediaPlayer.destroy();
 
-    const actualOptions = mocked(Plyr).mock.calls[1][1];
-    expect(actualOptions.controls).toEqual(['play-large']);
-  });
-});
+    mediaPlayer.configureWithVideo(VideoFactory.sample());
 
-it('does not configure video when the Plyr has been destroyed', () => {
-  const plyrInstance = Plyr.mock.instances[0];
-  const sourceSetSpy = jest.fn();
-  Object.defineProperty(plyrInstance, 'source', {
-    set: sourceSetSpy,
+    expect(sourceSetSpy).not.toHaveBeenCalled();
   });
 
-  mediaPlayer.destroy();
+  it('will remove an unload event listener on destruction', () => {
+    expect((window as any).__callbacks.beforeunload).toHaveLength(1);
 
-  mediaPlayer.configureWithVideo(VideoFactory.sample());
+    mockPlyr.currentTime = 15;
 
-  expect(sourceSetSpy).not.toHaveBeenCalled();
+    mediaPlayer.destroy();
+
+    expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(15);
+
+    expect((window as any).__callbacks.beforeunload).toHaveLength(0);
+  });
 });
