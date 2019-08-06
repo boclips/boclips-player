@@ -1,15 +1,16 @@
-import Hls from 'hls.js';
 import Plyr from 'plyr';
+import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
 import {
   BoclipsPlayer,
   PrivatePlayer,
 } from '../../BoclipsPlayer/BoclipsPlayer';
+import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
+import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
-import { StreamPlayback } from '../../types/Playback';
 import { Video } from '../../types/Video';
 import { MediaPlayer } from '../MediaPlayer';
 import PlyrWrapper from './PlyrWrapper';
@@ -17,6 +18,7 @@ import PlyrWrapper from './PlyrWrapper';
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
 jest.mock('../../ErrorHandler/ErrorHandler');
+jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 
 const video = VideoFactory.sample();
 
@@ -25,7 +27,6 @@ let player: PrivatePlayer;
 let mediaPlayer: MediaPlayer = null;
 
 beforeEach(() => {
-  Hls.mockClear();
   Plyr.mockClear();
 
   container = document.createElement('div');
@@ -53,75 +54,59 @@ it('Constructs a Plyr given an element a video element within container', () => 
 });
 
 describe('When a new video is configured', () => {
-  describe('With a STREAM video when Hls is supported', () => {
+  describe('With Stream (Kaltura)', () => {
+    let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+
     beforeEach(() => {
-      Hls.isSupported.mockReturnValue(true);
+      mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(player));
+    });
 
+    it('it initialises the streamingTechnique', () => {
       mediaPlayer.configureWithVideo(video);
-    });
 
-    it('does not instantiate Hls if there is no playback', () => {
-      Hls.mockClear();
-      // tslint:disable-next-line:no-unused-expression
-      new PlyrWrapper(player);
-      expect(Hls).not.toHaveBeenCalled();
-    });
-
-    it('instantiates a Hls', () => {
-      expect(Hls).toHaveBeenCalled();
-    });
-
-    it('configures HLS to not autoload', () => {
-      expect(Hls).toHaveBeenCalledWith(
-        expect.objectContaining({ autoStartLoad: false }),
+      expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+        video.playback,
+        undefined,
       );
     });
 
-    it('attaches a new hls.js if supported', () => {
-      const hlsMockInstance = Hls.mock.instances[0];
-      expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
+    it('adds a play listener to Plyr to startLoad on the streamingTechnique', () => {
+      mediaPlayer.configureWithVideo(video);
+
+      const plyrInstance = Plyr.mock.instances[0];
+      plyrInstance.currentTime = 20;
+      plyrInstance.__callEventCallback('play', {
+        detail: { plyr: plyrInstance },
+      });
+
+      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(20);
     });
 
-    it('loads the playback url when attached', () => {
-      const hlsMockInstance = Hls.mock.instances[0];
-      const [event, callback] = mocked(hlsMockInstance.on).mock.calls[0];
+    it('destroys the streamingTechnique before loading another video', () => {
+      mediaPlayer.configureWithVideo(video);
 
-      expect(event).toEqual(Hls.Events.MEDIA_ATTACHED);
-      expect(callback).toBeTruthy();
-
-      callback();
-
-      expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
-        (video.playback as StreamPlayback).streamUrl,
-      );
-    });
-
-    it('destroys HLS before loading another video', () => {
       mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
-      const hlsMockInstance = Hls.mock.instances[0];
-      expect(hlsMockInstance.destroy).toHaveBeenCalled();
+
+      expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
     });
 
     describe('with a playback segment', () => {
       beforeEach(() => {
-        Hls.mockClear();
         Plyr.mockClear();
-        Hls.isSupported.mockReturnValue(true);
       });
-      it('does not restrict HLS load when there is no start time', () => {
+
+      it('does not restrict streamingTechnique load when there is no start time', () => {
         const segment = {
           end: 60,
         };
 
-        mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
+        mediaPlayer.configureWithVideo(video, segment);
 
-        expect(Hls).toHaveBeenCalledWith(
-          expect.objectContaining({
-            autoStartLoad: false,
-            startPosition: -1,
-          }),
+        expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+          video.playback,
+          undefined,
         );
 
         const plyrInstance = Plyr.mock.instances[0];
@@ -129,11 +114,12 @@ describe('When a new video is configured', () => {
           detail: { plyr: plyrInstance },
         });
 
-        const hlsMockInstance = Hls.mock.instances[0];
-        expect(hlsMockInstance.startLoad).toHaveBeenCalled();
+        expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
+          undefined,
+        );
       });
 
-      it('restricts the initial HLS load when a playback segment is provided', () => {
+      it('restricts the initial streamingTechnique load when a playback segment is provided', () => {
         const segment = {
           start: 30,
           end: 60,
@@ -141,11 +127,9 @@ describe('When a new video is configured', () => {
 
         mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
-        expect(Hls).toHaveBeenCalledWith(
-          expect.objectContaining({
-            autoStartLoad: false,
-            startPosition: segment.start,
-          }),
+        expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+          video.playback,
+          segment.start,
         );
 
         const plyrInstance = Plyr.mock.instances[0];
@@ -153,24 +137,18 @@ describe('When a new video is configured', () => {
           detail: { plyr: plyrInstance },
         });
 
-        const hlsMockInstance = Hls.mock.instances[0];
-        expect(hlsMockInstance.startLoad).toHaveBeenCalledWith(segment.start);
+        expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
+          segment.start,
+        );
       });
 
-      it('stops hls loading when it is automatically paused', () => {
+      it('stops streamingTechnique from loading when it is automatically paused', () => {
         const segment = {
           start: 30,
           end: 60,
         };
 
         mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
-
-        expect(Hls).toHaveBeenCalledWith(
-          expect.objectContaining({
-            autoStartLoad: false,
-            startPosition: segment.start,
-          }),
-        );
 
         const plyrInstance = Plyr.mock.instances[0];
         plyrInstance.currentTime = 60;
@@ -178,72 +156,18 @@ describe('When a new video is configured', () => {
           detail: { plyr: plyrInstance },
         });
 
-        const hlsMockInstance = Hls.mock.instances[0];
-        expect(hlsMockInstance.stopLoad).toHaveBeenCalledWith();
+        expect(mockStreamingTechnique.stopLoad).toHaveBeenCalled();
       });
-    });
-
-    describe('When HLS has an error', () => {
-      it('gracefully handles non-fatal errors', () => {
-        const hlsMockInstance = Hls.mock.instances[0];
-
-        expect(() => {
-          hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
-            type: 'any type',
-            details: 'any details',
-            fatal: false,
-          });
-        }).not.toThrow();
-      });
-
-      it('render an error when a manifestLoadError occurs', () => {
-        const hlsMockInstance = Hls.mock.instances[0];
-
-        hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
-          type: Hls.ErrorTypes.NETWORK_ERROR,
-          details: 'manifestLoadError',
-          fatal: true,
-        });
-
-
-        const errorHandler = player.getErrorHandler();
-
-        expect(hlsMockInstance.destroy).toHaveBeenCalled();
-        expect(errorHandler.handleError).toHaveBeenCalled();
-      })
     });
   });
 
-  describe('When Hls is not supported with STREAM', () => {
-    beforeEach(() => {
-      Hls.mockClear();
-      Hls.isSupported.mockReturnValue(false);
-      mediaPlayer.configureWithVideo(video);
-    });
-
-    it('does not instantiate a Hls', () => {
-      expect(Hls).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('When Hls is supported with YOUTUBE', () => {
-    beforeEach(() => {
-      Hls.isSupported.mockReturnValue(true);
+  describe('With YouTube', () => {
+    it('does not get a StreamingTechnique', () => {
       mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
-    });
 
-    it('does not instantiate a Hls', () => {
-      expect(Hls).not.toHaveBeenCalled();
-    });
-
-    it('does not add an loadedmetadata listener', () => {
-      const plyrInstance = Plyr.mock.instances[0];
-      expect(plyrInstance.media.addEventListener).not.toHaveBeenCalledWith(
-        'loadedmetadata',
-        expect.anything(),
-      );
+      expect(StreamingTechniqueFactory.get).not.toHaveBeenCalled();
     });
   });
 });
@@ -259,9 +183,7 @@ const testData = [
 testData.forEach(({ type, segmentedVideo }) =>
   describe('segment playback restriction for ' + type, () => {
     beforeEach(() => {
-      Hls.mockClear();
       Plyr.mockClear();
-      Hls.isSupported.mockReturnValue(true);
     });
 
     it(
@@ -612,6 +534,12 @@ describe('is listening for plyr events', () => {
 });
 
 describe('when asked to destroy', () => {
+  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+
+  beforeEach(() => {
+    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(player));
+  });
+
   it('calls destroy on Plyr', () => {
     mediaPlayer.destroy();
     const plyrInstance = Plyr.mock.instances[0];
@@ -630,26 +558,22 @@ describe('when asked to destroy', () => {
     }).not.toThrow();
   });
 
-  it('calls destroy on Hls', () => {
-    Hls.isSupported.mockReturnValue(true);
+  it('calls destroy on streamingTechnique', () => {
     mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
 
     mediaPlayer.destroy();
-    const hlsMockInstance = Hls.mock.instances[0];
 
-    expect(hlsMockInstance.destroy).toHaveBeenCalled();
+    expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
   });
 
-  it('catches exceptions from the destroy function of hls', () => {
-    Hls.isSupported.mockReturnValue(true);
+  it('catches exceptions from the destroy function of streamingTechnique', () => {
     mediaPlayer.configureWithVideo(
       VideoFactory.sample(PlaybackFactory.streamSample()),
     );
 
-    const hlsMockInstance = Hls.mock.instances[0];
-    hlsMockInstance.destroy.mockImplementation(() => {
+    mockStreamingTechnique.destroy.mockImplementation(() => {
       throw Error('This should not bubble');
     });
 

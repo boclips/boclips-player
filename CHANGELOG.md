@@ -5,6 +5,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [Unreleased]
+
 ### Fixed
 - `options.interface.controls` was previously being appended to the default controls
 - Non-fatal HLS errors threw exceptions, preventing automatic recovery
@@ -12,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 - Internal representation of `Wrapper` to a better named `MediaPlayer`
+- Internal refactor to separate concerns of Hls & Plyr
 
 ## [2.1.6] - 2019-07-29
 

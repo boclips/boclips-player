@@ -1,6 +1,7 @@
-import Hls from 'hls.js';
 import Plyr from 'plyr';
 import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
+import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
+import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
   isStreamPlayback,
   Playback,
@@ -12,8 +13,8 @@ import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import './PlyrWrapper.less';
 
 export default class PlyrWrapper implements MediaPlayer {
-  private plyr;
-  private hls = null;
+  private plyr: Plyr.Plyr;
+  private streamingTechnique: StreamingTechnique = null;
   private hasBeenDestroyed: boolean = false;
 
   constructor(private readonly player: PrivatePlayer) {
@@ -31,7 +32,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
   private createStreamPlyr = (
     playback?: StreamPlayback,
-    segmentStart: number = -1,
+    segmentStart?: number,
   ) => {
     this.player.getContainer().innerHTML = '';
 
@@ -53,102 +54,18 @@ export default class PlyrWrapper implements MediaPlayer {
       return;
     }
 
-    if (Hls.isSupported()) {
-      this.initialiseHls(playback, segmentStart);
+    this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
+
+    if (this.streamingTechnique) {
+      this.streamingTechnique.initialise(playback, segmentStart);
+
+      this.plyr.on('play', event => {
+        const plyr = event.detail.plyr;
+
+        this.streamingTechnique.startLoad(plyr.currentTime);
+      });
     }
   };
-
-  private initialiseHls = (playback: StreamPlayback, segmentStart: number) => {
-    this.hls = new Hls({
-      debug: this.player.getOptions().debug,
-      autoStartLoad: false,
-      startPosition: segmentStart,
-    });
-
-    this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      this.hls.loadSource(playback.streamUrl);
-    });
-
-    this.hls.on(Hls.Events.ERROR, (_, error) => {
-      const video = this.player.getVideo();
-
-      let fatal = error.fatal;
-
-      if (
-        error.type === Hls.ErrorTypes.MEDIA_ERROR &&
-        error.details === 'fragParsingError'
-      ) {
-        // A fragParsingError is usually recoverable, even if fatal is true.
-        fatal = false;
-      }
-
-      if (!fatal) {
-        console.warn(
-          `A non-fatal playback error occurred during playback of ${video.id}.`,
-          error,
-        );
-        return;
-      }
-
-      switch (error.type) {
-        case Hls.ErrorTypes.NETWORK_ERROR:
-          if (error.details === 'manifestLoadError') {
-            this.handleFatalHlsError(error);
-
-            return;
-          }
-
-          console.warn(
-            `A fatal network error encountered during playback of ${
-              video.id
-            }, try to recover.`,
-            error,
-          );
-          this.hls.startLoad(this.plyr.currentTime);
-          break;
-        case Hls.ErrorTypes.MEDIA_ERROR:
-          console.warn(
-            `A fatal media error encountered during playback of ${
-              video.id
-            }, try to recover.`,
-            error,
-          );
-          break;
-        default:
-          // cannot recover
-          this.handleFatalHlsError(error);
-          break;
-      }
-
-      throw new Error(
-        `A fatal playback error occurred: VideoId: ${
-          video ? video.id : '-'
-        }. Type: ${error.type}. Details: ${error.details}. Reason: ${
-          error.reason
-        }. Error: ${error.err}`,
-      );
-    });
-
-    this.hls.attachMedia(this.plyr.media);
-
-    this.plyr.on('play', event => {
-      const plyr = event.detail.plyr;
-
-      if (!this.hasBeenDestroyed && this.hls) {
-        this.hls.startLoad(plyr.currentTime);
-      }
-    });
-  };
-
-  private handleFatalHlsError(error) {
-    this.hls.destroy();
-
-    this.player.getErrorHandler().handleError({
-      fatal: error.fatal,
-      type: error.type,
-      payload: error,
-    });
-  }
 
   private createYoutubePlyr = (
     playback: YoutubePlayback,
@@ -290,8 +207,8 @@ export default class PlyrWrapper implements MediaPlayer {
       return;
     }
 
-    if (this.hls) {
-      this.hls.destroy();
+    if (this.streamingTechnique) {
+      this.streamingTechnique.destroy();
     }
 
     if (isStreamPlayback(playback)) {
@@ -303,7 +220,7 @@ export default class PlyrWrapper implements MediaPlayer {
     if (segment) {
       const segmentStart = segment.start || 0;
 
-      if (segment.start) {
+      if (segmentStart) {
         const skipToStart = event => {
           console.log('skipping to start', segmentStart);
           event.detail.plyr.currentTime = segmentStart;
@@ -323,8 +240,8 @@ export default class PlyrWrapper implements MediaPlayer {
           if (plyr.currentTime >= segment.end) {
             plyr.pause();
 
-            if (this.hls) {
-              this.hls.stopLoad();
+            if (this.streamingTechnique) {
+              this.streamingTechnique.stopLoad();
             }
 
             plyr.off('timeupdate', autoStop);
@@ -374,8 +291,8 @@ export default class PlyrWrapper implements MediaPlayer {
     window.removeEventListener('beforeunload', this.handleBeforeUnload);
 
     try {
-      if (this.hls) {
-        this.hls.destroy();
+      if (this.streamingTechnique) {
+        this.streamingTechnique.destroy();
       }
     } catch (error) {
       console.warn('Error occurred while destroying hls', error);
@@ -438,4 +355,8 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private getOptions = () => this.player.getOptions().interface;
+
+  public getVideoContainer = () => this.plyr.media;
+
+  public getCurrentTime = () => this.plyr.currentTime;
 }

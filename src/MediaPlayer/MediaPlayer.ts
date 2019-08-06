@@ -19,4 +19,6 @@ export interface MediaPlayer {
   pause: () => void;
   configureWithVideo: (video: Video, segment?: PlaybackSegment) => void;
   destroy: () => void;
+  getVideoContainer: () => HTMLVideoElement | HTMLIFrameElement;
+  getCurrentTime: () => number;
 }
