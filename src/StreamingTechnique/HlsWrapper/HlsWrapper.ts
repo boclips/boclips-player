@@ -6,6 +6,8 @@ import { StreamingTechnique } from '../StreamingTechnique';
 export class HlsWrapper implements StreamingTechnique {
   private hls: Hls = null;
   private hasBeenDestroyed: boolean = false;
+  private playback: StreamPlayback;
+  private errorCount;
 
   public static isSupported = () => Hls.isSupported();
 
@@ -19,6 +21,12 @@ export class HlsWrapper implements StreamingTechnique {
       this.destroy();
     }
 
+    this.errorCount = {};
+
+    this.playback = playback;
+    // TODO: REMOVE ME
+    this.playback.streamUrl = 'https://httpstat.us/200';
+
     this.hasBeenDestroyed = false;
 
     this.hls = new Hls({
@@ -28,7 +36,7 @@ export class HlsWrapper implements StreamingTechnique {
     });
 
     this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      this.hls.loadSource(playback.streamUrl);
+      this.hls.loadSource(this.playback.streamUrl);
     });
 
     this.hls.on(Hls.Events.ERROR, this.hlsErrorHandler);
@@ -64,6 +72,8 @@ export class HlsWrapper implements StreamingTechnique {
   private canCallHls = () => !this.hasBeenDestroyed && this.hls;
 
   private hlsErrorHandler = (_, error) => {
+    this.increaseErrorCount(error.details);
+
     const video = this.player.getVideo();
 
     let fatal = error.fatal;
@@ -84,34 +94,41 @@ export class HlsWrapper implements StreamingTechnique {
       return;
     }
 
-    switch (error.type) {
-      case Hls.ErrorTypes.NETWORK_ERROR:
-        if (error.details === 'manifestLoadError') {
-          this.handleFatalHlsError(error);
+    if (error.type === Hls.ErrorTypes.NETWORK_ERROR) {
+      const reloadSource = [
+        Hls.ErrorDetails.MANIFEST_LOAD_ERROR,
+        Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT,
+        Hls.ErrorDetails.MANIFEST_PARSING_ERROR,
+      ];
+
+      if (reloadSource.indexOf(error.details) >= 0) {
+        if (this.errorCount[error.details] < 3) {
+          this.hls.loadSource(this.playback.streamUrl);
 
           return;
+        } else {
+          this.handleFatalHlsError(error);
         }
+      }
 
-        console.warn(
-          `A fatal network error encountered during playback of ${
-            video.id
-          }, try to recover.`,
-          error,
-        );
-        this.hls.startLoad(this.player.getMediaPlayer().getCurrentTime());
-        break;
-      case Hls.ErrorTypes.MEDIA_ERROR:
-        console.warn(
-          `A fatal media error encountered during playback of ${
-            video.id
-          }, try to recover.`,
-          error,
-        );
-        break;
-      default:
-        // cannot recover
-        this.handleFatalHlsError(error);
-        break;
+      console.warn(
+        `A fatal network error encountered during playback of ${
+          video.id
+        }, try to recover.`,
+        error,
+      );
+
+      this.hls.startLoad(this.player.getMediaPlayer().getCurrentTime());
+    } else if (error.type === Hls.ErrorTypes.MEDIA_ERROR) {
+      console.warn(
+        `A fatal media error encountered during playback of ${
+          video.id
+        }, try to recover.`,
+        error,
+      );
+    } else {
+      // cannot recover
+      this.handleFatalHlsError(error);
     }
 
     throw new Error(
@@ -121,6 +138,13 @@ export class HlsWrapper implements StreamingTechnique {
         error.reason
       }. Error: ${error.err}`,
     );
+  };
+
+  private increaseErrorCount = errorDetail => {
+    if (!this.errorCount[errorDetail]) {
+      this.errorCount[errorDetail] = 0;
+    }
+    this.errorCount[errorDetail] = this.errorCount[errorDetail] + 1;
   };
 
   private handleFatalHlsError = error => {

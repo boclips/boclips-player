@@ -169,20 +169,64 @@ describe('Error Handling', () => {
     }).not.toThrow();
   });
 
-  it('render an error when a manifestLoadError occurs', () => {
-    hlsTechnique.initialise(streamPlayback, -1);
+  describe('manifest errors', () => {
+    const manifestErrors = [
+      Hls.ErrorDetails.MANIFEST_LOAD_ERROR,
+      Hls.ErrorDetails.MANIFEST_LOAD_TIMEOUT,
+      Hls.ErrorDetails.MANIFEST_PARSING_ERROR,
+    ];
 
-    const hlsMockInstance = Hls.mock.instances[0];
+    manifestErrors.forEach(errorDetails => {
+      it(`tries to reload the source when an ${errorDetails} occurs`, () => {
+        hlsTechnique.initialise(streamPlayback, -1);
 
-    hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
-      type: Hls.ErrorTypes.NETWORK_ERROR,
-      details: 'manifestLoadError',
-      fatal: true,
+        const hlsMockInstance =
+          Hls.mock.instances[Hls.mock.instances.length - 1];
+
+        triggerError(errorDetails);
+
+        expect(hlsMockInstance.loadSource).toHaveBeenCalledTimes(1);
+        expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
+          streamPlayback.streamUrl,
+        );
+      });
+
+      it(`render an error when a ${errorDetails} occurs three times`, () => {
+        const errorHandler = player.getErrorHandler();
+
+        hlsTechnique.initialise(streamPlayback, -1);
+
+        const hlsMockInstance =
+          Hls.mock.instances[Hls.mock.instances.length - 1];
+
+        triggerError(errorDetails);
+
+        expect(hlsMockInstance.destroy).not.toHaveBeenCalled();
+        expect(errorHandler.handleError).not.toHaveBeenCalled();
+
+        triggerError(errorDetails);
+
+        expect(hlsMockInstance.destroy).not.toHaveBeenCalled();
+        expect(errorHandler.handleError).not.toHaveBeenCalled();
+
+        triggerError(errorDetails);
+
+        expect(hlsMockInstance.destroy).toHaveBeenCalled();
+        expect(errorHandler.handleError).toHaveBeenCalled();
+      });
     });
 
-    const errorHandler = player.getErrorHandler();
+    function triggerError(details) {
+      try {
+        const hlsMockInstance =
+          Hls.mock.instances[Hls.mock.instances.length - 1];
 
-    expect(hlsMockInstance.destroy).toHaveBeenCalled();
-    expect(errorHandler.handleError).toHaveBeenCalled();
+        hlsMockInstance.__callEventCallback(Hls.Events.ERROR, {
+          type: Hls.ErrorTypes.NETWORK_ERROR,
+          details,
+          fatal: true,
+        });
+      } catch (_) {}
+    }
   });
 });

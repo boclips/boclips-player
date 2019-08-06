@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- Attempted recovery of manifest file loading in HLS
+
 ### Fixed
 - `options.interface.controls` was previously being appended to the default controls
 - Non-fatal HLS errors threw exceptions, preventing automatic recovery
