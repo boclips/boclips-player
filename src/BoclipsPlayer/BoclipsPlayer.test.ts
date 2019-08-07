@@ -5,10 +5,10 @@ import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
-import { VideoFactory } from '../test-support/TestFactories';
-import { Video } from '../types/Video';
 import { PlaybackSegment } from '../MediaPlayer/MediaPlayer';
 import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
+import { VideoFactory } from '../test-support/TestFactories';
+import { Video } from '../types/Video';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
 
@@ -169,7 +169,8 @@ describe('BoclipsPlayer', () => {
 
     it('Will configure the media player with the video', () => {
       return player.loadVideo(uri).then(() => {
-        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock.calls;
+        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock
+          .calls;
         expect(calls).toHaveLength(1);
         const actualVideo = calls[0][0] as Video;
         expect(actualVideo).toBeTruthy();
@@ -183,7 +184,8 @@ describe('BoclipsPlayer', () => {
         end: 30,
       };
       return player.loadVideo(uri, playbackSegment).then(() => {
-        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock.calls;
+        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock
+          .calls;
         expect(calls).toHaveLength(1);
         const actualVideo = calls[0][0] as Video;
         expect(actualVideo).toBeTruthy();
