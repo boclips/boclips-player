@@ -6,7 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [2.2.1]
+
+### Fixed
+- Remove a bad mutation of the streamUrl in Hls 
+
 ## [2.2.0]
+
 ### Added
 - `CONTRIBUTING.md` and `demo/README.md` 
 - Attempted recovery of manifest file loading in HLS

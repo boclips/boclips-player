@@ -24,8 +24,6 @@ export class HlsWrapper implements StreamingTechnique {
     this.errorCount = {};
 
     this.playback = playback;
-    // TODO: REMOVE ME
-    this.playback.streamUrl = 'https://httpstat.us/200';
 
     this.hasBeenDestroyed = false;
 
