@@ -51,6 +51,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     return this.axios
       .post(video.playback.links.createPlaybackEvent.getOriginalLink(), event, {
         headers,
+        withCredentials: true,
       })
       .catch(error => {
         console.error(error);
