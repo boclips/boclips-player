@@ -21,7 +21,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     const headers = await this.buildHeaders();
 
     return this.axios
-      .get(uri, { headers })
+      .get(uri, { headers, withCredentials: true })
       .then(response => response.data)
       .then(convertVideoResource);
   };
