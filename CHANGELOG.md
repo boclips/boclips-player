@@ -6,15 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [2.2.2]
+## [2.2.2] - 2019-08-08
+
+### Added
 - Set `withCredentials` attribute in Axios to support cookies when talking to the Boclips API. 
 
-## [2.2.1]
+## [2.2.1] - 2019-08-07
 
 ### Fixed
 - Remove a bad mutation of the streamUrl in Hls 
 
-## [2.2.0]
+## [2.2.0] - 2019-08-07
 
 ### Added
 - `CONTRIBUTING.md` and `demo/README.md` 
