@@ -1,0 +1,56 @@
+.plyr__progress .plyr__tooltip {
+  // Hide the original
+  display: none;
+}
+
+.seek-thumbnail {
+  position: absolute;
+  bottom: 40px;
+  z-index: 3;
+
+  box-sizing: border-box;
+  margin-bottom: 5px;
+
+  background: white;
+  border: 2px solid white;
+  border-radius: 5px;
+
+  &--hidden {
+    display: none;
+  }
+
+  &__window {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+
+    border-radius: 5px;
+
+    img {
+      position: relative;
+    }
+  }
+
+  &__time {
+    display: block;
+    padding: 5px;
+
+    text-align: center;
+  }
+
+  &::after {
+    position: absolute;
+    bottom: -10px;
+    left: 75px;
+
+    display: block;
+    width: 0;
+    height: 0;
+
+    border-top: 10px solid white;
+    border-right: 10px solid transparent;
+    border-left: 10px solid transparent;
+
+    content: '';
+  }
+}
