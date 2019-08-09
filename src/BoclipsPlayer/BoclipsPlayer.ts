@@ -7,6 +7,7 @@ import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer/MediaPlayer';
 import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
+import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
@@ -24,7 +25,7 @@ export interface PrivatePlayer extends Player {
   getAnalytics: () => Analytics;
   getErrorHandler: () => ErrorHandler;
   getPlayerId: () => string;
-  getOptions: () => Partial<PlayerOptions>;
+  getOptions: () => PlayerOptions;
   getVideo: () => Video | undefined;
   getMediaPlayer: () => MediaPlayer;
 }
@@ -40,7 +41,7 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   constructor(
     private readonly container: HTMLElement,
-    options: Partial<PlayerOptions> = {},
+    options: DeepPartial<PlayerOptions> = {},
   ) {
     if (false === container instanceof Node) {
       throw Error(

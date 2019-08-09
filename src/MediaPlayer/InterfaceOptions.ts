@@ -18,6 +18,7 @@ type Controls =
 
 export interface InterfaceOptions {
   controls: Controls[];
+  seekPreview: boolean;
 }
 
 export const defaultInterfaceOptions: InterfaceOptions = {
@@ -31,4 +32,5 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     'captions',
     'fullscreen',
   ],
+  seekPreview: false,
 };
