@@ -115,7 +115,7 @@ export class SeekPreview implements AddonInterface {
     container.appendChild(imageWindow);
     container.appendChild(timeLabel);
 
-    this.getPlyrParent().append(container);
+    this.getPlyrContainer().append(container);
 
     this.container = container;
   };
@@ -173,5 +173,5 @@ export class SeekPreview implements AddonInterface {
 
   private getPlyrProgressBar = () => this.plyr.elements.progress;
 
-  private getPlyrParent = () => this.plyr.elements.container.parentElement;
+  private getPlyrContainer = () => this.plyr.elements.container;
 }

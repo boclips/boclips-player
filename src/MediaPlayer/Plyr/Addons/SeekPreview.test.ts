@@ -64,7 +64,6 @@ describe('Feature Enabling', () => {
 
 describe('Usage', () => {
   let progress: HTMLDivElement & HasEventListeners;
-  let parentContainer: HTMLDivElement;
   let plyrContainer: HTMLDivElement;
   let media: HTMLVideoElement;
 
@@ -75,9 +74,7 @@ describe('Usage', () => {
 
   beforeEach(() => {
     progress = document.createElement('div') as any;
-    parentContainer = document.createElement('div') as any;
     plyrContainer = document.createElement('div') as any;
-    parentContainer.appendChild(plyrContainer);
     media = document.createElement('video');
 
     (progress as any).setBoundingClientRect({
@@ -114,7 +111,7 @@ describe('Usage', () => {
   it('loads the image as soon as it is instantiated', () => {
     createSeekPreview();
 
-    const img: HTMLImageElement = parentContainer.querySelector(
+    const img: HTMLImageElement = plyrContainer.querySelector(
       '.seek-thumbnail__image',
     );
     expect(img).toBeTruthy();
@@ -132,7 +129,7 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = parentContainer.querySelector(
+    const container: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
     expect(container).toBeTruthy();
@@ -150,7 +147,7 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = parentContainer.querySelector(
+    const container: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
     expect(container).toBeTruthy();
@@ -172,7 +169,7 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = parentContainer.querySelector(
+    const container: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
     expect(container).toBeTruthy();
@@ -252,7 +249,7 @@ describe('Usage', () => {
         const mousemoveListener = mousemoveListeners[0];
         mousemoveListener({ pageX: cursorX });
 
-        const img: HTMLImageElement = parentContainer.querySelector(
+        const img: HTMLImageElement = plyrContainer.querySelector(
           '.seek-thumbnail img',
         );
 
@@ -261,7 +258,7 @@ describe('Usage', () => {
           SeekPreview.CONTAINER_WIDTH * expectedSlice * -1 + 'px',
         );
 
-        const label: HTMLSpanElement = parentContainer.querySelector(
+        const label: HTMLSpanElement = plyrContainer.querySelector(
           '.seek-thumbnail .seek-thumbnail__time',
         );
         expect(label).toBeTruthy();
@@ -280,7 +277,7 @@ describe('Usage', () => {
 
     mouseoutListener({});
 
-    const container: HTMLElement = parentContainer.querySelector(
+    const container: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail--hidden',
     );
 
