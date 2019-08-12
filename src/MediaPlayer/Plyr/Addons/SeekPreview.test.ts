@@ -116,7 +116,7 @@ describe('Usage', () => {
     );
     expect(img).toBeTruthy();
 
-    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/10/width/175');
+    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/15/width/175');
   });
 
   it('Renders a thumbnail container above the cursor when mousemove on Plyr progress bar', () => {
@@ -156,7 +156,7 @@ describe('Usage', () => {
 
     expect(img).toBeTruthy();
 
-    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/10/width/175');
+    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/15/width/175');
   });
 
   it('Accepts a different slice count via options', () => {
@@ -241,7 +241,7 @@ describe('Usage', () => {
 
     testData.forEach(({ cursorX, expectedSlice, expectedTime }) => {
       it(`Renders slice ${expectedSlice} when the cursor is at ${cursorX}px`, () => {
-        createSeekPreview();
+        createSeekPreview({ sliceCount: 10 });
 
         const mousemoveListeners = progress.__eventListeners.mousemove;
         expect(mousemoveListeners).toHaveLength(1);

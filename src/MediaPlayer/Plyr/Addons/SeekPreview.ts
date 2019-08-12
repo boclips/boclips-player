@@ -10,7 +10,7 @@ export interface SeekPreviewOptions {
 }
 
 export const defaultSeekPreviewOptions: SeekPreviewOptions = {
-  sliceCount: 10,
+  sliceCount: 15,
 };
 
 export class SeekPreview implements AddonInterface {
