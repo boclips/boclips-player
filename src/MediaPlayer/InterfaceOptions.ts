@@ -37,8 +37,6 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     'fullscreen',
   ],
   addons: {
-    seekPreview: {
-      sliceCount: 10,
-    },
+    seekPreview: true,
   },
 };

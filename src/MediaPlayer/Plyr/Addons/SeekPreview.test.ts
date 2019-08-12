@@ -64,6 +64,7 @@ describe('Feature Enabling', () => {
 
 describe('Usage', () => {
   let progress: HTMLDivElement & HasEventListeners;
+  let parentContainer: HTMLDivElement;
   let plyrContainer: HTMLDivElement;
   let media: HTMLVideoElement;
 
@@ -74,8 +75,11 @@ describe('Usage', () => {
 
   beforeEach(() => {
     progress = document.createElement('div') as any;
+    parentContainer = document.createElement('div') as any;
     plyrContainer = document.createElement('div') as any;
     media = document.createElement('video');
+
+    parentContainer.appendChild(plyrContainer);
 
     (progress as any).setBoundingClientRect({
       top: 500,

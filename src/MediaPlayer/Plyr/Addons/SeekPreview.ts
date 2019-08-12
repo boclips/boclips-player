@@ -105,7 +105,10 @@ export class SeekPreview implements AddonInterface {
     container.style.marginLeft = withPx(SeekPreview.CONTAINER_WIDTH / -2);
 
     const imageWindow = document.createElement('div');
-    imageWindow.classList.add('seek-thumbnail__window');
+    imageWindow.classList.add(
+      'seek-thumbnail__window',
+      'seek-thumbnail__window--loading',
+    );
     imageWindow.style.height = withPx(height);
 
     const img = document.createElement('img');
@@ -114,6 +117,9 @@ export class SeekPreview implements AddonInterface {
       thumbnailWidth: SeekPreview.CONTAINER_WIDTH,
       videoSlices: this.options.sliceCount,
     });
+    img.onload = () => {
+      imageWindow.classList.remove('seek-thumbnail__window--loading');
+    };
 
     const timeLabel = document.createElement('span');
     timeLabel.classList.add('seek-thumbnail__time');
