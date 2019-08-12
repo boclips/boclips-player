@@ -49,12 +49,15 @@ export class SeekPreview implements AddonInterface {
       this.options = options.addons.seekPreview as SeekPreviewOptions;
     }
 
+    this.hidePlyrSeek();
+
     this.createContainer();
 
     this.getPlyrProgressBar().addEventListener(
       'mousemove',
       this.handleMousemove,
     );
+
     this.getPlyrProgressBar().addEventListener('mouseout', this.handleMouseout);
   }
 
@@ -85,6 +88,10 @@ export class SeekPreview implements AddonInterface {
     if (this.container) {
       this.container.classList.add('seek-thumbnail--hidden');
     }
+  };
+
+  private hidePlyrSeek = () => {
+    this.getPlyrContainer().parentElement.classList.add('hide-plyr-seek');
   };
 
   private createContainer = () => {
