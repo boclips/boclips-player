@@ -2,7 +2,9 @@ import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
 
 export class PlaybackFactory {
-  public static streamSample = (): StreamPlayback => ({
+  public static streamSample = (
+    arg: Partial<StreamPlayback> = {},
+  ): StreamPlayback => ({
     id: 'stream-playback-id',
     thumbnailUrl: 'some/stream/image.jpg',
     duration: 60,
@@ -16,6 +18,7 @@ export class PlaybackFactory {
         href: 'create/interaction/event',
       }),
     },
+    ...arg,
   });
 
   public static youtubeSample = (): YoutubePlayback => ({

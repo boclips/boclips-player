@@ -12,10 +12,10 @@ import {
 } from '../MediaPlayer/InterfaceOptions';
 
 export interface PlayerOptions {
-  analytics: Partial<AnalyticsOptions>;
-  api: Partial<ApiOptions>;
+  analytics: AnalyticsOptions;
+  api: ApiOptions;
   debug: boolean;
-  interface: Partial<InterfaceOptions>;
+  interface: InterfaceOptions;
 }
 
 export const defaultOptions: PlayerOptions = Object.freeze({

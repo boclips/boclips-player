@@ -8,6 +8,7 @@ import { Analytics } from '../Events/Analytics';
 import { PlaybackSegment } from '../MediaPlayer/MediaPlayer';
 import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
 import { VideoFactory } from '../test-support/TestFactories';
+import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
@@ -140,7 +141,7 @@ describe('BoclipsPlayer', () => {
           if (uri === goodUri) {
             resolve(VideoFactory.sample());
           } else {
-            reject('NO WAY JOSE');
+            reject('NOPE');
           }
         }),
     );
@@ -210,7 +211,7 @@ describe('BoclipsPlayer', () => {
 
   describe('Options', () => {
     it('passes down analytics options', () => {
-      const options: Partial<PlayerOptions> = {
+      const options: DeepPartial<PlayerOptions> = {
         analytics: {
           metadata: {
             playerId: expect.anything(),
@@ -225,7 +226,7 @@ describe('BoclipsPlayer', () => {
     });
 
     it('does not wreck interface.controls', () => {
-      const options: Partial<PlayerOptions> = {
+      const options: DeepPartial<PlayerOptions> = {
         interface: { controls: ['captions', 'duration'] },
       };
 

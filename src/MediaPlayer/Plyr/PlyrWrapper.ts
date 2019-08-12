@@ -10,12 +10,14 @@ import {
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
+import { Addon, AddonInterface, Addons } from './Addons/Addons';
 import './PlyrWrapper.less';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: Plyr.Plyr;
   private streamingTechnique: StreamingTechnique = null;
   private hasBeenDestroyed: boolean = false;
+  private enabledAddons: AddonInterface[] = [];
 
   constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
@@ -285,6 +287,8 @@ export default class PlyrWrapper implements MediaPlayer {
       return;
     }
 
+    this.destroyAddons();
+
     this.handleBeforeUnload();
 
     this.hasBeenDestroyed = true;
@@ -353,6 +357,22 @@ export default class PlyrWrapper implements MediaPlayer {
     });
 
     this.installPlyrEventListeners();
+    this.installAddons(playback);
+  };
+
+  private installAddons = playback => {
+    Addons.forEach((AddonToInstall: Addon) => {
+      if (AddonToInstall.canBeEnabled(playback, this.getOptions())) {
+        // tslint:disable-next-line: no-unused-expression
+        this.enabledAddons.push(
+          new AddonToInstall(this.getOptions(), this.plyr, playback),
+        );
+      }
+    });
+  };
+
+  private destroyAddons = () => {
+    this.enabledAddons.forEach(addon => addon.destroy());
   };
 
   private getOptions = () => this.player.getOptions().interface;
@@ -360,4 +380,6 @@ export default class PlyrWrapper implements MediaPlayer {
   public getVideoContainer = () => this.plyr.media;
 
   public getCurrentTime = () => this.plyr.currentTime;
+
+  public getEnabledAddons = () => this.enabledAddons;
 }

@@ -1,6 +1,7 @@
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
+import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
 import {
   PlaybackEvent,
   PlayerInteractedWithEvent,
@@ -235,11 +236,11 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    player.getOptions.mockReturnValue(({
       api: {
         tokenFactory: jest.fn().mockResolvedValue('test-bearer-token'),
       },
-    });
+    } as any) as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
@@ -259,13 +260,13 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    player.getOptions.mockReturnValue(({
       api: {
         tokenFactory: jest
           .fn()
           .mockRejectedValue(new Error('Some fatal authorization error')),
       },
-    });
+    } as any) as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).catch(error => {
       expect(error).not.toBeNull();
@@ -280,11 +281,11 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    player.getOptions.mockReturnValue(({
       api: {
         tokenFactory: jest.fn().mockResolvedValue(null),
       },
-    });
+    } as any) as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;

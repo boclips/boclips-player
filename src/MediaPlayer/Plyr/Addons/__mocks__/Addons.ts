@@ -10,4 +10,5 @@ const mockAddon = (jest.fn(
 
 mockAddon.canBeEnabled = jest.fn().mockReturnValue(true);
 
+// noinspection JSUnusedGlobalSymbols
 export const Addons = [mockAddon];

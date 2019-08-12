@@ -137,6 +137,9 @@ The various modules within the player accept optional parameters to drive the be
 ----
 interface InterfaceOptions {
     controls: Controls[];
+    addons: {
+        seekPreview?: boolean | SeekPreviewOptions;
+    };
 }
 
 type Controls =
@@ -156,6 +159,10 @@ type Controls =
   | 'airplay'
   | 'download'
   | 'fullscreen';
+
+interface SeekPreviewOptions {
+    sliceCount: number;
+}
 ----
 
 ==== Boclips API Options

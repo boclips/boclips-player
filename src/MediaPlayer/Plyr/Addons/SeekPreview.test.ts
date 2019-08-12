@@ -2,7 +2,8 @@ import { PlaybackFactory } from '../../../test-support/TestFactories';
 import { HasEventListeners } from '../../../test-support/types';
 import { Link } from '../../../types/Link';
 import { Playback } from '../../../types/Playback';
-import { SeekPreview } from './SeekPreview';
+import { InterfaceOptions } from '../../InterfaceOptions';
+import { SeekPreview, SeekPreviewOptions } from './SeekPreview';
 
 describe('Feature Enabling', () => {
   it('is false if the option is disabled', () => {
@@ -90,8 +91,13 @@ describe('Usage', () => {
     plyr = { elements: { progress, container: plyrContainer }, media };
   });
 
-  const createSeekPreview = () =>
+  const createSeekPreview = (seekPreviewOptions?: SeekPreviewOptions) =>
     new SeekPreview(
+      {
+        addons: {
+          seekPreview: seekPreviewOptions || true,
+        },
+      } as InterfaceOptions,
       plyr,
       PlaybackFactory.streamSample({
         duration: 100,
@@ -154,6 +160,28 @@ describe('Usage', () => {
     expect(img).toBeTruthy();
 
     expect(img.src).toEqual('http://path/to/thumbnail/api/slices/10/width/175');
+  });
+
+  it('Accepts a different slice count via options', () => {
+    createSeekPreview({ sliceCount: 50 });
+
+    const mousemoveListeners = progress.__eventListeners.mousemove;
+    expect(mousemoveListeners).toHaveLength(1);
+
+    const mousemoveListener = mousemoveListeners[0];
+
+    mousemoveListener({ pageX: 30 });
+
+    const container: HTMLElement = parentContainer.querySelector(
+      '.seek-thumbnail',
+    );
+    expect(container).toBeTruthy();
+
+    const img: HTMLImageElement = container.querySelector('img');
+
+    expect(img).toBeTruthy();
+
+    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/50/width/175');
   });
 
   describe('Image position and Time label', () => {

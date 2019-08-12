@@ -12,10 +12,12 @@ import {
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { MediaPlayer } from '../MediaPlayer';
+import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
+jest.mock('./Addons/Addons');
 jest.mock('../../ErrorHandler/ErrorHandler');
 jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 
@@ -293,6 +295,38 @@ describe('Playback restriction', () => {
   );
 });
 
+describe('Addons', () => {
+  it('initialises the addon when it can be enabled', () => {
+    const MockAddon = mocked(Addons[0]);
+
+    MockAddon.mockClear();
+
+    mediaPlayer.configureWithVideo(video);
+
+    expect(MockAddon).toHaveBeenCalled();
+  });
+
+  it('does not initialise the addon when it cannot be enabled', () => {
+    const MockAddon = mocked(Addons[0]);
+
+    MockAddon.mockClear();
+
+    MockAddon.canBeEnabled.mockReturnValueOnce(false);
+
+    mediaPlayer.configureWithVideo(video);
+
+    expect(MockAddon).not.toHaveBeenCalled();
+  });
+
+  it('destroys any enabled addons too', () => {
+    const mockAddon = (mediaPlayer as PlyrWrapper).getEnabledAddons()[0];
+
+    mediaPlayer.destroy();
+
+    expect(mockAddon.destroy).toHaveBeenCalled();
+  });
+});
+
 describe('Passthrough API', () => {
   it('Will play', () => {
     mediaPlayer.configureWithVideo(video);
@@ -335,7 +369,7 @@ describe('Playback Tracking', () => {
   });
 
   it('will call on pause when the navigation is about to change', () => {
-    const callbacks = (window as any).__callbacks.beforeunload;
+    const callbacks = (window as any).__eventListeners.beforeunload;
 
     expect(callbacks).toHaveLength(1);
 
@@ -565,7 +599,7 @@ describe('Destruction', () => {
   });
 
   it('will remove an unload event listener on destruction', () => {
-    expect((window as any).__callbacks.beforeunload).toHaveLength(1);
+    expect((window as any).__eventListeners.beforeunload).toHaveLength(1);
 
     mockPlyr.currentTime = 15;
 
@@ -573,11 +607,11 @@ describe('Destruction', () => {
 
     expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(15);
 
-    expect((window as any).__callbacks.beforeunload).toHaveLength(0);
+    expect((window as any).__eventListeners.beforeunload).toHaveLength(0);
   });
 
   it('does not emit a handlePause event after destruction', () => {
-    const callbacks = (window as any).__callbacks.beforeunload;
+    const callbacks = (window as any).__eventListeners.beforeunload;
 
     expect(callbacks).toHaveLength(1);
 

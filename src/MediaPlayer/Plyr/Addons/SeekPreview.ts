@@ -5,6 +5,14 @@ import { InterfaceOptions } from '../../InterfaceOptions';
 import { AddonInterface } from './Addons';
 import './SeekPreview.less';
 
+export interface SeekPreviewOptions {
+  sliceCount: number;
+}
+
+export const defaultSeekPreviewOptions: SeekPreviewOptions = {
+  sliceCount: 10,
+};
+
 export class SeekPreview implements AddonInterface {
   public static canBeEnabled = (
     playback: Playback | null,
@@ -26,22 +34,28 @@ export class SeekPreview implements AddonInterface {
   };
 
   public static CONTAINER_WIDTH = 175;
-  private static SLICE_COUNT = 10;
 
+  private options: SeekPreviewOptions = null;
   private container: HTMLDivElement = null;
 
-  // @ts-ignore
-  public constructor(private plyr, private playback: Playback) {
+  public constructor(
+    options: InterfaceOptions,
+    private plyr,
+    private playback: Playback,
+  ) {
+    if (options.addons.seekPreview === true) {
+      this.options = defaultSeekPreviewOptions;
+    } else {
+      this.options = options.addons.seekPreview as SeekPreviewOptions;
+    }
+
     this.createContainer();
 
-    this.plyr.elements.progress.addEventListener(
+    this.getPlyrProgressBar().addEventListener(
       'mousemove',
       this.handleMousemove,
     );
-    this.plyr.elements.progress.addEventListener(
-      'mouseout',
-      this.handleMouseout,
-    );
+    this.getPlyrProgressBar().addEventListener('mouseout', this.handleMouseout);
   }
 
   public destroy = () => {
@@ -49,12 +63,12 @@ export class SeekPreview implements AddonInterface {
       this.container.parentElement.removeChild(this.container);
       this.container = null;
     }
-    if (this.plyr && this.plyr.elements.progress) {
-      this.plyr.elements.progress.removeEventListener(
+    if (this.plyr && this.getPlyrProgressBar()) {
+      this.getPlyrProgressBar().removeEventListener(
         'mousemove',
         this.handleMousemove,
       );
-      this.plyr.elements.progress.removeEventListener(
+      this.getPlyrProgressBar().removeEventListener(
         'mouseout',
         this.handleMouseout,
       );
@@ -84,14 +98,14 @@ export class SeekPreview implements AddonInterface {
     container.style.marginLeft = withPx(SeekPreview.CONTAINER_WIDTH / -2);
 
     const imageWindow = document.createElement('div');
-    imageWindow.style.height = withPx(height);
     imageWindow.classList.add('seek-thumbnail__window');
+    imageWindow.style.height = withPx(height);
 
     const img = document.createElement('img');
     img.classList.add('seek-thumbnail__image');
     img.src = this.playback.links.thumbnailApi.getTemplatedLink({
       thumbnailWidth: SeekPreview.CONTAINER_WIDTH,
-      videoSlices: SeekPreview.SLICE_COUNT,
+      videoSlices: this.options.sliceCount,
     });
 
     const timeLabel = document.createElement('span');
@@ -101,13 +115,13 @@ export class SeekPreview implements AddonInterface {
     container.appendChild(imageWindow);
     container.appendChild(timeLabel);
 
-    this.plyr.elements.container.parentElement.append(container);
+    this.getPlyrParent().append(container);
 
     this.container = container;
   };
 
   private updatePreview = (cursorX: number) => {
-    const clientRect: ClientRect = this.plyr.elements.progress.getBoundingClientRect();
+    const clientRect: ClientRect = this.getPlyrProgressBar().getBoundingClientRect();
 
     this.updatePosition(cursorX);
 
@@ -137,10 +151,12 @@ export class SeekPreview implements AddonInterface {
     const duration = this.playback.duration;
     const index = Math.max(
       0,
-      Math.ceil((SeekPreview.SLICE_COUNT * seekTime) / duration) - 1,
+      Math.ceil((this.options.sliceCount * seekTime) / duration) - 1,
     );
 
-    const img = this.container.querySelector('img');
+    const img: HTMLImageElement = this.container.querySelector(
+      '.seek-thumbnail__image',
+    );
     img.style.left = withPx(index * SeekPreview.CONTAINER_WIDTH * -1);
   };
 
@@ -154,4 +170,8 @@ export class SeekPreview implements AddonInterface {
 
     label.textContent = format(seconds * 1000, pattern);
   };
+
+  private getPlyrProgressBar = () => this.plyr.elements.progress;
+
+  private getPlyrParent = () => this.plyr.elements.container.parentElement;
 }

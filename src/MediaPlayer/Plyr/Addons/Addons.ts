@@ -8,7 +8,7 @@ export interface AddonInterface {
 
 export interface Addon {
   canBeEnabled: (playback: Playback, options: InterfaceOptions) => boolean;
-  new (plyr, playback: Playback): AddonInterface;
+  new (options: InterfaceOptions, plyr, playback: Playback): AddonInterface;
 }
 
 export const Addons: Addon[] = [SeekPreview];

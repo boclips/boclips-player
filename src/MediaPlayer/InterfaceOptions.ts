@@ -1,3 +1,5 @@
+import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview';
+
 type Controls =
   | 'play-large'
   | 'restart'
@@ -18,6 +20,9 @@ type Controls =
 
 export interface InterfaceOptions {
   controls: Controls[];
+  addons: {
+    seekPreview?: boolean | SeekPreviewOptions;
+  };
 }
 
 export const defaultInterfaceOptions: InterfaceOptions = {
@@ -31,4 +36,9 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     'captions',
     'fullscreen',
   ],
+  addons: {
+    seekPreview: {
+      sliceCount: 10,
+    },
+  },
 };

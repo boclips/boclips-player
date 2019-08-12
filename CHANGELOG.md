@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- A feature to allow thumbnail seeking on the progress bar for Stream playback only
+- `options.interface.addons.seekPreview` Seek Preview on hover on progress bar for Stream videos
+
+
 ## [2.2.2] - 2019-08-08
 
 ### Added
