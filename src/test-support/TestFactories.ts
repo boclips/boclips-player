@@ -67,6 +67,10 @@ export class VideoResourceFactory {
         createPlayerInteractedWithEvent: {
           href: 'create/interaction/event',
         },
+        videoPreview: {
+          href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
+          templated: true,
+        },
       },
     },
     _links: {

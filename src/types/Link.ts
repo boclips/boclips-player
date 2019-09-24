@@ -17,6 +17,10 @@ export class Link {
   }): string {
     return URI.expand(this.link.href, paramKeysValues).href();
   }
+
+  public isTemplated(): boolean {
+    return this.link.templated || false;
+  }
 }
 
 export interface RawLink {

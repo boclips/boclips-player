@@ -15,7 +15,7 @@ describe('Feature Enabling', () => {
     ).toEqual(false);
   });
 
-  it('is false if the playback has no thumbnailApi', () => {
+  it('is false if the playback has no videoPreview', () => {
     expect(
       SeekPreview.canBeEnabled(PlaybackFactory.streamSample(), {
         controls: ['progress'],
@@ -42,12 +42,12 @@ describe('Feature Enabling', () => {
     ).toEqual(false);
   });
 
-  it('is true if the playback has a thumbnailApi link, and controls have a progressbar, and the option is enabled', () => {
+  it('is true if the playback has a videoPreview link, and controls have a progressbar, and the option is enabled', () => {
     expect(
       SeekPreview.canBeEnabled(
         PlaybackFactory.streamSample({
           links: {
-            thumbnailApi: new Link({
+            videoPreview: new Link({
               href: 'http://path/to/thumbnail/api',
               templated: true,
             }),
@@ -103,9 +103,9 @@ describe('Usage', () => {
       PlaybackFactory.streamSample({
         duration: 100,
         links: {
-          thumbnailApi: new Link({
+          videoPreview: new Link({
             href:
-              'http://path/to/thumbnail/api/slices/{videoSlices}/width/{thumbnailWidth}',
+              'http://path/to/thumbnail/api/slices/{thumbnailCount}/width/{thumbnailWidth}',
             templated: true,
           }),
         } as Playback['links'],

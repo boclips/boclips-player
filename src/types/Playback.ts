@@ -3,7 +3,7 @@ import { Link } from './Link';
 interface PlaybackLinks {
   createPlayerInteractedWithEvent: Link;
   createPlaybackEvent: Link;
-  thumbnailApi?: Link;
+  videoPreview?: Link;
 }
 
 export type PlaybackType = StreamPlayback | YoutubePlayback;

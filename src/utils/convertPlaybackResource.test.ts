@@ -23,6 +23,9 @@ it('Can map the response to a StreamPlayback object', () => {
   expect(
     playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
   ).toEqual('create/interaction/event');
+  expect(playback.links.videoPreview.getOriginalLink()).toEqual(
+    'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
+  );
 });
 
 it('Can map the response to a YoutubePlayback object', () => {

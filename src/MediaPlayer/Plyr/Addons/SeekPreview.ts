@@ -30,7 +30,11 @@ export class SeekPreview implements AddonInterface {
       return false;
     }
 
-    return !!playback.links.thumbnailApi;
+    if (!playback.links.videoPreview) {
+      return false;
+    }
+
+    return !!playback.links.videoPreview.isTemplated();
   };
 
   public static CONTAINER_WIDTH = 175;
@@ -113,9 +117,9 @@ export class SeekPreview implements AddonInterface {
 
     const img = document.createElement('img');
     img.classList.add('seek-thumbnail__image');
-    img.src = this.playback.links.thumbnailApi.getTemplatedLink({
+    img.src = this.playback.links.videoPreview.getTemplatedLink({
       thumbnailWidth: SeekPreview.CONTAINER_WIDTH,
-      videoSlices: this.options.sliceCount,
+      thumbnailCount: this.options.sliceCount,
     });
     img.onload = () => {
       imageWindow.classList.remove('seek-thumbnail__window--loading');
