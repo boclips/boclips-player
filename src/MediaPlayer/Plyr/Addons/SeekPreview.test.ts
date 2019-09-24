@@ -8,43 +8,84 @@ import { SeekPreview, SeekPreviewOptions } from './SeekPreview';
 describe('Feature Enabling', () => {
   it('is false if the option is disabled', () => {
     expect(
-      SeekPreview.canBeEnabled(PlaybackFactory.streamSample(), {
-        controls: ['progress'],
-        addons: { seekPreview: false },
-      }),
+      SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 500 } } },
+        PlaybackFactory.streamSample(),
+        {
+          controls: ['progress'],
+          addons: { seekPreview: false },
+        },
+      ),
+    ).toEqual(false);
+  });
+
+  it('is false if the container is too small', () => {
+    expect(
+      SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 400 } } },
+        PlaybackFactory.streamSample({
+          links: {
+            videoPreview: new Link({
+              href: 'http://path/to/thumbnail/api',
+              templated: true,
+            }),
+          } as Playback['links'],
+        }),
+        {
+          controls: ['progress'],
+          addons: { seekPreview: true },
+        },
+      ),
     ).toEqual(false);
   });
 
   it('is false if the playback has no videoPreview', () => {
+    const playback = PlaybackFactory.streamSample();
+
+    delete playback.links.videoPreview;
+
     expect(
-      SeekPreview.canBeEnabled(PlaybackFactory.streamSample(), {
-        controls: ['progress'],
-        addons: { seekPreview: true },
-      }),
+      SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 500 } } },
+        playback,
+        {
+          controls: ['progress'],
+          addons: { seekPreview: true },
+        },
+      ),
     ).toEqual(false);
   });
 
   it('is false if there is no playback', () => {
     expect(
-      SeekPreview.canBeEnabled(null, {
-        controls: ['progress'],
-        addons: { seekPreview: true },
-      }),
+      SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 500 } } },
+        null,
+        {
+          controls: ['progress'],
+          addons: { seekPreview: true },
+        },
+      ),
     ).toEqual(false);
   });
 
   it('is false if the controls do not contain a progress bar', () => {
     expect(
-      SeekPreview.canBeEnabled(PlaybackFactory.streamSample(), {
-        controls: [],
-        addons: { seekPreview: true },
-      }),
+      SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 500 } } },
+        PlaybackFactory.streamSample(),
+        {
+          controls: [],
+          addons: { seekPreview: true },
+        },
+      ),
     ).toEqual(false);
   });
 
   it('is true if the playback has a videoPreview link, and controls have a progressbar, and the option is enabled', () => {
     expect(
       SeekPreview.canBeEnabled(
+        { elements: { container: { clientWidth: 500 } } },
         PlaybackFactory.streamSample({
           links: {
             videoPreview: new Link({
@@ -65,7 +106,7 @@ describe('Feature Enabling', () => {
 describe('Usage', () => {
   let progress: HTMLDivElement & HasEventListeners;
   let parentContainer: HTMLDivElement;
-  let plyrContainer: HTMLDivElement;
+  let plyrContainer: HTMLDivElement & { __jsdomMockClientWidth: number };
   let media: HTMLVideoElement;
 
   let plyr: {
@@ -78,6 +119,8 @@ describe('Usage', () => {
     parentContainer = document.createElement('div') as any;
     plyrContainer = document.createElement('div') as any;
     media = document.createElement('video');
+
+    plyrContainer.__jsdomMockClientWidth = 700;
 
     parentContainer.appendChild(plyrContainer);
 
@@ -94,11 +137,6 @@ describe('Usage', () => {
 
   const createSeekPreview = (seekPreviewOptions?: SeekPreviewOptions) =>
     new SeekPreview(
-      {
-        addons: {
-          seekPreview: seekPreviewOptions || true,
-        },
-      } as InterfaceOptions,
       plyr,
       PlaybackFactory.streamSample({
         duration: 100,
@@ -110,6 +148,11 @@ describe('Usage', () => {
           }),
         } as Playback['links'],
       }),
+      {
+        addons: {
+          seekPreview: seekPreviewOptions || true,
+        },
+      } as InterfaceOptions,
     );
 
   it('loads the image as soon as it is instantiated', () => {
@@ -259,7 +302,7 @@ describe('Usage', () => {
 
         expect(img).toBeTruthy();
         expect(img.style.left).toEqual(
-          SeekPreview.CONTAINER_WIDTH * expectedSlice * -1 + 'px',
+          Math.ceil(700 * 0.25) * expectedSlice * -1 + 'px',
         );
 
         const label: HTMLSpanElement = plyrContainer.querySelector(

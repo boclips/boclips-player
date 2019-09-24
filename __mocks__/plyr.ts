@@ -41,5 +41,10 @@ Plyr.prototype.off = off;
 Plyr.prototype.__callEventCallback = __callEventCallback;
 Plyr.prototype.media = media;
 Plyr.prototype.play = jest.fn().mockReturnValue(new Promise(noop));
+Plyr.prototype.elements = {
+  container: {
+    clientWidth: 700,
+  },
+};
 
 module.exports = Plyr;

@@ -2,6 +2,8 @@ import MockFetchVerify from '../test-support/MockFetchVerify';
 import { VideoResourceFactory } from '../test-support/TestFactories';
 import { BoclipsPlayer } from './BoclipsPlayer';
 
+jest.unmock('plyr');
+
 let container: HTMLElement;
 let player: BoclipsPlayer;
 

@@ -1,4 +1,5 @@
 import { format } from 'date-fns';
+import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
 import { withPx } from '../../../utils';
 import { InterfaceOptions } from '../../InterfaceOptions';
@@ -15,37 +16,29 @@ export const defaultSeekPreviewOptions: SeekPreviewOptions = {
 
 export class SeekPreview implements AddonInterface {
   public static canBeEnabled = (
+    plyr: Plyr.Plyr,
     playback: Playback | null,
     options: InterfaceOptions,
-  ) => {
-    if (!options.addons.seekPreview) {
-      return false;
-    }
-
-    if (options.controls.indexOf('progress') === -1) {
-      return false;
-    }
-
-    if (!playback) {
-      return false;
-    }
-
-    if (!playback.links.videoPreview) {
-      return false;
-    }
-
-    return !!playback.links.videoPreview.isTemplated();
+  ): boolean => {
+    return !!(
+      options.addons.seekPreview &&
+      Math.ceil(plyr.elements.container.clientWidth * 0.25) >= 125 &&
+      options.controls.indexOf('progress') !== -1 &&
+      playback &&
+      playback.links.videoPreview &&
+      playback.links.videoPreview.isTemplated()
+    );
   };
-
-  public static CONTAINER_WIDTH = 175;
 
   private options: SeekPreviewOptions = null;
   private container: HTMLDivElement = null;
+  private readonly width: number;
+  private readonly height: number;
 
   public constructor(
-    options: InterfaceOptions,
-    private plyr,
+    private plyr: Plyr.Plyr,
     private playback: Playback,
+    options: InterfaceOptions,
   ) {
     if (options.addons.seekPreview === true) {
       this.options = defaultSeekPreviewOptions;
@@ -54,6 +47,11 @@ export class SeekPreview implements AddonInterface {
     }
 
     this.hidePlyrSeek();
+
+    const media = this.plyr.media;
+    const aspectRatio = media.clientHeight / media.clientWidth;
+    this.width = Math.ceil(this.plyr.elements.container.clientWidth * 0.25);
+    this.height = this.width * aspectRatio;
 
     this.createContainer();
 
@@ -99,26 +97,22 @@ export class SeekPreview implements AddonInterface {
   };
 
   private createContainer = () => {
-    const media = this.plyr.media;
-    const aspectRatio = media.clientHeight / media.clientWidth;
-    const height = SeekPreview.CONTAINER_WIDTH * aspectRatio;
-
     const container = document.createElement('div');
     container.classList.add('seek-thumbnail', 'seek-thumbnail--hidden');
-    container.style.width = withPx(SeekPreview.CONTAINER_WIDTH);
-    container.style.marginLeft = withPx(SeekPreview.CONTAINER_WIDTH / -2);
+    container.style.width = withPx(this.width);
+    container.style.marginLeft = withPx(this.width / -2);
 
     const imageWindow = document.createElement('div');
     imageWindow.classList.add(
       'seek-thumbnail__window',
       'seek-thumbnail__window--loading',
     );
-    imageWindow.style.height = withPx(height);
+    imageWindow.style.height = withPx(this.height);
 
     const img = document.createElement('img');
     img.classList.add('seek-thumbnail__image');
     img.src = this.playback.links.videoPreview.getTemplatedLink({
-      thumbnailWidth: SeekPreview.CONTAINER_WIDTH,
+      thumbnailWidth: this.width,
       thumbnailCount: this.options.sliceCount,
     });
     img.onload = () => {
@@ -174,7 +168,7 @@ export class SeekPreview implements AddonInterface {
     const img: HTMLImageElement = this.container.querySelector(
       '.seek-thumbnail__image',
     );
-    img.style.left = withPx(index * SeekPreview.CONTAINER_WIDTH * -1);
+    img.style.left = withPx(index * this.width * -1);
   };
 
   private updateTimeLabel = (seconds: number) => {

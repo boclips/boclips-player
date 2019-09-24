@@ -17,7 +17,7 @@ Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
 Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
   configurable: true,
   get() {
-    return this.__jsdomMockClientWidth || 0;
+    return this.__jsdomMockClientWidth || 700;
   },
 });
 
