@@ -12,7 +12,6 @@ export type PlaybackType = StreamPlayback | YoutubePlayback;
 export interface Playback {
   id: string;
   type: 'YOUTUBE' | 'STREAM';
-  thumbnailUrl: string;
   duration: number;
   links: PlaybackLinks;
 }

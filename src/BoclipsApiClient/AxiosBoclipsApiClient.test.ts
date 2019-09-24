@@ -37,7 +37,6 @@ describe('retrieve video', () => {
         playback: {
           id: videoResource.playback.id,
           streamUrl: videoResource.playback.streamUrl,
-          thumbnailUrl: videoResource.playback.thumbnailUrl,
           type: videoResource.playback.type,
           links: {
             createPlaybackEvent: new Link(
@@ -62,7 +61,6 @@ describe('retrieve video', () => {
         id: video.id,
         playback: {
           id: videoResource.playback.id,
-          thumbnailUrl: videoResource.playback.thumbnailUrl,
           type: videoResource.playback.type,
           links: {
             createPlaybackEvent: new Link(

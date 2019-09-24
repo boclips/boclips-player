@@ -12,7 +12,6 @@ const convertPlaybackResource = (
   const playback: Playback = {
     type: rawPlayback.type,
     id: rawPlayback.id,
-    thumbnailUrl: rawPlayback.thumbnailUrl,
     duration: toSeconds(parse(rawPlayback.duration)),
     links: {
       createPlaybackEvent: new Link(rawPlayback._links.createPlaybackEvent),

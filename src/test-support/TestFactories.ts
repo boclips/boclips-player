@@ -6,7 +6,6 @@ export class PlaybackFactory {
     arg: Partial<StreamPlayback> = {},
   ): StreamPlayback => ({
     id: 'stream-playback-id',
-    thumbnailUrl: 'some/stream/image.jpg',
     duration: 60,
     type: 'STREAM',
     streamUrl: 'some/stream.mp4',
@@ -31,7 +30,6 @@ export class PlaybackFactory {
 
   public static youtubeSample = (): YoutubePlayback => ({
     id: 'youtube-stream-id',
-    thumbnailUrl: 'some/youtube/image.jpg',
     duration: 120,
     type: 'YOUTUBE',
     links: {
@@ -65,7 +63,6 @@ export class VideoResourceFactory {
     playback: {
       id: 'stream-playback-id',
       type: 'STREAM',
-      thumbnailUrl: 'kaltura/poster.jpg',
       streamUrl: 'kaltura/stream.mp4',
       duration: 'PT1M2S',
       _links: {
@@ -97,7 +94,6 @@ export class VideoResourceFactory {
     playback: {
       id: 'youtube-playback-id',
       type: 'YOUTUBE',
-      thumbnailUrl: 'youtube/poster.jpg',
       duration: 'PT1M3S',
       _links: {
         createPlaybackEvent: {
