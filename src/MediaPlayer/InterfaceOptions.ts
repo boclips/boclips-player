@@ -20,7 +20,7 @@ type Controls =
 
 export interface InterfaceOptions {
   controls: Controls[];
-  addons: {
+  addons?: {
     seekPreview?: boolean | SeekPreviewOptions;
   };
 }
