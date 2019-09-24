@@ -4,12 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [2.3.0] - 2019-09-24
 
 ### Added
 - A feature to allow thumbnail seeking on the progress bar for Stream playback only
 - `options.interface.addons.seekPreview` Seek Preview on hover on progress bar for Stream videos
 - Higher resolution posters for Stream playbacks
+
+### Changed
+- Use new PlaybackResource.links.thumbnail to generate thumbnail image URI
 
 ### Removed
 - Unused `convertPlaybackToSource` functionality
