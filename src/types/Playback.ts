@@ -24,8 +24,8 @@ export type YoutubePlayback = Playback;
 
 export const isStreamPlayback = (
   playback: Playback,
-): playback is StreamPlayback => playback.type === 'STREAM';
+): playback is StreamPlayback => playback && playback.type === 'STREAM';
 
 export const isYoutubePlayback = (
   playback: Playback,
-): playback is StreamPlayback => playback.type === 'YOUTUBE';
+): playback is StreamPlayback => playback && playback.type === 'YOUTUBE';

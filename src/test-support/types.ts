@@ -4,3 +4,8 @@ export interface HasEventListeners {
   };
   clearEventListeners: () => void;
 }
+
+export interface HasClientDimensions {
+  __jsdomMockClientWidth: number;
+  __jsdomMockClientHeight: number;
+}

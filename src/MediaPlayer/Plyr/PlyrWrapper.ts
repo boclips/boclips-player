@@ -4,9 +4,8 @@ import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique'
 import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
   isStreamPlayback,
+  isYoutubePlayback,
   Playback,
-  StreamPlayback,
-  YoutubePlayback,
 } from '../../types/Playback';
 import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
@@ -18,6 +17,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private streamingTechnique: StreamingTechnique = null;
   private hasBeenDestroyed: boolean = false;
   private enabledAddons: AddonInterface[] = [];
+  private playback: Playback = null;
 
   constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
@@ -32,10 +32,7 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   }
 
-  private createStreamPlyr = (
-    playback?: StreamPlayback,
-    segmentStart?: number,
-  ) => {
+  private createStreamPlyr = (segmentStart?: number) => {
     this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('video');
@@ -43,11 +40,11 @@ export default class PlyrWrapper implements MediaPlayer {
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('preload', 'metadata');
 
-    if (playback) {
-      media.setAttribute('src', playback.streamUrl);
+    if (isStreamPlayback(this.playback)) {
+      media.setAttribute('src', this.playback.streamUrl);
       media.setAttribute(
         'poster',
-        playback.links.thumbnail.getTemplatedLink({
+        this.playback.links.thumbnail.getTemplatedLink({
           thumbnailWidth: this.player.getContainer().clientWidth,
         }),
       );
@@ -55,35 +52,40 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.player.getContainer().appendChild(media);
 
-    this.resetPlyrInstance(media, playback);
+    this.resetPlyrInstance(media);
 
-    if (!playback) {
-      return;
-    }
-
-    this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
-
-    if (this.streamingTechnique) {
-      this.streamingTechnique.initialise(playback, segmentStart);
-
-      this.plyr.on('play', event => {
-        const plyr = event.detail.plyr;
-
-        this.streamingTechnique.startLoad(plyr.currentTime);
-      });
+    if (isStreamPlayback(this.playback)) {
+      this.initialiseStreamingTechnique(segmentStart);
     }
   };
 
-  private createYoutubePlyr = (
-    playback: YoutubePlayback,
-    segmentStart?: number,
-  ) => {
+  private initialiseStreamingTechnique = (segmentStart?: number) => {
+    this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
+
+    if (!this.streamingTechnique || !isStreamPlayback(this.playback)) {
+      return;
+    }
+
+    this.streamingTechnique.initialise(this.playback, segmentStart);
+
+    this.plyr.on('play', event => {
+      const plyr = event.detail.plyr;
+
+      this.streamingTechnique.startLoad(plyr.currentTime);
+    });
+  };
+
+  private createYoutubePlyr = (segmentStart?: number) => {
+    if (!isYoutubePlayback(this.playback)) {
+      throw new Error('Unable to create YouTube Plyr for non-YouTube playback');
+    }
+
     this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('div');
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('data-plyr-provider', 'youtube');
-    media.setAttribute('data-plyr-embed-id', playback.id);
+    media.setAttribute('data-plyr-embed-id', this.playback.id);
     if (segmentStart) {
       media.setAttribute(
         'data-plyr-config',
@@ -97,7 +99,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.player.getContainer().appendChild(media);
 
-    this.resetPlyrInstance(media, playback);
+    this.resetPlyrInstance(media);
   };
 
   private installPlyrEventListeners() {
@@ -218,10 +220,12 @@ export default class PlyrWrapper implements MediaPlayer {
       this.streamingTechnique.destroy();
     }
 
-    if (isStreamPlayback(playback)) {
-      this.createStreamPlyr(playback, segment && segment.start);
+    this.playback = playback;
+
+    if (isStreamPlayback(this.playback)) {
+      this.createStreamPlyr(segment && segment.start);
     } else {
-      this.createYoutubePlyr(playback, segment && segment.start);
+      this.createYoutubePlyr(segment && segment.start);
     }
 
     if (segment) {
@@ -322,10 +326,7 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   };
 
-  private resetPlyrInstance = (
-    media: HTMLDivElement | HTMLVideoElement,
-    playback?: Playback,
-  ) => {
+  private resetPlyrInstance = (media: HTMLDivElement | HTMLVideoElement) => {
     if (this.plyr) {
       this.plyr.destroy();
     }
@@ -334,7 +335,7 @@ export default class PlyrWrapper implements MediaPlayer {
       debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
       controls: this.getOptions().controls,
-      duration: playback ? playback.duration : null,
+      duration: this.playback ? this.playback.duration : null,
       listeners: {
         fastForward: () => {
           this.player
@@ -362,15 +363,17 @@ export default class PlyrWrapper implements MediaPlayer {
     });
 
     this.installPlyrEventListeners();
-    this.installAddons(playback);
+    this.installAddons();
   };
 
-  private installAddons = playback => {
+  private installAddons = () => {
     Addons.forEach((AddonToInstall: Addon) => {
-      if (AddonToInstall.canBeEnabled(this.plyr, playback, this.getOptions())) {
+      if (
+        AddonToInstall.canBeEnabled(this.plyr, this.playback, this.getOptions())
+      ) {
         // tslint:disable-next-line: no-unused-expression
         this.enabledAddons.push(
-          new AddonToInstall(this.plyr, playback, this.getOptions()),
+          new AddonToInstall(this.plyr, this.playback, this.getOptions()),
         );
       }
     });
@@ -378,6 +381,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
   private destroyAddons = () => {
     this.enabledAddons.forEach(addon => addon.destroy());
+    this.enabledAddons = [];
   };
 
   private getOptions = () => this.player.getOptions().interface;

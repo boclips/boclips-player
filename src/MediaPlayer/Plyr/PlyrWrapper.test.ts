@@ -11,6 +11,7 @@ import {
   PlaybackFactory,
   VideoFactory,
 } from '../../test-support/TestFactories';
+import { HasClientDimensions } from '../../test-support/types';
 import { MediaPlayer } from '../MediaPlayer';
 import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
@@ -23,7 +24,7 @@ jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 
 const video = VideoFactory.sample();
 
-let container: HTMLElement & { __jsdomMockClientWidth: number } = null;
+let container: HTMLElement & HasClientDimensions = null;
 let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer = null;
 let mockPlyr;
