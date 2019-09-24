@@ -23,24 +23,28 @@ jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 
 const video = VideoFactory.sample();
 
-let container: HTMLElement = null;
+let container: HTMLElement & { __jsdomMockClientWidth: number } = null;
 let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer = null;
 let mockPlyr;
 
-function getLatestMockPlyr() {
+function getLatestMockPlyrInstance() {
   return Plyr.mock.instances[Plyr.mock.instances.length - 1];
+}
+function getLatestMockPlyrConstructor() {
+  return Plyr.mock.calls[Plyr.mock.calls.length - 1];
 }
 
 beforeEach(() => {
   Plyr.mockClear();
 
-  container = document.createElement('div');
+  container = document.createElement('div') as any;
+  container.__jsdomMockClientWidth = 700;
 
   mockPlayer = mocked(new BoclipsPlayer(container));
   mediaPlayer = new PlyrWrapper(mockPlayer);
 
-  mockPlyr = getLatestMockPlyr();
+  mockPlyr = getLatestMockPlyrInstance();
 });
 
 describe('Instantiation', () => {
@@ -79,6 +83,18 @@ describe('Stream Playback', () => {
     mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
   });
 
+  it('sets the poster on the video element', () => {
+    mediaPlayer.configureWithVideo(video);
+
+    const videoElement = getLatestMockPlyrConstructor()[0];
+
+    expect(videoElement.getAttribute('poster')).toEqual(
+      video.playback.links.thumbnail.getTemplatedLink({
+        thumbnailWidth: 700,
+      }),
+    );
+  });
+
   it('initialises the streamingTechnique', () => {
     mediaPlayer.configureWithVideo(video);
 
@@ -91,7 +107,7 @@ describe('Stream Playback', () => {
   it('adds a play listener to Plyr to startLoad on the streamingTechnique', () => {
     mediaPlayer.configureWithVideo(video);
 
-    mockPlyr = getLatestMockPlyr();
+    mockPlyr = getLatestMockPlyrInstance();
     mockPlyr.currentTime = 20;
     mockPlyr.__callEventCallback('play');
 
@@ -121,7 +137,7 @@ describe('Stream Playback', () => {
         undefined,
       );
 
-      mockPlyr = getLatestMockPlyr();
+      mockPlyr = getLatestMockPlyrInstance();
       mockPlyr.__callEventCallback('play');
 
       expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(undefined);
@@ -140,7 +156,7 @@ describe('Stream Playback', () => {
         segment.start,
       );
 
-      mockPlyr = getLatestMockPlyr();
+      mockPlyr = getLatestMockPlyrInstance();
       mockPlyr.__callEventCallback('play');
 
       expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
@@ -156,7 +172,7 @@ describe('Stream Playback', () => {
 
       mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
 
-      mockPlyr = getLatestMockPlyr();
+      mockPlyr = getLatestMockPlyrInstance();
       mockPlyr.currentTime = 60;
       mockPlyr.__callEventCallback('timeupdate');
 
@@ -193,7 +209,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
         expect(mockPlyr.currentTime).toEqual(segment.start);
       });
 
@@ -204,7 +220,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
         // Some browsers won't set currentTime if it hasn't loaded the data
         mockPlyr.currentTime = 0;
 
@@ -220,7 +236,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
         mockPlyr.currentTime = 60;
         mockPlyr.__callEventCallback('timeupdate');
 
@@ -234,7 +250,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
         mockPlyr.currentTime = 60;
         mockPlyr.__callEventCallback('timeupdate');
 
@@ -254,7 +270,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
 
         expect(mockPlyr.on).not.toHaveBeenCalledWith(
           'timeupdate',
@@ -270,7 +286,7 @@ describe('Playback restriction', () => {
 
         mediaPlayer.configureWithVideo(segmentedVideo, segment);
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
         expect(mockPlyr.currentTime).toEqual(30);
 
         mockPlyr.currentTime = 60;
@@ -282,7 +298,7 @@ describe('Playback restriction', () => {
           VideoFactory.sample(PlaybackFactory.youtubeSample()),
         );
 
-        mockPlyr = getLatestMockPlyr();
+        mockPlyr = getLatestMockPlyrInstance();
 
         expect(mockPlyr.currentTime).toBeUndefined();
 
@@ -332,7 +348,7 @@ describe('Passthrough API', () => {
     mediaPlayer.configureWithVideo(video);
 
     mediaPlayer.play();
-    mockPlyr = getLatestMockPlyr();
+    mockPlyr = getLatestMockPlyrInstance();
     expect(mockPlyr.play).toHaveBeenCalled();
   });
 
@@ -340,7 +356,7 @@ describe('Passthrough API', () => {
     mediaPlayer.configureWithVideo(video);
 
     mediaPlayer.pause();
-    mockPlyr = getLatestMockPlyr();
+    mockPlyr = getLatestMockPlyrInstance();
     expect(mockPlyr.pause).toHaveBeenCalled();
   });
 });

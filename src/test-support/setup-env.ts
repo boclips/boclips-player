@@ -14,6 +14,13 @@ Object.defineProperty(HTMLElement.prototype, 'clientHeight', {
   },
 });
 
+Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
+  configurable: true,
+  get() {
+    return this.__jsdomMockClientWidth || 0;
+  },
+});
+
 const eventTargets = [window, HTMLElement.prototype];
 
 eventTargets.forEach(target => {

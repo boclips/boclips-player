@@ -26,6 +26,9 @@ const convertPlaybackResource = (
     (playback as StreamPlayback).streamUrl = rawPlayback.streamUrl;
   }
 
+  if (rawPlayback._links.thumbnail) {
+    playback.links.thumbnail = new Link(rawPlayback._links.thumbnail);
+  }
 
   if (rawPlayback._links.videoPreview) {
     playback.links.videoPreview = new Link(rawPlayback._links.videoPreview);

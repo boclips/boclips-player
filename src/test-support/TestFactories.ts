@@ -17,6 +17,14 @@ export class PlaybackFactory {
       createPlayerInteractedWithEvent: new Link({
         href: 'create/interaction/event',
       }),
+      thumbnail: new Link({
+        href: 'thumbnail/{thumbnailWidth}.jpg',
+        templated: true,
+      }),
+      videoPreview: new Link({
+        href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
+        templated: true,
+      }),
     },
     ...arg,
   });
@@ -67,6 +75,10 @@ export class VideoResourceFactory {
         createPlayerInteractedWithEvent: {
           href: 'create/interaction/event',
         },
+        thumbnail: {
+          href: 'thumbnail/{thumbnailWidth}.jpg',
+          templated: true,
+        },
         videoPreview: {
           href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
           templated: true,
@@ -93,6 +105,9 @@ export class VideoResourceFactory {
         },
         createPlayerInteractedWithEvent: {
           href: 'create/interaction/event',
+        },
+        thumbnail: {
+          href: 'youtube/thumbnail.jpg',
         },
       },
     },

@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - A feature to allow thumbnail seeking on the progress bar for Stream playback only
 - `options.interface.addons.seekPreview` Seek Preview on hover on progress bar for Stream videos
+- Higher resolution posters for Stream playbacks
 
 ### Fixed
 - Demo URIs for videos on staging-boclips.com

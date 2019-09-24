@@ -23,6 +23,9 @@ it('Can map the response to a StreamPlayback object', () => {
   expect(
     playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
   ).toEqual('create/interaction/event');
+  expect(playback.links.thumbnail.getOriginalLink()).toEqual(
+    'thumbnail/{thumbnailWidth}.jpg',
+  );
   expect(playback.links.videoPreview.getOriginalLink()).toEqual(
     'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
   );
@@ -43,6 +46,10 @@ it('Can map the response to a YoutubePlayback object', () => {
   expect(
     playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
   ).toEqual('create/interaction/event');
+  expect(playback.links.thumbnail.getOriginalLink()).toEqual(
+    'youtube/thumbnail.jpg',
+  );
+  expect(playback.links.thumbnail.isTemplated()).toEqual(false);
 });
 
 it('will throw an exception if the type is not YOUTUBE or STREAM', () => {

@@ -3,6 +3,7 @@ import { Link } from './Link';
 interface PlaybackLinks {
   createPlayerInteractedWithEvent: Link;
   createPlaybackEvent: Link;
+  thumbnail?: Link;
   videoPreview?: Link;
 }
 

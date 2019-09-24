@@ -45,7 +45,12 @@ export default class PlyrWrapper implements MediaPlayer {
 
     if (playback) {
       media.setAttribute('src', playback.streamUrl);
-      media.setAttribute('poster', playback.thumbnailUrl);
+      media.setAttribute(
+        'poster',
+        playback.links.thumbnail.getTemplatedLink({
+          thumbnailWidth: this.player.getContainer().clientWidth,
+        }),
+      );
     }
 
     this.player.getContainer().appendChild(media);
