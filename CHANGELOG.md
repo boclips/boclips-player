@@ -11,8 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `options.interface.addons.seekPreview` Seek Preview on hover on progress bar for Stream videos
 - Higher resolution posters for Stream playbacks
 
+### Removed
+- Unused `convertPlaybackToSource` functionality
+
 ### Fixed
 - Demo URIs for videos on staging-boclips.com
+
+
 
 ## [2.2.2] - 2019-08-08
 
