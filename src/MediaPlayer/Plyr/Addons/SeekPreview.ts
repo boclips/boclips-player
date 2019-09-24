@@ -7,11 +7,11 @@ import { AddonInterface } from './Addons';
 import './SeekPreview.less';
 
 export interface SeekPreviewOptions {
-  sliceCount: number;
+  frameCount: number;
 }
 
 export const defaultSeekPreviewOptions: SeekPreviewOptions = {
-  sliceCount: 15,
+  frameCount: 15,
 };
 
 export class SeekPreview implements AddonInterface {
@@ -142,7 +142,7 @@ export class SeekPreview implements AddonInterface {
     };
     img.src = this.playback.links.videoPreview.getTemplatedLink({
       thumbnailWidth: this.width,
-      thumbnailCount: this.options.sliceCount,
+      thumbnailCount: this.options.frameCount,
     });
 
     const timeLabel = document.createElement('span');
@@ -189,7 +189,7 @@ export class SeekPreview implements AddonInterface {
     const duration = this.playback.duration;
     const index = Math.max(
       0,
-      Math.ceil((this.options.sliceCount * seekTime) / duration) - 1,
+      Math.ceil((this.options.frameCount * seekTime) / duration) - 1,
     );
 
     const img: HTMLImageElement = this.container.querySelector(

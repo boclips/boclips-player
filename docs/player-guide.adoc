@@ -161,7 +161,7 @@ type Controls =
   | 'fullscreen';
 
 interface SeekPreviewOptions {
-    sliceCount: number;
+    frameCount: number;
 }
 ----
 

@@ -233,7 +233,7 @@ describe('Usage', () => {
   });
 
   it('Accepts a different slice count via options', () => {
-    createSeekPreview({ sliceCount: 50 });
+    createSeekPreview({ frameCount: 50 });
 
     const mousemoveListeners = progress.__eventListeners.mousemove;
     expect(mousemoveListeners).toHaveLength(1);
@@ -314,7 +314,7 @@ describe('Usage', () => {
 
     testData.forEach(({ cursorX, expectedSlice, expectedTime }) => {
       it(`Renders slice ${expectedSlice} when the cursor is at ${cursorX}px`, () => {
-        createSeekPreview({ sliceCount: 10 });
+        createSeekPreview({ frameCount: 10 });
 
         const mousemoveListeners = progress.__eventListeners.mousemove;
         expect(mousemoveListeners).toHaveLength(1);
