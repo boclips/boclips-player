@@ -1,5 +1,9 @@
+import Plyr from 'plyr';
 import { PlaybackFactory } from '../../../test-support/TestFactories';
-import { HasEventListeners } from '../../../test-support/types';
+import {
+  HasClientDimensions,
+  HasEventListeners,
+} from '../../../test-support/types';
 import { Link } from '../../../types/Link';
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
@@ -105,34 +109,41 @@ describe('Feature Enabling', () => {
 
 describe('Usage', () => {
   let progress: HTMLDivElement & HasEventListeners;
-  let parentContainer: HTMLDivElement;
-  let plyrContainer: HTMLDivElement & { __jsdomMockClientWidth: number };
-  let media: HTMLVideoElement;
+  let container: HTMLDivElement;
+  let plyrContainer: HTMLDivElement & HasClientDimensions;
+  let media: HTMLVideoElement & HasClientDimensions;
 
   let plyr: {
-    elements: { progress: HTMLDivElement; container: HTMLDivElement };
+    elements: {
+      progress: HTMLDivElement;
+      container: HTMLDivElement & HasClientDimensions;
+    };
     media: HTMLVideoElement;
+    __callEventCallback: (event: string) => void;
   };
 
   beforeEach(() => {
-    progress = document.createElement('div') as any;
-    parentContainer = document.createElement('div') as any;
+    container = document.createElement('div') as any;
+    media = document.createElement('video') as any;
+    media.__jsdomMockClientWidth = 1600;
+    media.__jsdomMockClientHeight = 900;
+    container.appendChild(media);
+
     plyrContainer = document.createElement('div') as any;
-    media = document.createElement('video');
-
     plyrContainer.__jsdomMockClientWidth = 700;
+    container.appendChild(plyrContainer);
 
-    parentContainer.appendChild(plyrContainer);
-
+    progress = document.createElement('div') as any;
     (progress as any).setBoundingClientRect({
       top: 500,
       left: 50,
       width: 100,
     } as ClientRect);
-
     plyrContainer.appendChild(progress);
 
-    plyr = { elements: { progress, container: plyrContainer }, media };
+    plyr = new Plyr(media);
+    plyr.elements.container = plyrContainer;
+    plyr.elements.progress = progress;
   });
 
   const createSeekPreview = (seekPreviewOptions?: SeekPreviewOptions) =>
@@ -176,12 +187,12 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
-    expect(container).toBeTruthy();
+    expect(previewContainer).toBeTruthy();
 
-    expect(container.style.left).toEqual('-20px');
+    expect(previewContainer.style.left).toEqual('-20px');
   });
 
   it('Renders the correct image within the container', () => {
@@ -194,12 +205,12 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
-    expect(container).toBeTruthy();
+    expect(previewContainer).toBeTruthy();
 
-    const img: HTMLImageElement = container.querySelector('img');
+    const img: HTMLImageElement = previewContainer.querySelector('img');
 
     expect(img).toBeTruthy();
 
@@ -216,12 +227,12 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const container: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail',
     );
-    expect(container).toBeTruthy();
+    expect(previewContainer).toBeTruthy();
 
-    const img: HTMLImageElement = container.querySelector('img');
+    const img: HTMLImageElement = previewContainer.querySelector('img');
 
     expect(img).toBeTruthy();
 
@@ -324,10 +335,60 @@ describe('Usage', () => {
 
     mouseoutListener({});
 
-    const container: HTMLElement = plyrContainer.querySelector(
+    const hiddenContainer: HTMLElement = plyrContainer.querySelector(
       '.seek-thumbnail--hidden',
     );
 
-    expect(container).toBeTruthy();
+    expect(hiddenContainer).toBeTruthy();
+  });
+
+  describe('events', () => {
+    it('resets itself on enterfullscreen', () => {
+      plyr.elements.container.__jsdomMockClientWidth = 700;
+
+      createSeekPreview();
+
+      const seekPreviewContainer = container.querySelector(
+        '.seek-thumbnail',
+      ) as HTMLElement;
+
+      expect(seekPreviewContainer).toBeTruthy();
+      expect(seekPreviewContainer.style.width).toEqual(`${700 * 0.25}px`);
+
+      plyr.elements.container.__jsdomMockClientWidth = 1400;
+
+      plyr.__callEventCallback('enterfullscreen');
+
+      const seekPreviewContainerAfter = container.querySelector(
+        '.seek-thumbnail',
+      ) as HTMLElement;
+
+      expect(seekPreviewContainerAfter).toBeTruthy();
+      expect(seekPreviewContainerAfter.style.width).toEqual(`${1400 * 0.25}px`);
+    });
+
+    it('resets itself on exitfullscreen', () => {
+      plyr.elements.container.__jsdomMockClientWidth = 1400;
+
+      createSeekPreview();
+
+      const seekPreviewContainer = container.querySelector(
+        '.seek-thumbnail',
+      ) as HTMLElement;
+
+      expect(seekPreviewContainer).toBeTruthy();
+      expect(seekPreviewContainer.style.width).toEqual(`${1400 * 0.25}px`);
+
+      plyr.elements.container.__jsdomMockClientWidth = 700;
+
+      plyr.__callEventCallback('exitfullscreen');
+
+      const seekPreviewContainerAfter = container.querySelector(
+        '.seek-thumbnail',
+      ) as HTMLElement;
+
+      expect(seekPreviewContainerAfter).toBeTruthy();
+      expect(seekPreviewContainerAfter.style.width).toEqual(`${700 * 0.25}px`);
+    });
   });
 });

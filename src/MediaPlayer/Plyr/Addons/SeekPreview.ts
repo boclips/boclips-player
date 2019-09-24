@@ -32,8 +32,8 @@ export class SeekPreview implements AddonInterface {
 
   private options: SeekPreviewOptions = null;
   private container: HTMLDivElement = null;
-  private readonly width: number;
-  private readonly height: number;
+  private width: number;
+  private height: number;
 
   public constructor(
     private plyr: Plyr.Plyr,
@@ -48,26 +48,14 @@ export class SeekPreview implements AddonInterface {
 
     this.hidePlyrSeek();
 
-    const media = this.plyr.media;
-    const aspectRatio = media.clientHeight / media.clientWidth;
-    this.width = Math.ceil(this.plyr.elements.container.clientWidth * 0.25);
-    this.height = this.width * aspectRatio;
+    this.installPlyrListeners();
 
-    this.createContainer();
-
-    this.getPlyrProgressBar().addEventListener(
-      'mousemove',
-      this.handleMousemove,
-    );
-
-    this.getPlyrProgressBar().addEventListener('mouseout', this.handleMouseout);
+    this.updateDimensions();
   }
 
   public destroy = () => {
-    if (this.container) {
-      this.container.parentElement.removeChild(this.container);
-      this.container = null;
-    }
+    this.destroyContainer();
+
     if (this.plyr && this.getPlyrProgressBar()) {
       this.getPlyrProgressBar().removeEventListener(
         'mousemove',
@@ -78,6 +66,34 @@ export class SeekPreview implements AddonInterface {
         this.handleMouseout,
       );
     }
+  };
+
+  private destroyContainer = () => {
+    if (!this.container) {
+      return;
+    }
+
+    this.container.parentElement.removeChild(this.container);
+    this.container = null;
+  };
+
+  private installPlyrListeners = () => {
+    this.plyr.on('enterfullscreen', this.updateDimensions);
+    this.plyr.on('exitfullscreen', this.updateDimensions);
+
+    const plyrProgressBar = this.getPlyrProgressBar();
+    plyrProgressBar.addEventListener('mousemove', this.handleMousemove);
+    plyrProgressBar.addEventListener('mouseout', this.handleMouseout);
+  };
+
+  private updateDimensions = () => {
+    const media = this.plyr.media;
+    const aspectRatio = media.clientHeight / media.clientWidth;
+
+    this.width = Math.ceil(this.plyr.elements.container.clientWidth * 0.25);
+    this.height = this.width * aspectRatio;
+
+    this.createContainer();
   };
 
   private handleMousemove = (event: MouseEvent) => {
@@ -97,6 +113,10 @@ export class SeekPreview implements AddonInterface {
   };
 
   private createContainer = () => {
+    if (this.container) {
+      this.destroyContainer();
+    }
+
     const container = document.createElement('div');
     container.classList.add('seek-thumbnail', 'seek-thumbnail--hidden');
     container.style.width = withPx(this.width);
