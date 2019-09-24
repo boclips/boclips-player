@@ -129,20 +129,27 @@ export class SeekPreview implements AddonInterface {
     );
     imageWindow.style.height = withPx(this.height);
 
+    const placeholderImage = document.createElement('img');
+    placeholderImage.classList.add('seek-thumbnail__image--placeholder');
+    placeholderImage.src = this.playback.links.thumbnail.getTemplatedLink({
+      thumbnailWidth: this.plyr.elements.container.clientWidth,
+    });
+
     const img = document.createElement('img');
     img.classList.add('seek-thumbnail__image');
+    img.onload = () => {
+      imageWindow.classList.remove('seek-thumbnail__window--loading');
+    };
     img.src = this.playback.links.videoPreview.getTemplatedLink({
       thumbnailWidth: this.width,
       thumbnailCount: this.options.sliceCount,
     });
-    img.onload = () => {
-      imageWindow.classList.remove('seek-thumbnail__window--loading');
-    };
 
     const timeLabel = document.createElement('span');
     timeLabel.classList.add('seek-thumbnail__time');
 
     imageWindow.appendChild(img);
+    imageWindow.appendChild(placeholderImage);
     container.appendChild(imageWindow);
     container.appendChild(timeLabel);
 

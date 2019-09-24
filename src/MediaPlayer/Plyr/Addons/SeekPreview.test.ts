@@ -157,6 +157,10 @@ describe('Usage', () => {
               'http://path/to/thumbnail/api/slices/{thumbnailCount}/width/{thumbnailWidth}',
             templated: true,
           }),
+          thumbnail: new Link({
+            href: 'http://path/to/thumbnail/api/width/{thumbnailWidth}',
+            templated: true,
+          }),
         } as Playback['links'],
       }),
       {
@@ -165,6 +169,17 @@ describe('Usage', () => {
         },
       } as InterfaceOptions,
     );
+
+  it('loads a placeholder image while loading the larger image', () => {
+    createSeekPreview();
+
+    const img: HTMLImageElement = plyrContainer.querySelector(
+      '.seek-thumbnail__image--placeholder',
+    );
+    expect(img).toBeTruthy();
+
+    expect(img.src).toEqual('http://path/to/thumbnail/api/width/700');
+  });
 
   it('loads the image as soon as it is instantiated', () => {
     createSeekPreview();
