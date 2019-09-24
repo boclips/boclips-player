@@ -2,6 +2,11 @@
   <head>
     <title>Boclips Player Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <style type="text/css">
+      #container {
+        width: 600px;
+      }
+    </style>
   </head>
   <body>
     <div id="container"></div>
@@ -34,7 +39,7 @@
       };
       const player = Boclips.PlayerFactory.get(container, options);
       player.loadVideo(
-        'https://teachers.boclips.com/v1/videos/5c54d6e6d8eafeecae20757a',
+        'https://api.staging-boclips.com/v1/videos/5c542abf5438cdbcb56df029',
       );
     </script>
   </body>
