@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.4.0] - 2019-09-25
+
 ## Added
 - A feature to show a preview of a video on hover over
 - `options.interface.addons.hoverPreview` Hover Preview option. `default: false`
