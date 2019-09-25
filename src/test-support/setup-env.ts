@@ -21,6 +21,16 @@ Object.defineProperty(HTMLElement.prototype, 'clientWidth', {
   },
 });
 
+Object.defineProperty(HTMLImageElement.prototype, 'onload', {
+  configurable: true,
+  set(callback) {
+    this.__onload = callback;
+  },
+  get() {
+    return this.__onload;
+  },
+});
+
 const eventTargets = [window, HTMLElement.prototype];
 
 eventTargets.forEach(target => {

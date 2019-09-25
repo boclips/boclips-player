@@ -1,6 +1,7 @@
 import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
+import { HoverPreview } from './HoverPreview';
 import { SeekPreview } from './SeekPreview';
 
 export interface AddonInterface {
@@ -20,4 +21,4 @@ export interface Addon {
   ): AddonInterface;
 }
 
-export const Addons: Addon[] = [SeekPreview];
+export const Addons: Addon[] = [SeekPreview, HoverPreview];

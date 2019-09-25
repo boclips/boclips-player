@@ -1,3 +1,4 @@
+import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview';
 import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview';
 
 type Controls =
@@ -22,6 +23,7 @@ export interface InterfaceOptions {
   controls: Controls[];
   addons?: {
     seekPreview?: boolean | SeekPreviewOptions;
+    hoverPreview?: boolean | HoverPreviewOptions;
   };
 }
 
@@ -38,5 +40,6 @@ export const defaultInterfaceOptions: InterfaceOptions = {
   ],
   addons: {
     seekPreview: true,
+    hoverPreview: false,
   },
 };

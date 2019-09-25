@@ -139,6 +139,7 @@ interface InterfaceOptions {
     controls: Controls[];
     addons: {
         seekPreview?: boolean | SeekPreviewOptions;
+        hoverPreview?: boolean | HoverPreviewOptions;
     };
 }
 
@@ -162,6 +163,11 @@ type Controls =
 
 interface SeekPreviewOptions {
     frameCount: number;
+}
+
+interface HoverPreviewOptions {
+    frameCount: number;
+    delayMilliseconds: number;
 }
 ----
 

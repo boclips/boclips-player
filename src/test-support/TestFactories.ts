@@ -11,17 +11,17 @@ export class PlaybackFactory {
     streamUrl: 'some/stream.mp4',
     links: {
       createPlaybackEvent: new Link({
-        href: 'create/playback/event',
+        href: 'https://events/create/playback/event',
       }),
       createPlayerInteractedWithEvent: new Link({
-        href: 'create/interaction/event',
+        href: 'https://events/create/interaction/event',
       }),
       thumbnail: new Link({
-        href: 'thumbnail/{thumbnailWidth}.jpg',
+        href: 'https://thumbnail/{thumbnailWidth}.jpg',
         templated: true,
       }),
       videoPreview: new Link({
-        href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
+        href: 'https://video-preview/{thumbnailWidth}/{thumbnailCount}.jpg',
         templated: true,
       }),
     },
