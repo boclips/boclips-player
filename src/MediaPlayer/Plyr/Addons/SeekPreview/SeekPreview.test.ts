@@ -1,8 +1,8 @@
 import Plyr from 'plyr';
-import { PlaybackFactory } from '../../../test-support/TestFactories';
-import { Link } from '../../../types/Link';
-import { Playback } from '../../../types/Playback';
-import { InterfaceOptions } from '../../InterfaceOptions';
+import { PlaybackFactory } from '../../../../test-support/TestFactories';
+import { Link } from '../../../../types/Link';
+import { Playback } from '../../../../types/Playback';
+import { InterfaceOptions } from '../../../InterfaceOptions';
 import {
   defaultSeekPreviewOptions,
   SeekPreview,

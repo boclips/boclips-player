@@ -1,8 +1,8 @@
 import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
-import { HoverPreview } from './HoverPreview';
-import { SeekPreview } from './SeekPreview';
+import { HoverPreview } from './HoverPreview/HoverPreview';
+import { SeekPreview } from './SeekPreview/SeekPreview';
 
 export interface AddonInterface {
   destroy: () => void;

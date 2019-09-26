@@ -1,7 +1,7 @@
 import Plyr from 'plyr';
-import { PlaybackFactory } from '../../../test-support/TestFactories';
-import { HasClientDimensions } from '../../../test-support/types';
-import { InterfaceOptions } from '../../InterfaceOptions';
+import { PlaybackFactory } from '../../../../test-support/TestFactories';
+import { HasClientDimensions } from '../../../../test-support/types';
+import { InterfaceOptions } from '../../../InterfaceOptions';
 import { defaultHoverPreviewOptions, HoverPreview } from './HoverPreview';
 
 let plyr: Plyr.Plyr;

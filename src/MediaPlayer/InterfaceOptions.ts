@@ -1,5 +1,5 @@
-import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview';
-import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview';
+import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview/HoverPreview';
+import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview/SeekPreview';
 
 type Controls =
   | 'play-large'

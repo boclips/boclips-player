@@ -1,9 +1,9 @@
 import Plyr from 'plyr';
-import { Playback } from '../../../types/Playback';
-import { getBoundedValue, withPx } from '../../../utils';
-import { InterfaceOptions } from '../../InterfaceOptions';
+import { Playback } from '../../../../types/Playback';
+import { getBoundedValue, withPx } from '../../../../utils';
+import { InterfaceOptions } from '../../../InterfaceOptions';
 
-import { AddonInterface } from './Addons';
+import { AddonInterface } from '../Addons';
 import './HoverPreview.less';
 
 export interface HoverPreviewOptions {
