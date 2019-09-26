@@ -62,7 +62,7 @@ export class HoverPreview implements AddonInterface {
 
     this.createContainer();
 
-    this.addPlyrListeners();
+    this.addListeners();
   }
 
   public destroy = () => {
@@ -70,7 +70,7 @@ export class HoverPreview implements AddonInterface {
       return;
     }
 
-    this.removePlyrListeners();
+    this.removeListeners();
 
     if (this.animationInterval) {
       clearInterval(this.animationInterval);
@@ -128,13 +128,16 @@ export class HoverPreview implements AddonInterface {
     window.appendChild(this.image);
   };
 
-  private addPlyrListeners = () => {
+  private addListeners = () => {
     this.getPlyrContainer().addEventListener('mouseover', this.handleMouseover);
     this.getPlyrContainer().addEventListener('mouseout', this.handleMouseout);
     this.plyr.on('play', this.destroy);
+    this.container.addEventListener('click', () => {
+      this.plyr.play();
+    });
   };
 
-  private removePlyrListeners = () => {
+  private removeListeners = () => {
     this.getPlyrContainer().removeEventListener(
       'mouseover',
       this.handleMouseover,

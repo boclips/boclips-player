@@ -235,6 +235,17 @@ describe('HoverPreview', () => {
 
       expect(container.classList).toContain('hover-preview--hidden');
     });
+
+    it('clicking on the preview will play the video', () => {
+      getHoverPreview();
+
+      const container = plyr.elements.container.querySelector('.hover-preview');
+
+      const clickEvent = new Event('click');
+      container.dispatchEvent(clickEvent);
+
+      expect(plyr.play).toHaveBeenCalled();
+    })
   });
 
   describe('animation', () => {
