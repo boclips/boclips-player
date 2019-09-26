@@ -162,11 +162,32 @@ type Controls =
   | 'fullscreen';
 
 interface SeekPreviewOptions {
+    /**
+     * Number of frames to retrieve for distribution over the length
+     * of the video.
+     *
+     * Minimum: 10
+     * Maximum: 20
+     */
     frameCount: number;
 }
 
 interface HoverPreviewOptions {
+    /**
+     * Number of frames to retrieve for distribution over the length
+     * of the video.
+     *
+     * Minimum: 4
+     * Maximum: 15
+     */
     frameCount: number;
+    /**
+     * Number of frames to retrieve for distribution over the length
+     * of the video.
+     *
+     * Minimum: 200
+     * Maximum: 1000
+     */
     delayMilliseconds: number;
 }
 ----

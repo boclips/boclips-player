@@ -7,6 +7,13 @@ import { AddonInterface } from './Addons';
 import './SeekPreview.less';
 
 export interface SeekPreviewOptions {
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 10
+   * Maximum: 20
+   */
   frameCount: number;
 }
 

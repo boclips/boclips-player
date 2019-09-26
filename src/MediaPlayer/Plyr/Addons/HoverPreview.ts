@@ -7,7 +7,21 @@ import { AddonInterface } from './Addons';
 import './HoverPreview.less';
 
 export interface HoverPreviewOptions {
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 4
+   * Maximum: 15
+   */
   frameCount: number;
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 200
+   * Maximum: 1000
+   */
   delayMilliseconds: number;
 }
 
