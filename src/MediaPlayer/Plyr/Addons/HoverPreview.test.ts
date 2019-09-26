@@ -1,9 +1,24 @@
 import Plyr from 'plyr';
 import { PlaybackFactory } from '../../../test-support/TestFactories';
 import { HasClientDimensions } from '../../../test-support/types';
-import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
-import { HoverPreview } from './HoverPreview';
+import { defaultHoverPreviewOptions, HoverPreview } from './HoverPreview';
+
+let plyr: Plyr.Plyr;
+
+beforeEach(() => {
+  const plyrContainer = document.createElement('div') as HTMLDivElement &
+    HasClientDimensions;
+  plyrContainer.__jsdomMockClientWidth = 500;
+
+  plyr = new Plyr();
+  plyr.elements.container = plyrContainer;
+});
+
+const getHoverPreview = (playback = PlaybackFactory.streamSample()) =>
+  new HoverPreview(plyr, playback, {
+    addons: { hoverPreview: true },
+  } as any);
 
 describe('Feature Enabling', () => {
   const testData = [
@@ -46,30 +61,108 @@ describe('Feature Enabling', () => {
   });
 });
 
-describe('HoverPreview', () => {
-  let plyrContainer: HTMLDivElement & HasClientDimensions;
-  let playback: Playback;
-  let plyr: Plyr.Plyr;
-  let addon: HoverPreview;
+describe('Options', () => {
+  interface Test<T = InterfaceOptions['addons']['hoverPreview']> {
+    message: string;
+    input: T;
+    expected: T;
+  }
+  const testData: Test[] = [
+    {
+      message: 'default when input is true',
+      input: true,
+      expected: defaultHoverPreviewOptions,
+    },
+    {
+      message: 'frameCount as specified when input is within limits',
+      input: {
+        frameCount: 10,
+        delayMilliseconds: 400,
+      },
+      expected: {
+        frameCount: 10,
+        delayMilliseconds: 400,
+      },
+    },
+    {
+      message: 'frameCount to upper bound when input is above upper bound',
+      input: {
+        frameCount: 100,
+        delayMilliseconds: 400,
+      },
+      expected: {
+        frameCount: 15,
+        delayMilliseconds: 400,
+      },
+    },
+    {
+      message: 'frameCount to lower bound when input is below lower bound',
+      input: {
+        frameCount: -10,
+        delayMilliseconds: 400,
+      },
+      expected: {
+        frameCount: 4,
+        delayMilliseconds: 400,
+      },
+    },
+    {
+      message: 'delayMilliseconds as specified when input is within limits',
+      input: {
+        frameCount: 5,
+        delayMilliseconds: 550,
+      },
+      expected: {
+        delayMilliseconds: 550,
+        frameCount: 5,
+      },
+    },
+    {
+      message:
+        'delayMilliseconds to upper bound when input is above upper bound',
+      input: {
+        frameCount: 5,
+        delayMilliseconds: 3000,
+      },
+      expected: {
+        delayMilliseconds: 1000,
+        frameCount: 5,
+      },
+    },
+    {
+      message:
+        'delayMilliseconds to lower bound when input is below lower bound',
+      input: {
+        frameCount: 5,
+        delayMilliseconds: -10,
+      },
+      expected: {
+        delayMilliseconds: 200,
+        frameCount: 5,
+      },
+    },
+  ];
 
-  beforeEach(() => {
-    plyrContainer = document.createElement('div') as HTMLDivElement &
-      HasClientDimensions;
-    plyrContainer.__jsdomMockClientWidth = 500;
+  testData.forEach(({ message, input, expected }) => {
+    it(`is set to ${message}`, () => {
+      const addon = new HoverPreview(plyr, PlaybackFactory.streamSample(), {
+        controls: null,
+        addons: { hoverPreview: input },
+      });
 
-    plyr = new Plyr();
-    plyr.elements.container = plyrContainer;
-
-    playback = PlaybackFactory.streamSample();
-
-    addon = new HoverPreview(plyr, playback, {
-      addons: { hoverPreview: true },
-    } as any);
+      expect(addon.getOptions()).toEqual(expected);
+    });
   });
+});
 
+describe('HoverPreview', () => {
   describe('loading the sprite', () => {
     it('will load the image immediately', () => {
-      const hiddenContainer = plyrContainer.querySelector(
+      const playback = PlaybackFactory.streamSample();
+
+      getHoverPreview(playback);
+
+      const hiddenContainer = plyr.elements.container.querySelector(
         '.hover-preview.hover-preview--hidden',
       );
       expect(hiddenContainer).toBeTruthy();
@@ -92,7 +185,9 @@ describe('HoverPreview', () => {
     });
 
     it('will unhide the addon once the image is loaded', () => {
-      const container = plyrContainer.querySelector('.hover-preview');
+      getHoverPreview();
+
+      const container = plyr.elements.container.querySelector('.hover-preview');
 
       expect(container.classList).toContain('hover-preview--loading');
 
@@ -111,28 +206,32 @@ describe('HoverPreview', () => {
 
   describe('mouse events', () => {
     it('will unhide the addon on mouseover', () => {
-      const container = plyrContainer.querySelector('.hover-preview');
+      getHoverPreview();
+
+      const container = plyr.elements.container.querySelector('.hover-preview');
       expect(container).toBeTruthy();
       expect(container.classList).toContain('hover-preview--hidden');
 
       const event = new Event('mouseover');
-      plyrContainer.dispatchEvent(event);
+      plyr.elements.container.dispatchEvent(event);
 
       expect(container.classList).not.toContain('hover-preview--hidden');
     });
 
     it('will hide the addon on mouseover', () => {
-      const container = plyrContainer.querySelector('.hover-preview');
+      getHoverPreview();
+
+      const container = plyr.elements.container.querySelector('.hover-preview');
       expect(container).toBeTruthy();
       expect(container.classList).toContain('hover-preview--hidden');
 
       const mouseoverEvent = new Event('mouseover');
-      plyrContainer.dispatchEvent(mouseoverEvent);
+      plyr.elements.container.dispatchEvent(mouseoverEvent);
 
       expect(container.classList).not.toContain('hover-preview--hidden');
 
       const mouseoutEvent = new Event('mouseout');
-      plyrContainer.dispatchEvent(mouseoutEvent);
+      plyr.elements.container.dispatchEvent(mouseoutEvent);
 
       expect(container.classList).toContain('hover-preview--hidden');
     });
@@ -145,23 +244,27 @@ describe('HoverPreview', () => {
 
   describe('destruction', () => {
     it('will destroy itself when user clicks play', () => {
-      const container = plyrContainer.querySelector('.hover-preview');
+      getHoverPreview();
 
-      expect(plyrContainer.children).toContain(container);
+      const container = plyr.elements.container.querySelector('.hover-preview');
+
+      expect(plyr.elements.container.children).toContain(container);
 
       plyr.__callEventCallback('play');
 
-      expect(plyrContainer.children).not.toContain(container);
+      expect(plyr.elements.container.children).not.toContain(container);
     });
 
     it('can be destroyed', () => {
-      const container = plyrContainer.querySelector('.hover-preview');
+      const addon = getHoverPreview();
 
-      expect(plyrContainer.children).toContain(container);
+      const container = plyr.elements.container.querySelector('.hover-preview');
+
+      expect(plyr.elements.container.children).toContain(container);
 
       addon.destroy();
 
-      expect(plyrContainer.children).not.toContain(container);
+      expect(plyr.elements.container.children).not.toContain(container);
     });
   });
 });

@@ -1,13 +1,37 @@
 import Plyr from 'plyr';
 import { PlaybackFactory } from '../../../test-support/TestFactories';
-import {
-  HasClientDimensions,
-  HasEventListeners,
-} from '../../../test-support/types';
 import { Link } from '../../../types/Link';
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
-import { SeekPreview, SeekPreviewOptions } from './SeekPreview';
+import {
+  defaultSeekPreviewOptions,
+  SeekPreview,
+  SeekPreviewOptions,
+} from './SeekPreview';
+
+let container;
+let plyr: Plyr.Plyr;
+
+beforeEach(() => {
+  container = document.createElement('div') as any;
+
+  const plyrContainer = document.createElement('div') as any;
+  plyrContainer.__jsdomMockClientWidth = 700;
+  container.appendChild(plyrContainer);
+
+  const progress = document.createElement('div') as any;
+  progress.classList.add('progress');
+  (progress as any).setBoundingClientRect({
+    top: 500,
+    left: 50,
+    width: 100,
+  } as ClientRect);
+  plyrContainer.appendChild(progress);
+
+  plyr = new Plyr();
+  plyr.elements.container = plyrContainer;
+  plyr.elements.progress = progress;
+});
 
 describe('Feature Enabling', () => {
   it('is false if the option is disabled', () => {
@@ -107,45 +131,55 @@ describe('Feature Enabling', () => {
   });
 });
 
-describe('Usage', () => {
-  let progress: HTMLDivElement & HasEventListeners;
-  let container: HTMLDivElement;
-  let plyrContainer: HTMLDivElement & HasClientDimensions;
-  let media: HTMLVideoElement & HasClientDimensions;
+describe('Options', () => {
+  const testData = [
+    {
+      message: 'default when input is true',
+      input: true,
+      expected: defaultSeekPreviewOptions,
+    },
+    {
+      message: 'as specified when input is within limits',
+      input: {
+        frameCount: 10,
+      },
+      expected: {
+        frameCount: 10,
+      },
+    },
+    {
+      message: 'upper bound when input is above upper bound',
+      input: {
+        frameCount: 100,
+      },
+      expected: {
+        frameCount: 20,
+      },
+    },
+    {
+      message: 'lower bound when input is below lower bound',
+      input: {
+        frameCount: -10,
+      },
+      expected: {
+        frameCount: 10,
+      },
+    },
+  ];
 
-  let plyr: {
-    elements: {
-      progress: HTMLDivElement;
-      container: HTMLDivElement & HasClientDimensions;
-    };
-    media: HTMLVideoElement;
-    __callEventCallback: (event: string) => void;
-  };
+  testData.forEach(({ message, input, expected }) => {
+    it(`is set to ${message}`, () => {
+      const addon = new SeekPreview(plyr, PlaybackFactory.streamSample(), {
+        controls: null,
+        addons: { seekPreview: input },
+      });
 
-  beforeEach(() => {
-    container = document.createElement('div') as any;
-    media = document.createElement('video') as any;
-    media.__jsdomMockClientWidth = 1600;
-    media.__jsdomMockClientHeight = 900;
-    container.appendChild(media);
-
-    plyrContainer = document.createElement('div') as any;
-    plyrContainer.__jsdomMockClientWidth = 700;
-    container.appendChild(plyrContainer);
-
-    progress = document.createElement('div') as any;
-    (progress as any).setBoundingClientRect({
-      top: 500,
-      left: 50,
-      width: 100,
-    } as ClientRect);
-    plyrContainer.appendChild(progress);
-
-    plyr = new Plyr(media);
-    plyr.elements.container = plyrContainer;
-    plyr.elements.progress = progress;
+      expect(addon.getOptions()).toEqual(expected);
+    });
   });
+});
 
+describe('Usage', () => {
   const createSeekPreview = (seekPreviewOptions?: SeekPreviewOptions) =>
     new SeekPreview(
       plyr,
@@ -173,7 +207,7 @@ describe('Usage', () => {
   it('loads a placeholder image while loading the larger image', () => {
     createSeekPreview();
 
-    const img: HTMLImageElement = plyrContainer.querySelector(
+    const img: HTMLImageElement = plyr.elements.container.querySelector(
       '.seek-thumbnail__image--placeholder',
     );
     expect(img).toBeTruthy();
@@ -184,7 +218,7 @@ describe('Usage', () => {
   it('loads the image as soon as it is instantiated', () => {
     createSeekPreview();
 
-    const img: HTMLImageElement = plyrContainer.querySelector(
+    const img: HTMLImageElement = plyr.elements.container.querySelector(
       '.seek-thumbnail__image',
     );
     expect(img).toBeTruthy();
@@ -195,14 +229,15 @@ describe('Usage', () => {
   it('Renders a thumbnail container above the cursor when mousemove on Plyr progress bar', () => {
     createSeekPreview();
 
-    const mousemoveListeners = progress.__eventListeners.mousemove;
+    const mousemoveListeners =
+      plyr.elements.progress.__eventListeners.mousemove;
     expect(mousemoveListeners).toHaveLength(1);
 
     const mousemoveListener = mousemoveListeners[0];
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
       '.seek-thumbnail',
     );
     expect(previewContainer).toBeTruthy();
@@ -213,14 +248,15 @@ describe('Usage', () => {
   it('Renders the correct image within the container', () => {
     createSeekPreview();
 
-    const mousemoveListeners = progress.__eventListeners.mousemove;
+    const mousemoveListeners =
+      plyr.elements.progress.__eventListeners.mousemove;
     expect(mousemoveListeners).toHaveLength(1);
 
     const mousemoveListener = mousemoveListeners[0];
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
       '.seek-thumbnail',
     );
     expect(previewContainer).toBeTruthy();
@@ -233,16 +269,17 @@ describe('Usage', () => {
   });
 
   it('Accepts a different slice count via options', () => {
-    createSeekPreview({ frameCount: 50 });
+    createSeekPreview({ frameCount: 18 });
 
-    const mousemoveListeners = progress.__eventListeners.mousemove;
+    const mousemoveListeners =
+      plyr.elements.progress.__eventListeners.mousemove;
     expect(mousemoveListeners).toHaveLength(1);
 
     const mousemoveListener = mousemoveListeners[0];
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyrContainer.querySelector(
+    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
       '.seek-thumbnail',
     );
     expect(previewContainer).toBeTruthy();
@@ -251,7 +288,7 @@ describe('Usage', () => {
 
     expect(img).toBeTruthy();
 
-    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/50/width/175');
+    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/18/width/175');
   });
 
   describe('Image position and Time label', () => {
@@ -316,13 +353,14 @@ describe('Usage', () => {
       it(`Renders slice ${expectedSlice} when the cursor is at ${cursorX}px`, () => {
         createSeekPreview({ frameCount: 10 });
 
-        const mousemoveListeners = progress.__eventListeners.mousemove;
+        const mousemoveListeners =
+          plyr.elements.progress.__eventListeners.mousemove;
         expect(mousemoveListeners).toHaveLength(1);
 
         const mousemoveListener = mousemoveListeners[0];
         mousemoveListener({ pageX: cursorX });
 
-        const img: HTMLImageElement = plyrContainer.querySelector(
+        const img: HTMLImageElement = plyr.elements.container.querySelector(
           '.seek-thumbnail img',
         );
 
@@ -331,7 +369,7 @@ describe('Usage', () => {
           Math.ceil(700 * 0.25) * expectedSlice * -1 + 'px',
         );
 
-        const label: HTMLSpanElement = plyrContainer.querySelector(
+        const label: HTMLSpanElement = plyr.elements.container.querySelector(
           '.seek-thumbnail .seek-thumbnail__time',
         );
         expect(label).toBeTruthy();
@@ -343,14 +381,14 @@ describe('Usage', () => {
   it('hides the thumbnail on mouse out', () => {
     createSeekPreview();
 
-    const mouseoutListeners = progress.__eventListeners.mouseout;
+    const mouseoutListeners = plyr.elements.progress.__eventListeners.mouseout;
     expect(mouseoutListeners).toHaveLength(1);
 
     const mouseoutListener = mouseoutListeners[0];
 
     mouseoutListener({});
 
-    const hiddenContainer: HTMLElement = plyrContainer.querySelector(
+    const hiddenContainer: HTMLElement = plyr.elements.container.querySelector(
       '.seek-thumbnail--hidden',
     );
 

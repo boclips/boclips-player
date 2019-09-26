@@ -1,6 +1,6 @@
 import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
-import { withPx } from '../../../utils';
+import { getBoundedValue, withPx } from '../../../utils';
 import { InterfaceOptions } from '../../InterfaceOptions';
 
 import { AddonInterface } from './Addons';
@@ -11,7 +11,7 @@ export interface HoverPreviewOptions {
   delayMilliseconds: number;
 }
 
-export const defaultOptions: HoverPreviewOptions = {
+export const defaultHoverPreviewOptions: HoverPreviewOptions = {
   frameCount: 5,
   delayMilliseconds: 400,
 };
@@ -42,11 +42,7 @@ export class HoverPreview implements AddonInterface {
     private playback: Playback,
     options: InterfaceOptions,
   ) {
-    if (options.addons.hoverPreview === true) {
-      this.options = defaultOptions;
-    } else {
-      this.options = options.addons.hoverPreview as HoverPreviewOptions;
-    }
+    this.applyOptions(options);
 
     this.width = this.getPlyrContainer().clientWidth;
 
@@ -68,6 +64,28 @@ export class HoverPreview implements AddonInterface {
 
     this.getPlyrContainer().removeChild(this.container);
     this.container = null;
+  };
+
+  public getOptions = () => this.options;
+
+  private applyOptions = (options: InterfaceOptions) => {
+    if (options.addons.hoverPreview === true) {
+      this.options = defaultHoverPreviewOptions;
+    } else {
+      this.options = options.addons.hoverPreview as HoverPreviewOptions;
+    }
+
+    // prettier-ignore
+    this.options.frameCount = getBoundedValue(
+      4,
+      this.options.frameCount,
+      15,
+    );
+    this.options.delayMilliseconds = getBoundedValue(
+      200,
+      this.options.delayMilliseconds,
+      1000,
+    );
   };
 
   private createContainer = () => {

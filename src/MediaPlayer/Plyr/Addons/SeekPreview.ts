@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
-import { withPx } from '../../../utils';
+import { getBoundedValue, withPx } from '../../../utils';
 import { InterfaceOptions } from '../../InterfaceOptions';
 import { AddonInterface } from './Addons';
 import './SeekPreview.less';
@@ -40,11 +40,7 @@ export class SeekPreview implements AddonInterface {
     private playback: Playback,
     options: InterfaceOptions,
   ) {
-    if (options.addons.seekPreview === true) {
-      this.options = defaultSeekPreviewOptions;
-    } else {
-      this.options = options.addons.seekPreview as SeekPreviewOptions;
-    }
+    this.applyOptions(options);
 
     this.hidePlyrSeek();
 
@@ -66,6 +62,20 @@ export class SeekPreview implements AddonInterface {
         this.handleMouseout,
       );
     }
+  };
+
+  public getOptions = () => this.options;
+
+  private applyOptions = (options: InterfaceOptions) => {
+    if (options.addons.seekPreview === true) {
+      this.options = defaultSeekPreviewOptions;
+
+      return;
+    }
+
+    this.options = options.addons.seekPreview as SeekPreviewOptions;
+
+    this.options.frameCount = getBoundedValue(10, this.options.frameCount, 20);
   };
 
   private destroyContainer = () => {
