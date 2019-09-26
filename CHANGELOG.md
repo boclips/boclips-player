@@ -6,6 +6,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.5.0] - 2019-09-26
+
 ### Added
 - Auto pause of playback when a second player begins playing on the same page. Can be disabled by
 `options.interface.addons.singlePlayback = false`
