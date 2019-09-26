@@ -1,5 +1,6 @@
 import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview/HoverPreview';
 import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview/SeekPreview';
+import { SinglePlaybackOptions } from './Plyr/Addons/SinglePlayback/SinglePlayback';
 
 type Controls =
   | 'play-large'
@@ -24,6 +25,7 @@ export interface InterfaceOptions {
   addons?: {
     seekPreview?: boolean | SeekPreviewOptions;
     hoverPreview?: boolean | HoverPreviewOptions;
+    singlePlayback?: boolean | SinglePlaybackOptions;
   };
 }
 
@@ -41,5 +43,6 @@ export const defaultInterfaceOptions: InterfaceOptions = {
   addons: {
     seekPreview: true,
     hoverPreview: false,
+    singlePlayback: true,
   },
 };

@@ -6,17 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Added
+- Auto pause of playback when a second player begins playing on the same page. Can be disabled by
+`options.interface.addons.singlePlayback = false`
+
 ## [2.4.1] - 2019-09-26
 
-## Added
+### Added
 - Clicking the HoverPreview will now play the video
 
-## Changed
+### Changed
 - Set bounds on options for HoverPreview and SeekPreview
 
 ## [2.4.0] - 2019-09-25
 
-## Added
+### Added
 - A feature to show a preview of a video on hover over
 - `options.interface.addons.hoverPreview` Hover Preview option. `default: false`
 

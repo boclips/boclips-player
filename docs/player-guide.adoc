@@ -140,6 +140,7 @@ interface InterfaceOptions {
     addons: {
         seekPreview?: boolean | SeekPreviewOptions;
         hoverPreview?: boolean | HoverPreviewOptions;
+        singlePlayback?: boolean | SinglePlaybackOptions;
     };
 }
 
@@ -190,6 +191,8 @@ interface HoverPreviewOptions {
      */
     delayMilliseconds: number;
 }
+
+type SinglePlaybackOptions = boolean;
 ----
 
 ==== Boclips API Options

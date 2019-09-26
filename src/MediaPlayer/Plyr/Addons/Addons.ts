@@ -3,6 +3,7 @@ import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
 import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
+import { SinglePlayback } from './SinglePlayback/SinglePlayback';
 
 export interface AddonInterface {
   destroy: () => void;
@@ -21,4 +22,4 @@ export interface Addon {
   ): AddonInterface;
 }
 
-export const Addons: Addon[] = [SeekPreview, HoverPreview];
+export const Addons: Addon[] = [SeekPreview, HoverPreview, SinglePlayback];
