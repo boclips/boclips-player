@@ -12,7 +12,7 @@ export class SinglePlayback implements AddonInterface {
 
   private readonly addonId = uuid();
 
-  public constructor(private plyr: Plyr.Plyr, _, __) {
+  public constructor(private readonly plyr: Plyr.Plyr, _, __) {
     this.addEventListeners();
   }
 
@@ -25,7 +25,10 @@ export class SinglePlayback implements AddonInterface {
   };
 
   private removeEventListeners = () => {
-    this.plyr.off('playing', this.handlePlyrPlaying);
+    if (this.plyr) {
+      this.plyr.off('playing', this.handlePlyrPlaying);
+    }
+
     EventBus.getEmitter().off(
       'boclips-player/playing',
       this.handleEmittedPlaybackEvent,

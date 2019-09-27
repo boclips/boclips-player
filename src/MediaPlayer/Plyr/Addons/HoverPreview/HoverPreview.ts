@@ -70,13 +70,26 @@ export class HoverPreview implements AddonInterface {
       return;
     }
 
-    this.removeListeners();
-
     if (this.animationInterval) {
       clearInterval(this.animationInterval);
     }
 
-    this.getPlyrContainer().removeChild(this.container);
+    if (this.plyr) {
+      this.plyr.off('play', this.destroy);
+    }
+
+    if (this.getPlyrContainer()) {
+      this.getPlyrContainer().removeEventListener(
+        'mouseover',
+        this.handleMouseover,
+      );
+      this.getPlyrContainer().removeEventListener(
+        'mouseout',
+        this.handleMouseout,
+      );
+      this.getPlyrContainer().removeChild(this.container);
+    }
+
     this.container = null;
   };
 
@@ -137,18 +150,6 @@ export class HoverPreview implements AddonInterface {
     });
   };
 
-  private removeListeners = () => {
-    this.getPlyrContainer().removeEventListener(
-      'mouseover',
-      this.handleMouseover,
-    );
-    this.getPlyrContainer().removeEventListener(
-      'mouseout',
-      this.handleMouseout,
-    );
-    this.plyr.off('play', this.destroy);
-  };
-
   private handleMouseover = () => {
     if (this.animationInterval !== null) {
       return;
@@ -184,5 +185,6 @@ export class HoverPreview implements AddonInterface {
     this.image.style.left = withPx(index * this.width * -1);
   };
 
-  private getPlyrContainer = () => this.plyr.elements.container;
+  private getPlyrContainer = () =>
+    this.plyr && this.plyr.elements && this.plyr.elements.container;
 }

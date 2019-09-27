@@ -59,7 +59,7 @@ export class SeekPreview implements AddonInterface {
   public destroy = () => {
     this.destroyContainer();
 
-    if (this.plyr && this.getPlyrProgressBar()) {
+    if (this.getPlyrProgressBar()) {
       this.getPlyrProgressBar().removeEventListener(
         'mousemove',
         this.handleMousemove,
@@ -86,7 +86,7 @@ export class SeekPreview implements AddonInterface {
   };
 
   private destroyContainer = () => {
-    if (!this.container) {
+    if (!this.container || !this.container.parentElement) {
       return;
     }
 
@@ -226,7 +226,9 @@ export class SeekPreview implements AddonInterface {
     label.textContent = format(seconds * 1000, pattern);
   };
 
-  private getPlyrProgressBar = () => this.plyr.elements.progress;
+  private getPlyrProgressBar = () =>
+    this.plyr && this.plyr.elements && this.plyr.elements.progress;
 
-  private getPlyrContainer = () => this.plyr.elements.container;
+  private getPlyrContainer = () =>
+    this.plyr && this.plyr.elements && this.plyr.elements.container;
 }

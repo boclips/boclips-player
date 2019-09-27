@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.5.1] - 2019-09-27
+
+### Fixed
+- Be careful during destruction of Addons on SPAs where the parent elements have disappeared.
+
 ## [2.5.0] - 2019-09-26
 
 ### Added
