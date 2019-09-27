@@ -41,6 +41,7 @@ export class SeekPreview implements AddonInterface {
   private container: HTMLDivElement = null;
   private width: number;
   private height: number;
+  private destroyed: boolean = false;
 
   public constructor(
     private plyr: Plyr.Plyr,
@@ -57,6 +58,10 @@ export class SeekPreview implements AddonInterface {
   }
 
   public destroy = () => {
+    if (this.destroyed) {
+      return;
+    }
+
     this.destroyContainer();
 
     if (this.getPlyrProgressBar()) {
@@ -69,6 +74,8 @@ export class SeekPreview implements AddonInterface {
         this.handleMouseout,
       );
     }
+
+    this.destroyed = true;
   };
 
   public getOptions = () => this.options;
@@ -114,12 +121,20 @@ export class SeekPreview implements AddonInterface {
   };
 
   private handleMousemove = (event: MouseEvent) => {
+    if (this.hasBeenDestroyed()) {
+      return;
+    }
+
     this.container.classList.remove('seek-thumbnail--hidden');
 
     this.updatePreview(event.pageX);
   };
 
   private handleMouseout = () => {
+    if (this.hasBeenDestroyed()) {
+      return;
+    }
+
     if (this.container) {
       this.container.classList.add('seek-thumbnail--hidden');
     }
@@ -155,6 +170,10 @@ export class SeekPreview implements AddonInterface {
     const img = document.createElement('img');
     img.classList.add('seek-thumbnail__image');
     img.onload = () => {
+      if (this.hasBeenDestroyed()) {
+        return;
+      }
+
       imageWindow.classList.remove('seek-thumbnail__window--loading');
     };
     img.src = this.playback.links.videoPreview.getTemplatedLink({
@@ -231,4 +250,6 @@ export class SeekPreview implements AddonInterface {
 
   private getPlyrContainer = () =>
     this.plyr && this.plyr.elements && this.plyr.elements.container;
+
+  private hasBeenDestroyed = (): boolean => this.destroyed;
 }

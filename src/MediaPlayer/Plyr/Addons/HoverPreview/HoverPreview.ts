@@ -50,6 +50,7 @@ export class HoverPreview implements AddonInterface {
   private container: HTMLDivElement;
   private image: HTMLImageElement;
   private readonly width: number;
+  private destroyed: boolean = false;
 
   public constructor(
     private plyr: Plyr.Plyr,
@@ -66,7 +67,7 @@ export class HoverPreview implements AddonInterface {
   }
 
   public destroy = () => {
-    if (!this.container) {
+    if (this.destroyed) {
       return;
     }
 
@@ -88,9 +89,10 @@ export class HoverPreview implements AddonInterface {
         this.handleMouseout,
       );
       this.getPlyrContainer().removeChild(this.container);
+      this.container = null;
     }
 
-    this.container = null;
+    this.destroyed = true;
   };
 
   public getOptions = () => this.options;
@@ -135,6 +137,10 @@ export class HoverPreview implements AddonInterface {
       thumbnailCount: this.options.frameCount,
     });
     this.image.onload = () => {
+      if (this.hasBeenDestroyed()) {
+        return;
+      }
+
       this.container.classList.remove('hover-preview--loading');
     };
 
@@ -146,11 +152,19 @@ export class HoverPreview implements AddonInterface {
     this.getPlyrContainer().addEventListener('mouseout', this.handleMouseout);
     this.plyr.on('play', this.destroy);
     this.container.addEventListener('click', () => {
+      if (this.hasBeenDestroyed()) {
+        return;
+      }
+
       this.plyr.play();
     });
   };
 
   private handleMouseover = () => {
+    if (this.hasBeenDestroyed()) {
+      return;
+    }
+
     if (this.animationInterval !== null) {
       return;
     }
@@ -165,6 +179,10 @@ export class HoverPreview implements AddonInterface {
   };
 
   private handleMouseout = () => {
+    if (this.hasBeenDestroyed()) {
+      return;
+    }
+
     this.container.classList.add('hover-preview--hidden');
 
     clearInterval(this.animationInterval);
@@ -187,4 +205,6 @@ export class HoverPreview implements AddonInterface {
 
   private getPlyrContainer = () =>
     this.plyr && this.plyr.elements && this.plyr.elements.container;
+
+  private hasBeenDestroyed = (): boolean => this.destroyed;
 }

@@ -25,7 +25,7 @@ export class SinglePlayback implements AddonInterface {
   };
 
   private removeEventListeners = () => {
-    if (this.plyr) {
+    if (this.plyr && this.plyr.elements && this.plyr.elements.container) {
       this.plyr.off('playing', this.handlePlyrPlaying);
     }
 
