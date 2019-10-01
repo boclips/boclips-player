@@ -8,7 +8,6 @@ export class PlaybackFactory {
     id: 'stream-playback-id',
     duration: 60,
     type: 'STREAM',
-    streamUrl: 'some/stream.mp4',
     links: {
       createPlaybackEvent: new Link({
         href: 'https://events/create/playback/event',
@@ -23,6 +22,9 @@ export class PlaybackFactory {
       videoPreview: new Link({
         href: 'https://video-preview/{thumbnailWidth}/{thumbnailCount}.jpg',
         templated: true,
+      }),
+      hlsStream: new Link({
+        href: 'videoStream/hls.mp4',
       }),
     },
     ...arg,
@@ -63,7 +65,6 @@ export class VideoResourceFactory {
     playback: {
       id: 'stream-playback-id',
       type: 'STREAM',
-      streamUrl: 'kaltura/stream.mp4',
       duration: 'PT1M2S',
       _links: {
         createPlaybackEvent: {
@@ -79,6 +80,9 @@ export class VideoResourceFactory {
         videoPreview: {
           href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
           templated: true,
+        },
+        hlsStream: {
+          href: 'videoStream/hls.mp4',
         },
       },
     },

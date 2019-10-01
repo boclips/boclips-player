@@ -34,7 +34,7 @@ export class HlsWrapper implements StreamingTechnique {
     });
 
     this.hls.on(Hls.Events.MEDIA_ATTACHED, () => {
-      this.hls.loadSource(this.playback.streamUrl);
+      this.hls.loadSource(this.playback.links.hlsStream.getOriginalLink());
     });
 
     this.hls.on(Hls.Events.ERROR, this.hlsErrorHandler);
@@ -101,7 +101,7 @@ export class HlsWrapper implements StreamingTechnique {
 
       if (reloadSource.indexOf(error.details) >= 0) {
         if (this.errorCount[error.details] < 3) {
-          this.hls.loadSource(this.playback.streamUrl);
+          this.hls.loadSource(this.playback.links.hlsStream.getOriginalLink());
 
           return;
         } else {

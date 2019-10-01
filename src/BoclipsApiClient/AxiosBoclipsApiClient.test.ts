@@ -36,12 +36,12 @@ describe('retrieve video', () => {
         id: videoResource.id,
         playback: {
           id: videoResource.playback.id,
-          streamUrl: videoResource.playback.streamUrl,
           type: videoResource.playback.type,
           links: {
             createPlaybackEvent: new Link(
               videoResource.playback._links.createPlaybackEvent,
             ),
+            hlsStream: new Link(videoResource.playback._links.hlsStream),
           },
         },
         links: {

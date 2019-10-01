@@ -21,8 +21,8 @@ const convertPlaybackResource = (
     },
   };
 
-  if (rawPlayback.type === 'STREAM') {
-    (playback as StreamPlayback).streamUrl = rawPlayback.streamUrl;
+  if (rawPlayback._links.hlsStream) {
+    playback.links.hlsStream = new Link(rawPlayback._links.hlsStream);
   }
 
   if (rawPlayback._links.thumbnail) {

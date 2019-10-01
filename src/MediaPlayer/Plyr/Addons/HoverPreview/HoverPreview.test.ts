@@ -245,7 +245,7 @@ describe('HoverPreview', () => {
       container.dispatchEvent(clickEvent);
 
       expect(plyr.play).toHaveBeenCalled();
-    })
+    });
   });
 
   describe('animation', () => {

@@ -41,7 +41,10 @@ export default class PlyrWrapper implements MediaPlayer {
     media.setAttribute('preload', 'metadata');
 
     if (isStreamPlayback(this.playback)) {
-      media.setAttribute('src', this.playback.streamUrl);
+      media.setAttribute(
+        'src',
+        this.playback.links.hlsStream.getOriginalLink(),
+      );
       media.setAttribute(
         'poster',
         this.playback.links.thumbnail.getTemplatedLink({

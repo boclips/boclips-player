@@ -14,7 +14,6 @@ it('Can map the response to a StreamPlayback object', () => {
   expect(isStreamPlayback(playback)).toBeTruthy();
   expect(playback.id).toEqual('stream-playback-id');
   expect(playback.type).toEqual('STREAM');
-  expect(playback.streamUrl).toEqual('kaltura/stream.mp4');
   expect(playback.duration).toEqual(62);
   expect(playback.links.createPlaybackEvent.getOriginalLink()).toEqual(
     'create/playback/event',
@@ -27,6 +26,9 @@ it('Can map the response to a StreamPlayback object', () => {
   );
   expect(playback.links.videoPreview.getOriginalLink()).toEqual(
     'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
+  );
+  expect(playback.links.hlsStream.getOriginalLink()).toEqual(
+    'videoStream/hls.mp4',
   );
 });
 

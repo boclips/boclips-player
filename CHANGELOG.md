@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.0] - 2019-10-01
+
+### Added
+- Ability to auto upgrade/downgrade stream quality using the new `hlsStream` which now
+contains a range of qualities that may be consumed.
+
 ## [2.5.2] - 2019-09-27
 
 ### Fixed

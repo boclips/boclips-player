@@ -5,6 +5,7 @@ interface PlaybackLinks {
   createPlaybackEvent: Link;
   thumbnail?: Link;
   videoPreview?: Link;
+  hlsStream?: Link;
 }
 
 export type PlaybackType = StreamPlayback | YoutubePlayback;
@@ -16,9 +17,7 @@ export interface Playback {
   links: PlaybackLinks;
 }
 
-export interface StreamPlayback extends Playback {
-  streamUrl: string;
-}
+export type StreamPlayback = Playback;
 
 export type YoutubePlayback = Playback;
 

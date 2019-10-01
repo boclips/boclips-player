@@ -72,7 +72,7 @@ describe('initialisation', () => {
     hlsMockInstance.__callEventCallback(Hls.Events.MEDIA_ATTACHED);
 
     expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
-      streamPlayback.streamUrl,
+      streamPlayback.links.hlsStream.getOriginalLink(),
     );
   });
 });
@@ -187,7 +187,7 @@ describe('Error Handling', () => {
 
         expect(hlsMockInstance.loadSource).toHaveBeenCalledTimes(1);
         expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
-          streamPlayback.streamUrl,
+          streamPlayback.links.hlsStream.getOriginalLink(),
         );
       });
 
