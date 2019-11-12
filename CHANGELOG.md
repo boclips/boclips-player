@@ -6,6 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.1] - 2019-11-12
+
+### Fixed
+- Hide default Firefox captions otherwise double captions show to the user when they enable them.
+
 ## [2.6.0] - 2019-10-01
 
 ### Added

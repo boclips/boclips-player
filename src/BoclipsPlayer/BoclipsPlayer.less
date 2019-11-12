@@ -4,3 +4,8 @@
 .boclips-player-container {
   position: relative;
 }
+
+// For Firefox, captions are shown automatically.
+video::cue {
+  visibility: hidden;
+}
