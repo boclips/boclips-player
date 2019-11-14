@@ -5,10 +5,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+## [2.6.3] - 2019-11-14
+
+### Fixed
+- Playing a video with multiple captions defined would not load the first caption entry. We've fixed this as best we can,
+however it seems there is an ongoing issue with HLS. There may still be times where a caption fails to load due to timing.
+
 ## [2.6.2] - 2019-11-13
+
 ### Fixed
 - Adjust padding of controls to stop them covering the play button at small sizes.
-
 
 ## [2.6.1] - 2019-11-12
 

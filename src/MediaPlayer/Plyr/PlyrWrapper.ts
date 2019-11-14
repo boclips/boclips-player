@@ -209,6 +209,25 @@ export default class PlyrWrapper implements MediaPlayer {
         });
       }
     });
+
+    /**
+     * Current Plyr and HLS versions have a bug when the video has multiple captions. This seems to stem from a
+     * timing issue loading the TextTrack content. It seems to not initialise the first TextTrack properly, and
+     * leaves the mode 'disabled'.
+     * As the Plyr is unable to show the first caption, we force the mode whenever the video starts playing, or the
+     * captions are enabled, if captions are active.
+     *
+     * @see https://github.com/sampotts/plyr/issues/994 et al.
+     */
+    const forceShowCaption = () => {
+      if (this.plyr && this.plyr.captions && this.plyr.captions.active) {
+        this.plyr.captions.currentTrackNode.mode = 'showing';
+      }
+    };
+
+    this.plyr.on('playing', forceShowCaption);
+    this.plyr.on('captionsenabled', forceShowCaption);
+    this.plyr.on('languagechange', forceShowCaption);
   }
 
   public configureWithVideo = (
@@ -312,7 +331,10 @@ export default class PlyrWrapper implements MediaPlayer {
         this.streamingTechnique.destroy();
       }
     } catch (error) {
-      console.warn('Error occurred while destroying hls', error);
+      console.warn(
+        'Error occurred while destroying the streaming technique',
+        error,
+      );
     }
 
     try {
