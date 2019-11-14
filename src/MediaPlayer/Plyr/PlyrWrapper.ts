@@ -219,11 +219,17 @@ export default class PlyrWrapper implements MediaPlayer {
      *
      * @see https://github.com/sampotts/plyr/issues/994 et al.
      */
-    const forceShowCaption = () => {
-      if (this.plyr && this.plyr.captions && this.plyr.captions.active) {
-        this.plyr.captions.currentTrackNode.mode = 'showing';
-      }
-    };
+    const forceShowCaption = () =>
+      setTimeout(() => {
+        if (
+          this.plyr &&
+          this.plyr.captions &&
+          this.plyr.captions.active &&
+          this.plyr.captions.currentTrackNode
+        ) {
+          this.plyr.captions.currentTrackNode.mode = 'showing';
+        }
+      }, 50);
 
     this.plyr.on('playing', forceShowCaption);
     this.plyr.on('captionsenabled', forceShowCaption);
