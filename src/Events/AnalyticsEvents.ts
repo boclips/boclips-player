@@ -15,7 +15,6 @@ export interface PlayerInteractedWithEvent<
   currentTime: number;
   subtype: T;
   payload: InteractionEventPayload[T];
-  playerId?: string;
 }
 
 export interface InteractionEventPayload {
