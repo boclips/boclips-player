@@ -104,7 +104,6 @@ describe('Creating a playback event', () => {
       segmentStartSeconds: 15,
       segmentEndSeconds: 30,
       videoDurationSeconds: 60,
-      playerId: 'player-id',
     };
 
     return boclipsClient.emitPlaybackEvent(15, 30).then(() => {
@@ -175,7 +174,6 @@ describe('Creating a player interaction event ', () => {
 
   it('maps a captionsEnabled event correctly', () => {
     const expectedEvent: PlayerInteractedWithEvent<'captionsEnabled'> = {
-      playerId: 'player-id',
       videoId: video.id,
       videoDurationSeconds: 60,
       currentTime: 30,
@@ -206,7 +204,6 @@ describe('Creating a player interaction event ', () => {
 
   it('maps a fullscreenEnabled event correctly', () => {
     const expectedEvent: PlayerInteractedWithEvent<'fullscreenEnabled'> = {
-      playerId: 'player-id',
       videoId: video.id,
       videoDurationSeconds: 60,
       currentTime: 30,

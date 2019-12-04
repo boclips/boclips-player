@@ -41,7 +41,6 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
 
     const event: PlaybackEvent = {
       ...metadata,
-      playerId: this.player.getPlayerId(),
       videoId: video.id,
       videoDurationSeconds: video.playback.duration,
       segmentStartSeconds,
@@ -74,7 +73,6 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     }
 
     const event: PlayerInteractedWithEvent<T> = {
-      playerId: this.player.getPlayerId(),
       videoId: video.id,
       videoDurationSeconds: video.playback.duration,
       currentTime,

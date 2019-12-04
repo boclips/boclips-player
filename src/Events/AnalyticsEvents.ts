@@ -1,5 +1,4 @@
 interface PlayerEvent {
-  playerId?: string;
   videoId: string;
   videoDurationSeconds: number;
 }
@@ -16,6 +15,7 @@ export interface PlayerInteractedWithEvent<
   currentTime: number;
   subtype: T;
   payload: InteractionEventPayload[T];
+  playerId?: string;
 }
 
 export interface InteractionEventPayload {
