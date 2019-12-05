@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.4] - 2019-12-04
+
+### Removed
+
+- Removed `playerId` parameter from events.
+
 ## [2.6.3] - 2019-11-14
 
 ### Fixed
