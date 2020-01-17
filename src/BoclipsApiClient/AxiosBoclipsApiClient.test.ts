@@ -8,6 +8,7 @@ import {
 } from '../Events/AnalyticsEvents';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import {
+  PlaybackEventFactory, PlaybackFactory,
   VideoFactory,
   VideoResourceFactory,
 } from '../test-support/TestFactories';
@@ -244,6 +245,31 @@ describe('With authorisation', () => {
       const request = requests[0];
       expect(request.headers).toMatchObject({
         Authorization: 'Bearer test-bearer-token',
+      });
+    });
+  });
+
+  it('Will send a user id over if provided with a user id factory', async () => {
+    const uri = PlaybackFactory.streamSample().links.createPlaybackEvent.getOriginalLink();
+    console.log(uri)
+    const playbackEvent = PlaybackEventFactory.sample({ videoDurationSeconds: 60, videoId: 'video-id' });
+    console.log(playbackEvent);
+
+    MockFetchVerify.post(uri, 201, JSON.stringify(playbackEvent), undefined);
+
+    player.getOptions.mockReturnValue(({
+      api: {
+        userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
+      },
+    } as any) as PlayerOptions);
+
+    return boclipsClient.emitPlaybackEvent(0, 10).then(() => {
+      const requests = MockFetchVerify.getHistory().get;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.headers).toMatchObject({
+        'Boclips-User-Id': 'test-user-id',
       });
     });
   });

@@ -1,5 +1,6 @@
 import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
+import {PlaybackEvent} from "../Events/AnalyticsEvents";
 
 export class PlaybackFactory {
   public static streamSample = (
@@ -117,4 +118,16 @@ export class VideoResourceFactory {
       },
     },
   });
+}
+
+export class PlaybackEventFactory {
+  public static sample(playbackEvent: Partial<PlaybackEvent> = {}): PlaybackEvent {
+    return {
+      segmentStartSeconds: 0,
+      segmentEndSeconds: 10,
+      videoId: "some-video-id",
+      videoDurationSeconds: 10,
+      ...playbackEvent
+    }
+  }
 }
