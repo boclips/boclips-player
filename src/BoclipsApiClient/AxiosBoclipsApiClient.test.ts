@@ -291,3 +291,73 @@ describe('With authorisation', () => {
     });
   });
 });
+
+describe('with user ID factory', () => {
+  it('Will not send user ID over on retrieveVideo if user id factory is not provided', async () => {
+    const uri = '/v1/videos/177';
+
+    const videoResource = VideoResourceFactory.youtubeSample();
+
+    MockFetchVerify.get(uri, JSON.stringify(videoResource));
+
+    player.getOptions.mockReturnValue(({
+      api: {
+        userIdFactory: undefined,
+      },
+    } as any) as PlayerOptions);
+
+    return boclipsClient.retrieveVideo(uri).then(() => {
+      const requests = MockFetchVerify.getHistory().get;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.headers).not.toHaveProperty('Boclips-User-Id');
+    });
+  });
+
+  it('Will send a user id over on retrieveVideo if provided with a user id factory', async () => {
+    const uri = '/v1/videos/177';
+
+    const videoResource = VideoResourceFactory.youtubeSample();
+
+    MockFetchVerify.get(uri, JSON.stringify(videoResource));
+
+    player.getOptions.mockReturnValue(({
+      api: {
+        userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
+      },
+    } as any) as PlayerOptions);
+
+    return boclipsClient.retrieveVideo(uri).then(() => {
+      const requests = MockFetchVerify.getHistory().get;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.headers).toMatchObject({
+        'Boclips-User-Id': 'test-user-id',
+      });
+    });
+  });
+
+  it('Will send a user id over on emitPlaybackEvent if provided with a user id factory', async () => {
+    const uri = 'https://events/create/playback/event';
+
+    MockFetchVerify.post(uri, undefined, 201);
+
+    player.getOptions.mockReturnValue(({
+      api: {
+        userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
+      },
+    } as any) as PlayerOptions);
+
+    return boclipsClient.emitPlaybackEvent(0, 10).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(request.headers).toMatchObject({
+        'Boclips-User-Id': 'test-user-id',
+      });
+    });
+  });
+});

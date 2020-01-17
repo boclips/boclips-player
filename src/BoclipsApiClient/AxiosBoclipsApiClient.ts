@@ -92,26 +92,41 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
   };
 
   private buildHeaders = async () => {
-    if (!this.getOptions().tokenFactory) {
-      return {};
+    const headers: { Authorization?: string; 'Boclips-User-Id'?: string } = {};
+
+    if (this.getOptions().tokenFactory) {
+      const token = await this.getOptions()
+        .tokenFactory()
+        .catch(error => {
+          console.error(error);
+          throw {
+            type: 'API_ERROR',
+            payload: { statusCode: 403 },
+            fatal: true,
+          } as APIError;
+        });
+      if (token !== null) {
+        headers.Authorization = `Bearer ${token}`;
+      }
     }
 
-    const token = await this.getOptions()
-      .tokenFactory()
-      .catch(error => {
-        console.error(error);
-        throw {
-          type: 'API_ERROR',
-          payload: { statusCode: 403 },
-          fatal: true,
-        } as APIError;
-      });
-
-    if (token === null) {
-      return {};
+    if (this.getOptions().userIdFactory) {
+      const userId = await this.getOptions()
+        .userIdFactory()
+        .catch(error => {
+          console.error(error);
+          throw {
+            type: 'API_ERROR',
+            payload: { statusCode: 400 },
+            fatal: true,
+          } as APIError;
+        });
+      if (userId !== null) {
+        headers['Boclips-User-Id'] = userId;
+      }
     }
 
-    return { Authorization: `Bearer ${token}` };
+    return headers;
   };
 
   private getOptions = () => this.player.getOptions().api;

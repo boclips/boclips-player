@@ -9,10 +9,12 @@ export interface ApiOptions {
    * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
    */
   tokenFactory?: () => Promise<string>;
+  userIdFactory?: () => Promise<string>;
 }
 
 export const defaultApiOptions: ApiOptions = Object.freeze({
   tokenFactory: null,
+  userIdFactory: null,
 });
 
 export interface BoclipsApiClient {
