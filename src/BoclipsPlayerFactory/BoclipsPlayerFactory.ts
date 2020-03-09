@@ -23,7 +23,7 @@ export class BoclipsPlayerFactory {
   }
 
   public static getSeveral(
-    containers: Array<HTMLElement | string> | string,
+    containers: (HTMLElement | string)[] | string,
   ): BoclipsPlayer[] {
     let players = [];
 

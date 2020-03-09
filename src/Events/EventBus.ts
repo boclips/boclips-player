@@ -4,7 +4,7 @@ interface BoclipsPlayerEvents {
   'boclips-player/playing': [
     {
       addonId: string;
-    }
+    },
   ];
 }
 const eventEmitter = new EventEmitter<BoclipsPlayerEvents>();

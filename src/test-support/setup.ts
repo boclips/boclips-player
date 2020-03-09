@@ -1,5 +1,5 @@
 import axios from 'axios';
-import AxiosLogger from 'axios-logger';
+import * as AxiosLogger from 'axios-logger';
 import MockFetchVerify from './MockFetchVerify';
 import { HasEventListeners } from './types';
 

@@ -110,18 +110,14 @@ export class HlsWrapper implements StreamingTechnique {
       }
 
       console.warn(
-        `A fatal network error encountered during playback of ${
-          video.id
-        }, try to recover.`,
+        `A fatal network error encountered during playback of ${video.id}, try to recover.`,
         error,
       );
 
       this.hls.startLoad(this.player.getMediaPlayer().getCurrentTime());
     } else if (error.type === Hls.ErrorTypes.MEDIA_ERROR) {
       console.warn(
-        `A fatal media error encountered during playback of ${
-          video.id
-        }, try to recover.`,
+        `A fatal media error encountered during playback of ${video.id}, try to recover.`,
         error,
       );
     } else {
