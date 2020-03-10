@@ -1,4 +1,5 @@
 import Plyr from 'plyr';
+import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import { Link } from '../../../../types/Link';
 import { Playback } from '../../../../types/Playback';
@@ -10,7 +11,7 @@ import {
 } from './SeekPreview';
 
 let container;
-let plyr: Plyr.Plyr;
+let plyr: MockedPlyr;
 
 beforeEach(() => {
   container = document.createElement('div') as any;
@@ -28,7 +29,7 @@ beforeEach(() => {
   } as ClientRect);
   plyrContainer.appendChild(progress);
 
-  plyr = new Plyr();
+  plyr = new Plyr(plyrContainer) as MockedPlyr;
   plyr.elements.container = plyrContainer;
   plyr.elements.progress = progress;
 });
@@ -37,7 +38,7 @@ describe('Feature Enabling', () => {
   it('is false if the option is disabled', () => {
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 500 } } },
+        { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample(),
         {
           controls: ['progress'],
@@ -50,7 +51,7 @@ describe('Feature Enabling', () => {
   it('is false if the container is too small', () => {
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 400 } } },
+        { elements: { container: { clientWidth: 400 } } } as any,
         PlaybackFactory.streamSample({
           links: {
             videoPreview: new Link({
@@ -74,7 +75,7 @@ describe('Feature Enabling', () => {
 
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 500 } } },
+        { elements: { container: { clientWidth: 500 } } } as any,
         playback,
         {
           controls: ['progress'],
@@ -87,7 +88,7 @@ describe('Feature Enabling', () => {
   it('is false if there is no playback', () => {
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 500 } } },
+        { elements: { container: { clientWidth: 500 } } } as any,
         null,
         {
           controls: ['progress'],
@@ -100,7 +101,7 @@ describe('Feature Enabling', () => {
   it('is false if the controls do not contain a progress bar', () => {
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 500 } } },
+        { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample(),
         {
           controls: [],
@@ -113,7 +114,7 @@ describe('Feature Enabling', () => {
   it('is true if the playback has a videoPreview link, and controls have a progressbar, and the option is enabled', () => {
     expect(
       SeekPreview.canBeEnabled(
-        { elements: { container: { clientWidth: 500 } } },
+        { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample({
           links: {
             videoPreview: new Link({

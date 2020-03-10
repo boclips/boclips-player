@@ -1,6 +1,6 @@
-import Plyr from 'plyr';
 import uuid from 'uuid/v1';
 import { EventBus } from '../../../../Events/EventBus';
+import { EnrichedPlyr } from '../../../../types/plyr';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
 
@@ -12,7 +12,7 @@ export class SinglePlayback implements AddonInterface {
 
   private readonly addonId = uuid();
 
-  public constructor(private readonly plyr: Plyr.Plyr, _, __) {
+  public constructor(private readonly plyr: EnrichedPlyr, _, __) {
     this.addEventListeners();
   }
 

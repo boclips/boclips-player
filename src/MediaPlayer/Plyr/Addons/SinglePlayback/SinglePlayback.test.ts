@@ -1,6 +1,7 @@
 import Plyr from 'plyr';
 import { MaybeMocked } from 'ts-jest/dist/util/testing';
 import { mocked } from 'ts-jest/utils';
+import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { EventBus } from '../../../../Events/EventBus';
 import { SinglePlayback } from './SinglePlayback';
 
@@ -30,10 +31,10 @@ describe('Feature Enabling', () => {
 });
 
 describe('Functionality', () => {
-  let plyr: Plyr.Plyr;
+  let plyr: any;
 
   beforeEach(() => {
-    plyr = new Plyr();
+    plyr = new Plyr(document.createElement('div'));
 
     // tslint:disable-next-line:no-unused-expression
     new SinglePlayback(plyr, null, null);
@@ -84,11 +85,11 @@ describe('Functionality', () => {
 });
 
 describe('Destruction', () => {
-  let plyr: MaybeMocked<Plyr.Plyr>;
+  let plyr: MaybeMocked<MockedPlyr>;
   let addon: SinglePlayback;
 
   beforeEach(() => {
-    plyr = new Plyr();
+    plyr = new Plyr(document.createElement('div')) as MaybeMocked<MockedPlyr>;
 
     addon = new SinglePlayback(plyr, null, null);
   });

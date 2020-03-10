@@ -1,7 +1,7 @@
-import Plyr from 'plyr';
 import { Playback } from '../../../../types/Playback';
 import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
+import { EnrichedPlyr } from '../../../../types/plyr';
 
 import { AddonInterface } from '../Addons';
 import './HoverPreview.less';
@@ -53,7 +53,7 @@ export class HoverPreview implements AddonInterface {
   private destroyed: boolean = false;
 
   public constructor(
-    private plyr: Plyr.Plyr,
+    private plyr: EnrichedPlyr,
     private playback: Playback,
     options: InterfaceOptions,
   ) {

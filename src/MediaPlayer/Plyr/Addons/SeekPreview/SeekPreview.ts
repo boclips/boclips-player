@@ -1,6 +1,6 @@
 import { format } from 'date-fns';
-import Plyr from 'plyr';
 import { Playback } from '../../../../types/Playback';
+import { EnrichedPlyr } from '../../../../types/plyr';
 import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
@@ -23,7 +23,7 @@ export const defaultSeekPreviewOptions: SeekPreviewOptions = {
 
 export class SeekPreview implements AddonInterface {
   public static canBeEnabled = (
-    plyr: Plyr.Plyr,
+    plyr: EnrichedPlyr,
     playback: Playback | null,
     options: InterfaceOptions,
   ): boolean => {
@@ -44,7 +44,7 @@ export class SeekPreview implements AddonInterface {
   private destroyed: boolean = false;
 
   public constructor(
-    private plyr: Plyr.Plyr,
+    private plyr: EnrichedPlyr,
     private playback: Playback,
     options: InterfaceOptions,
   ) {

@@ -29,15 +29,17 @@ let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer = null;
 let mockPlyr;
 
+const mockedPlyr = mocked(Plyr);
+
 function getLatestMockPlyrInstance() {
-  return Plyr.mock.instances[Plyr.mock.instances.length - 1];
+  return mockedPlyr.mock.instances[mockedPlyr.mock.instances.length - 1];
 }
 function getLatestMockPlyrConstructor() {
-  return Plyr.mock.calls[Plyr.mock.calls.length - 1];
+  return mockedPlyr.mock.calls[mockedPlyr.mock.calls.length - 1];
 }
 
 beforeEach(() => {
-  Plyr.mockClear();
+  mockedPlyr.mockClear();
 
   container = document.createElement('div') as any;
   container.__jsdomMockClientWidth = 700;
@@ -87,7 +89,7 @@ describe('Stream Playback', () => {
   it('sets the poster on the video element', () => {
     mediaPlayer.configureWithVideo(video);
 
-    const videoElement = getLatestMockPlyrConstructor()[0];
+    const videoElement = getLatestMockPlyrConstructor()[0] as HTMLElement;
 
     expect(videoElement.getAttribute('poster')).toEqual(
       video.playback.links.thumbnail.getTemplatedLink({

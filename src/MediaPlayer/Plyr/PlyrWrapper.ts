@@ -7,13 +7,14 @@ import {
   isYoutubePlayback,
   Playback,
 } from '../../types/Playback';
+import { EnrichedPlyr } from '../../types/plyr';
 import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import { Addon, AddonInterface, Addons } from './Addons/Addons';
 import './PlyrWrapper.less';
 
 export default class PlyrWrapper implements MediaPlayer {
-  private plyr: Plyr.Plyr;
+  private plyr: EnrichedPlyr;
   private streamingTechnique: StreamingTechnique = null;
   private hasBeenDestroyed: boolean = false;
   private enabledAddons: AddonInterface[] = [];
@@ -196,7 +197,8 @@ export default class PlyrWrapper implements MediaPlayer {
     });
 
     this.plyr.on('error', event => {
-      const mediaError = event.detail.plyr.media.error;
+      const eventDetailsPlyr = event.detail.plyr as EnrichedPlyr;
+      const mediaError = eventDetailsPlyr.media.error;
 
       if (mediaError && mediaError.code && mediaError.message) {
         this.player.getErrorHandler().handleError({
@@ -391,7 +393,7 @@ export default class PlyrWrapper implements MediaPlayer {
           return true;
         },
       },
-    });
+    }) as EnrichedPlyr;
 
     this.installPlyrEventListeners();
     this.installAddons();

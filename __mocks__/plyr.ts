@@ -1,3 +1,4 @@
+import { EnrichedPlyr } from '../src/types/plyr';
 import { noop } from '../src/utils';
 
 const Plyr: any = jest.genMockFromModule('plyr');
@@ -46,5 +47,10 @@ Plyr.prototype.elements = {
     clientWidth: 700,
   },
 };
+
+export interface MockedPlyr extends EnrichedPlyr {
+  __callEventCallback: (event: string) => void;
+  elements: any;
+}
 
 module.exports = Plyr;

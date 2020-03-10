@@ -1,6 +1,6 @@
-import Plyr from 'plyr';
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
+import { EnrichedPlyr } from '../../../types/plyr';
 import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
@@ -11,12 +11,12 @@ export interface AddonInterface {
 
 export interface Addon {
   canBeEnabled: (
-    plyr: Plyr.Plyr,
+    plyr: EnrichedPlyr,
     playback: Playback,
     options: InterfaceOptions,
   ) => boolean;
   new (
-    plyr: Plyr.Plyr,
+    plyr: EnrichedPlyr,
     playback: Playback,
     options: InterfaceOptions,
   ): AddonInterface;

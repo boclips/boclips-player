@@ -1,17 +1,18 @@
 import Plyr from 'plyr';
+import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import { HasClientDimensions } from '../../../../test-support/types';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { defaultHoverPreviewOptions, HoverPreview } from './HoverPreview';
 
-let plyr: Plyr.Plyr;
+let plyr: MockedPlyr;
 
 beforeEach(() => {
   const plyrContainer = document.createElement('div') as HTMLDivElement &
     HasClientDimensions;
   plyrContainer.__jsdomMockClientWidth = 500;
 
-  plyr = new Plyr();
+  plyr = new Plyr(plyrContainer) as MockedPlyr;
   plyr.elements.container = plyrContainer;
 });
 
@@ -50,11 +51,15 @@ describe('Feature Enabling', () => {
 
   testData.forEach(({ when, playback, hoverPreviewOption, expected }) => {
     it(`will return ${expected} when ${when}`, () => {
-      const actual = HoverPreview.canBeEnabled(new Plyr(), playback, {
-        addons: {
-          hoverPreview: hoverPreviewOption,
-        },
-      } as InterfaceOptions);
+      const actual = HoverPreview.canBeEnabled(
+        new Plyr(document.createElement('div')),
+        playback,
+        {
+          addons: {
+            hoverPreview: hoverPreviewOption,
+          },
+        } as InterfaceOptions,
+      );
 
       expect(actual).toEqual(expected);
     });
