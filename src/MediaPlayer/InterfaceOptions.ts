@@ -27,6 +27,7 @@ export interface InterfaceOptions {
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
   };
+  ratio?: '16:9' | '4:3';
 }
 
 export const defaultInterfaceOptions: InterfaceOptions = {
@@ -45,4 +46,5 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     hoverPreview: false,
     singlePlayback: true,
   },
+  ratio: undefined,
 };

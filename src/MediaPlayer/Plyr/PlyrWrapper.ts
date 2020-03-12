@@ -393,6 +393,7 @@ export default class PlyrWrapper implements MediaPlayer {
           return true;
         },
       },
+      ratio: this.getOptions().ratio,
     }) as EnrichedPlyr;
 
     this.installPlyrEventListeners();

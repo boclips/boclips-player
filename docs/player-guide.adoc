@@ -142,6 +142,7 @@ interface InterfaceOptions {
         hoverPreview?: boolean | HoverPreviewOptions;
         singlePlayback?: boolean | SinglePlaybackOptions;
     };
+    ratio: '16:9' | '4:3';
 }
 
 type Controls =
