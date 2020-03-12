@@ -49,8 +49,8 @@ export class HoverPreview implements AddonInterface {
   private animationIndex: number = 0;
   private container: HTMLDivElement;
   private image: HTMLImageElement;
-  private readonly width: number;
   private destroyed: boolean = false;
+  private imageRatio: number;
 
   public constructor(
     private plyr: EnrichedPlyr,
@@ -58,8 +58,6 @@ export class HoverPreview implements AddonInterface {
     options: InterfaceOptions,
   ) {
     this.applyOptions(options);
-
-    this.width = this.getPlyrContainer().clientWidth;
 
     this.createContainer();
 
@@ -133,13 +131,18 @@ export class HoverPreview implements AddonInterface {
     this.image = document.createElement('img');
     this.image.classList.add('hover-preview__image');
     this.image.src = this.playback.links.videoPreview.getTemplatedLink({
-      thumbnailWidth: this.width,
+      thumbnailWidth: this.calculateWidthOfPlayer(),
       thumbnailCount: this.options.frameCount,
     });
     this.image.onload = () => {
       if (this.hasBeenDestroyed()) {
         return;
       }
+
+      this.imageRatio =
+        this.image.naturalWidth /
+        this.image.naturalHeight /
+        this.options.frameCount;
 
       this.container.classList.remove('hover-preview--loading');
     };
@@ -195,13 +198,27 @@ export class HoverPreview implements AddonInterface {
       return;
     }
 
+    const adjustedWidth = Math.min(
+      this.getPlyrContainer().clientHeight * this.imageRatio,
+      this.getPlyrContainer().clientWidth,
+    );
+
+    const window = this.image.parentElement;
+
+    window.style.width = adjustedWidth + 'px';
+    window.style.height = adjustedWidth / this.imageRatio + 'px';
+
     this.setImageIndex(this.animationIndex);
     this.animationIndex = (this.animationIndex + 1) % this.options.frameCount;
   };
 
   private setImageIndex = (index: number) => {
-    this.image.style.left = withPx(index * this.width * -1);
+    this.image.style.left = withPx(
+      index * this.image.parentElement.clientWidth * -1,
+    );
   };
+
+  private calculateWidthOfPlayer = () => this.getPlyrContainer().clientWidth;
 
   private getPlyrContainer = () =>
     this.plyr && this.plyr.elements && this.plyr.elements.container;
