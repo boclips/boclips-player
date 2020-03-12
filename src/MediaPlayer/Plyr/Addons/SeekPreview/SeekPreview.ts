@@ -39,9 +39,11 @@ export class SeekPreview implements AddonInterface {
 
   private options: SeekPreviewOptions = null;
   private container: HTMLDivElement = null;
+  private window: HTMLDivElement;
   private width: number;
   private height: number;
   private destroyed: boolean = false;
+  private imageRatio: number;
 
   public constructor(
     private plyr: EnrichedPlyr,
@@ -54,7 +56,7 @@ export class SeekPreview implements AddonInterface {
 
     this.installPlyrListeners();
 
-    this.updateDimensions();
+    this.createContainer();
   }
 
   public destroy = () => {
@@ -111,13 +113,12 @@ export class SeekPreview implements AddonInterface {
   };
 
   private updateDimensions = () => {
-    const media = this.plyr.media;
-    const aspectRatio = media.clientHeight / media.clientWidth;
-
     this.width = Math.ceil(this.plyr.elements.container.clientWidth * 0.25);
-    this.height = this.width * aspectRatio;
+    this.height = this.width / this.imageRatio;
 
-    this.createContainer();
+    this.window.style.height = withPx(this.height);
+    this.container.style.width = withPx(this.width);
+    this.container.style.marginLeft = withPx(this.width / -2);
   };
 
   private handleMousemove = (event: MouseEvent) => {
@@ -149,17 +150,16 @@ export class SeekPreview implements AddonInterface {
       this.destroyContainer();
     }
 
-    const container = document.createElement('div');
-    container.classList.add('seek-thumbnail', 'seek-thumbnail--hidden');
-    container.style.width = withPx(this.width);
-    container.style.marginLeft = withPx(this.width / -2);
+    this.container = document.createElement('div');
+    this.container.classList.add('seek-thumbnail', 'seek-thumbnail--hidden');
 
-    const imageWindow = document.createElement('div');
-    imageWindow.classList.add(
+    this.window = document.createElement('div');
+    this.window.classList.add(
       'seek-thumbnail__window',
       'seek-thumbnail__window--loading',
     );
-    imageWindow.style.height = withPx(this.height);
+    this.updateDimensions();
+    // this.window.style.height = withPx(this.height);
 
     const placeholderImage = document.createElement('img');
     placeholderImage.classList.add('seek-thumbnail__image--placeholder');
@@ -167,16 +167,19 @@ export class SeekPreview implements AddonInterface {
       thumbnailWidth: this.plyr.elements.container.clientWidth,
     });
 
-    const img = document.createElement('img');
-    img.classList.add('seek-thumbnail__image');
-    img.onload = () => {
+    const image = document.createElement('img');
+    image.classList.add('seek-thumbnail__image');
+    image.onload = () => {
       if (this.hasBeenDestroyed()) {
         return;
       }
 
-      imageWindow.classList.remove('seek-thumbnail__window--loading');
+      this.imageRatio =
+        image.naturalWidth / image.naturalHeight / this.options.frameCount;
+
+      this.window.classList.remove('seek-thumbnail__window--loading');
     };
-    img.src = this.playback.links.videoPreview.getTemplatedLink({
+    image.src = this.playback.links.videoPreview.getTemplatedLink({
       thumbnailWidth: this.width,
       thumbnailCount: this.options.frameCount,
     });
@@ -184,17 +187,17 @@ export class SeekPreview implements AddonInterface {
     const timeLabel = document.createElement('span');
     timeLabel.classList.add('seek-thumbnail__time');
 
-    imageWindow.appendChild(img);
-    imageWindow.appendChild(placeholderImage);
-    container.appendChild(imageWindow);
-    container.appendChild(timeLabel);
+    this.window.appendChild(image);
+    this.window.appendChild(placeholderImage);
+    this.container.appendChild(this.window);
+    this.container.appendChild(timeLabel);
 
-    this.getPlyrContainer().append(container);
-
-    this.container = container;
+    this.getPlyrContainer().append(this.container);
   };
 
   private updatePreview = (cursorX: number) => {
+    this.updateDimensions();
+
     const clientRect: ClientRect = this.getPlyrProgressBar().getBoundingClientRect();
 
     this.updatePosition(cursorX);

@@ -8,7 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- HoverPreview can now handle changing player widths, and different aspect ratios
+- SeekPreview & HoverPreview can now handle changing player widths, and different aspect ratios
 
 ### Added
 
