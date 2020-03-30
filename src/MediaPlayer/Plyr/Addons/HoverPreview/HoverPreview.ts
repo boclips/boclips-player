@@ -194,6 +194,10 @@ export class HoverPreview implements AddonInterface {
   };
 
   private animationTick = () => {
+    if (this.hasBeenDestroyed()) {
+      return;
+    }
+
     if (this.container.classList.contains('hover-preview--loading')) {
       return;
     }

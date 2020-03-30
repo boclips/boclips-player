@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.6.8] - 2020-03-30
+
+### Fixed
+
+- HoverPreview errors when the animation is running post destruction
+
 ## [2.6.7] - 2020-03-12
 
 ### Fixed
