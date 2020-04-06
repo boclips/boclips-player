@@ -55,6 +55,49 @@ describe('getting several players', () => {
     containers = [containerOne, containerTwo];
   });
 
+  it('adds a data attribute to the container on creation', () => {
+    const container = document.createElement('div');
+
+    const player = BoclipsPlayerFactory.get(container);
+
+    const updatedContainer = player.getContainer();
+    expect(
+      updatedContainer.getAttribute('data-boclips-player-initialised'),
+    ).toBeTruthy();
+  });
+
+  it('removes data attribute to the container on destruction', () => {
+    const container = document.createElement('div');
+
+    const player = BoclipsPlayerFactory.get(container);
+    player.destroy();
+
+    const updatedContainer = player.getContainer();
+    expect(
+      updatedContainer.getAttribute('data-boclips-player-initialised'),
+    ).toBeFalsy();
+  });
+
+  it('returns null when attempting to create a second player', () => {
+    const container = document.createElement('div');
+
+    const firstPlayer = BoclipsPlayerFactory.get(container);
+    const secondPlayer = BoclipsPlayerFactory.get(container);
+
+    expect(firstPlayer).not.toBeNull();
+    expect(secondPlayer).toBeNull();
+  });
+
+  it('can create a new player after being destroyed', () => {
+    const container = document.createElement('div');
+
+    const firstPlayer = BoclipsPlayerFactory.get(container);
+    firstPlayer.destroy();
+    const secondPlayer = BoclipsPlayerFactory.get(container);
+
+    expect(secondPlayer).not.toBeNull();
+  });
+
   it('returns a BoclipsPlayer per container', () => {
     const players = BoclipsPlayerFactory.getSeveral(containers);
 

@@ -11,6 +11,7 @@ import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
+import { Constants } from './Constants';
 
 export interface Player {
   play: () => Promise<any>;
@@ -148,7 +149,12 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public getPlayerId = () => this.playerId;
 
-  public destroy = () => this.mediaPlayer.destroy();
+  public destroy = () => {
+    this.container.removeAttribute(
+      Constants.BOCLIPS_PLAYER_INTIALISED_ATTRIBUTE,
+    );
+    return this.mediaPlayer.destroy();
+  };
 
   public getContainer = () => this.container;
 

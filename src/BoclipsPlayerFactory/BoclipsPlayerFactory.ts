@@ -1,5 +1,6 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
+import { Constants } from '../BoclipsPlayer/Constants';
 
 export class BoclipsPlayerFactory {
   public static get(
@@ -13,11 +14,14 @@ export class BoclipsPlayerFactory {
       return null;
     }
 
-    if (container.getAttribute('data-boclips-player-initialised')) {
+    if (container.getAttribute(Constants.BOCLIPS_PLAYER_INTIALISED_ATTRIBUTE)) {
       return null;
     }
 
-    container.setAttribute('data-boclips-player-initialised', 'true');
+    container.setAttribute(
+      Constants.BOCLIPS_PLAYER_INTIALISED_ATTRIBUTE,
+      'true',
+    );
 
     return new BoclipsPlayer(container, options);
   }
