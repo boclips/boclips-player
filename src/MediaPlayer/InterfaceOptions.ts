@@ -1,3 +1,4 @@
+import { RewatchButtonOptions } from './Plyr/Addons/RewatchButton/RewatchButton';
 import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview/HoverPreview';
 import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview/SeekPreview';
 import { SinglePlaybackOptions } from './Plyr/Addons/SinglePlayback/SinglePlayback';
@@ -26,6 +27,7 @@ export interface InterfaceOptions {
     seekPreview?: boolean | SeekPreviewOptions;
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
+    rewatchButton?: boolean | RewatchButtonOptions;
   };
   ratio?: '16:9' | '4:3';
 }
@@ -43,8 +45,9 @@ export const defaultInterfaceOptions: InterfaceOptions = {
   ],
   addons: {
     seekPreview: true,
-    hoverPreview: false,
+    hoverPreview: true,
     singlePlayback: true,
+    rewatchButton: true,
   },
   ratio: undefined,
 };

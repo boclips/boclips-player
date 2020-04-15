@@ -55,7 +55,6 @@ export class SeekPreview implements AddonInterface {
     this.hidePlyrSeek();
 
     this.installPlyrListeners();
-
     this.createContainer();
   }
 
@@ -195,33 +194,33 @@ export class SeekPreview implements AddonInterface {
     this.getPlyrContainer().append(this.container);
   };
 
-  private updatePreview = (cursorX: number) => {
+  private updatePreview = (cursorY: number) => {
     this.updateDimensions();
 
     const clientRect: ClientRect = this.getPlyrProgressBar().getBoundingClientRect();
 
-    this.updatePosition(cursorX);
+    this.updatePosition(cursorY);
 
-    const seekTime = this.calculateSeekTime(clientRect, cursorX);
+    const seekTime = this.calculateSeekTime(clientRect, cursorY);
 
     this.updateImageSlice(seekTime);
     this.updateTimeLabel(seekTime);
   };
 
-  private calculateSeekTime(clientRect: ClientRect, cursorX: number) {
+  private calculateSeekTime(clientRect: ClientRect, cursorY: number) {
     const duration = this.playback.duration;
 
     const percentage = Math.min(
       100,
-      Math.max(0, (100 / clientRect.width) * (cursorX - clientRect.left)),
+      Math.max(0, (100 / clientRect.width) * (cursorY - clientRect.left)),
     );
 
     return duration * (percentage / 100);
   }
 
-  private updatePosition(cursorX: number) {
+  private updatePosition(cursorY: number) {
     const parentClientRect = this.container.parentElement.getBoundingClientRect();
-    this.container.style.left = withPx(cursorX - parentClientRect.left);
+    this.container.style.left = withPx(cursorY - parentClientRect.left);
   }
 
   private updateImageSlice = (seekTime: number) => {
