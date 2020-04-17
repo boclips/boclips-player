@@ -16,16 +16,16 @@ export class RewatchButton implements AddonInterface {
 
   private addListeners = () => {
     this.plyr.on('ended', this.createContainer);
-    // document
-    //   .querySelector(
-    //     '#player-container > div > div.plyr__controls button.plyr__controls__item.plyr__control',
-    //   )
-    //   .addEventListener('click', this.destroyContainer, false);
-    // document
-    //   .querySelector(
-    //     '#player-container > div > div.plyr__controls > div.plyr__controls__item.plyr__progress__container > div',
-    //   )
-    //   .addEventListener('click', this.destroyContainer, false);
+    document
+      .querySelector(
+        '#player-container > div > div.plyr__controls button.plyr__controls__item.plyr__control',
+      )
+      .addEventListener('click', this.destroyContainer, false);
+    document
+      .querySelector(
+        '#player-container > div > div.plyr__controls > div.plyr__controls__item.plyr__progress__container > div',
+      )
+      .addEventListener('click', this.destroyContainer, false);
   };
   public createContainer = () => {
     this.overlayContainer = document.createElement('Button');
@@ -33,12 +33,15 @@ export class RewatchButton implements AddonInterface {
 
     const rewatch = document.createElement('Button');
     rewatch.id = 'replay-overlay-button';
+    const label = document.createElement('div');
+    label.id = 'replay-overlay-label';
 
     rewatch.onclick = this.replayVideo;
-    rewatch.innerHTML = 'Rewatch';
+    label.innerHTML = 'Rewatch';
 
     this.getPlyrContainer().append(this.overlayContainer);
     this.overlayContainer.append(rewatch);
+    rewatch.append(label);
 
     const button: HTMLButtonElement = document.querySelector(
       '#player-container > div > button',

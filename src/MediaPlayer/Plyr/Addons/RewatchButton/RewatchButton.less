@@ -5,11 +5,45 @@
   height: 100%;
   width: 100%;
   opacity: 0.8;
-  background-color: grey;
+  background-color: #3d4564;
 }
 #replay-overlay-button {
+  height: 40px;
+  width: 140px;
   cursor: pointer;
-  background-color: grey;
-  width: 10%;
-  overflow: hidden;
+  border-radius: 8px;
+  background-color: #0e69ff;
+  border: none;
+}
+
+#replay-overlay-button:hover {
+  border-radius: 8px;
+  background-color: #0051bc;
+}
+#replay-overlay-button:focus {
+  border-radius: 8px;
+  background-color: #0e69ff;
+  box-shadow: 0 0 4px 1px #4189ff;
+}
+#replay-overlay-button:disabled {
+  border-radius: 8px;
+  background-color: #e8efff;
+}
+#replay-overlay-button:active {
+  border-radius: 8px;
+  background-color: #00217d;
+}
+#replay-overlay-label {
+  height: 26px;
+  width: 127px;
+  color: #ffffff;
+  font-family: Heebo, Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  font-weight: bold;
+  letter-spacing: 0;
+  line-height: 24px;
+  text-align: center;
+}
+#replay-overlay-label:disabled {
+  color: #b4c8f4;
 }
