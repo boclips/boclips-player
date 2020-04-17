@@ -1,68 +1,71 @@
 import { AddonInterface } from '../Addons';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import { InterfaceOptions } from '../../../InterfaceOptions';
-
-export interface RewatchButtonOptions {}
+import './RewatchButton.less';
 
 export class RewatchButton implements AddonInterface {
   public static canBeEnabled = (_, __, options: InterfaceOptions) =>
-    options.addons.rewatchButton && !options.controls.includes('restart');
+    !!options.addons.rewatchButton && !options.controls.includes('restart');
 
-  private container: HTMLElement = null;
+  private overlayContainer: HTMLElement = null;
+  private destroyed: boolean = false;
 
   public constructor(private plyr: EnrichedPlyr) {
     this.addListeners();
-    this.replayVideo();
   }
 
   private addListeners = () => {
-    this.plyr.media.addEventListener('ended', this.createContainer, false);
-    document
-      .querySelector('#player-container > div > div.plyr__controls')
-      .addEventListener('click', this.destroyContainer, false);
+    this.plyr.on('ended', this.createContainer);
+    // document
+    //   .querySelector(
+    //     '#player-container > div > div.plyr__controls button.plyr__controls__item.plyr__control',
+    //   )
+    //   .addEventListener('click', this.destroyContainer, false);
+    // document
+    //   .querySelector(
+    //     '#player-container > div > div.plyr__controls > div.plyr__controls__item.plyr__progress__container > div',
+    //   )
+    //   .addEventListener('click', this.destroyContainer, false);
   };
   public createContainer = () => {
-    {
-      this.container = document.createElement('BUTTON');
-      this.container.style.position = 'absolute';
-      this.container.style.top = '0';
-      this.container.style.left = '0';
-      this.container.style.height = '100%';
-      this.container.style.width = '100%';
-      this.container.style.opacity = '0.8';
-      this.container.style.backgroundColor = 'grey';
+    this.overlayContainer = document.createElement('Button');
+    this.overlayContainer.id = 'replay-overlay';
 
-      const rewatch = document.createElement('Button');
-      rewatch.style.cursor = 'pointer';
-      rewatch.style.backgroundColor = 'grey';
-      rewatch.style.width = '10%';
-      rewatch.style.overflow = 'hidden';
-      rewatch.onclick = this.replayVideo;
+    const rewatch = document.createElement('Button');
+    rewatch.id = 'replay-overlay-button';
 
-      rewatch.innerHTML = 'Rewatch';
-      this.getPlyrContainer().append(this.container);
-      this.container.append(rewatch);
-      const button = document.querySelector('#player-container > div > button');
+    rewatch.onclick = this.replayVideo;
+    rewatch.innerHTML = 'Rewatch';
 
+    this.getPlyrContainer().append(this.overlayContainer);
+    this.overlayContainer.append(rewatch);
+
+    const button: HTMLButtonElement = document.querySelector(
+      '#player-container > div > button',
+    );
+
+    if (button) {
       button.style.visibility = 'hidden';
     }
   };
+
   public replayVideo = () => {
-    if (this.container) {
+    if (this.overlayContainer) {
       this.plyr.play();
       this.destroyContainer();
     }
   };
 
   public destroyContainer = () => {
-    this.container.parentElement.removeChild(this.container);
-    this.container = null;
+    if (this.overlayContainer) {
+      this.overlayContainer.parentElement.removeChild(this.overlayContainer);
+      this.overlayContainer.remove();
+    }
   };
 
   private getPlyrContainer = () =>
     this.plyr && this.plyr.elements && this.plyr.elements.container;
 
-  private destroyed: boolean = false;
   public destroy() {
     if (this.destroyed) {
       return;
