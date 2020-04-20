@@ -26,6 +26,7 @@ export interface InterfaceOptions {
     seekPreview?: boolean | SeekPreviewOptions;
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
+    rewatchButton?: boolean;
   };
   ratio?: '16:9' | '4:3';
 }
@@ -45,6 +46,7 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     seekPreview: true,
     hoverPreview: false,
     singlePlayback: true,
+    rewatchButton: false,
   },
   ratio: undefined,
 };

@@ -55,7 +55,6 @@ export class SeekPreview implements AddonInterface {
     this.hidePlyrSeek();
 
     this.installPlyrListeners();
-
     this.createContainer();
   }
 

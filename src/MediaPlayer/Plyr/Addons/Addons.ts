@@ -4,6 +4,7 @@ import { EnrichedPlyr } from '../../../types/plyr';
 import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
+import { RewatchButton } from './RewatchButton/RewatchButton';
 
 export interface AddonInterface {
   destroy: () => void;
@@ -22,4 +23,9 @@ export interface Addon {
   ): AddonInterface;
 }
 
-export const Addons: Addon[] = [SeekPreview, HoverPreview, SinglePlayback];
+export const Addons: Addon[] = [
+  SeekPreview,
+  HoverPreview,
+  SinglePlayback,
+  RewatchButton,
+];
