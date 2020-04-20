@@ -27,7 +27,6 @@ export class RewatchButton implements AddonInterface {
     }
     this.controlListners();
     this.createOverlay();
-    this.hideControls();
   };
   public controlListners = () => {
     this.plyr.on('play', this.destroyContainer);
@@ -49,16 +48,6 @@ export class RewatchButton implements AddonInterface {
     this.getPlyrContainer().append(this.overlayContainer);
     this.overlayContainer.append(rewatch);
     rewatch.append(label);
-  };
-
-  public hideControls = () => {
-    const button: HTMLButtonElement = document.querySelector(
-      '#player-container > div > button',
-    );
-
-    if (button) {
-      button.style.visibility = 'hidden';
-    }
   };
 
   public replayVideo = () => {
