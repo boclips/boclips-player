@@ -44,9 +44,9 @@ export const defaultInterfaceOptions: InterfaceOptions = {
   ],
   addons: {
     seekPreview: true,
-    hoverPreview: true,
+    hoverPreview: false,
     singlePlayback: true,
-    rewatchButton: true,
+    rewatchButton: false,
   },
   ratio: undefined,
 };

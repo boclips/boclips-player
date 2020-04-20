@@ -15,19 +15,26 @@ export class RewatchButton implements AddonInterface {
   }
 
   private addListeners = () => {
-    this.plyr.on('ended', this.createContainer);
-    document
-      .querySelector(
-        '#player-container > div > div.plyr__controls button.plyr__controls__item.plyr__control',
-      )
-      .addEventListener('click', this.destroyContainer, false);
-    document
-      .querySelector(
-        '#player-container > div > div.plyr__controls > div.plyr__controls__item.plyr__progress__container > div',
-      )
-      .addEventListener('click', this.destroyContainer, false);
+    if (this.destroyed) {
+      return;
+    }
+    this.plyr.on('ended', this.setUpReplayOverlay);
   };
-  public createContainer = () => {
+
+  public setUpReplayOverlay = () => {
+    if (this.destroyed) {
+      return;
+    }
+    this.controlListners();
+    this.createOverlay();
+    this.hideControls();
+  };
+  public controlListners = () => {
+    this.plyr.on('play', this.destroyContainer);
+    this.plyr.on('progress', this.destroyContainer);
+  };
+
+  public createOverlay = () => {
     this.overlayContainer = document.createElement('Button');
     this.overlayContainer.id = 'replay-overlay';
 
@@ -42,7 +49,9 @@ export class RewatchButton implements AddonInterface {
     this.getPlyrContainer().append(this.overlayContainer);
     this.overlayContainer.append(rewatch);
     rewatch.append(label);
+  };
 
+  public hideControls = () => {
     const button: HTMLButtonElement = document.querySelector(
       '#player-container > div > button',
     );
@@ -53,10 +62,12 @@ export class RewatchButton implements AddonInterface {
   };
 
   public replayVideo = () => {
-    if (this.overlayContainer) {
-      this.plyr.play();
-      this.destroyContainer();
+    if (this.destroyed) {
+      return;
     }
+
+    this.plyr.play();
+    this.destroyContainer();
   };
 
   public destroyContainer = () => {
@@ -66,14 +77,19 @@ export class RewatchButton implements AddonInterface {
     }
   };
 
-  private getPlyrContainer = () =>
-    this.plyr && this.plyr.elements && this.plyr.elements.container;
+  private getPlyrContainer = () => {
+    if (this.destroyed) {
+      return;
+    }
+    return this.plyr && this.plyr.elements && this.plyr.elements.container;
+  };
 
   public destroy() {
     if (this.destroyed) {
       return;
     } else {
       this.destroyed = true;
+      this.destroyContainer();
     }
   }
 }

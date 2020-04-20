@@ -194,33 +194,33 @@ export class SeekPreview implements AddonInterface {
     this.getPlyrContainer().append(this.container);
   };
 
-  private updatePreview = (cursorY: number) => {
+  private updatePreview = (cursorX: number) => {
     this.updateDimensions();
 
     const clientRect: ClientRect = this.getPlyrProgressBar().getBoundingClientRect();
 
-    this.updatePosition(cursorY);
+    this.updatePosition(cursorX);
 
-    const seekTime = this.calculateSeekTime(clientRect, cursorY);
+    const seekTime = this.calculateSeekTime(clientRect, cursorX);
 
     this.updateImageSlice(seekTime);
     this.updateTimeLabel(seekTime);
   };
 
-  private calculateSeekTime(clientRect: ClientRect, cursorY: number) {
+  private calculateSeekTime(clientRect: ClientRect, cursorX: number) {
     const duration = this.playback.duration;
 
     const percentage = Math.min(
       100,
-      Math.max(0, (100 / clientRect.width) * (cursorY - clientRect.left)),
+      Math.max(0, (100 / clientRect.width) * (cursorX - clientRect.left)),
     );
 
     return duration * (percentage / 100);
   }
 
-  private updatePosition(cursorY: number) {
+  private updatePosition(cursorX: number) {
     const parentClientRect = this.container.parentElement.getBoundingClientRect();
-    this.container.style.left = withPx(cursorY - parentClientRect.left);
+    this.container.style.left = withPx(cursorX - parentClientRect.left);
   }
 
   private updateImageSlice = (seekTime: number) => {
