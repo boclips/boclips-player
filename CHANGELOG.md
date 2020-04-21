@@ -7,11 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-## [2.7.0] - 2020-04-20
+## [2.8.0] - 2020-04-21
 
 ### Added
 
-- A rewatch button that appears at the end of a video.
+- An optional feature to enable a rewatch button that appears at the end of a video.
 
 ## [2.6.9] - 2020-04-09
 
