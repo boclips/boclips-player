@@ -28,9 +28,15 @@ export class RewatchButton implements AddonInterface {
     this.controlListners();
     this.createOverlay();
   };
+
   public controlListners = () => {
     this.plyr.on('play', this.destroyContainer);
     this.plyr.on('progress', this.destroyContainer);
+  };
+
+  public removeListners = () => {
+    this.plyr.off('play', this.destroyContainer);
+    this.plyr.off('progress', this.destroyContainer);
   };
 
   public createOverlay = () => {
@@ -56,13 +62,14 @@ export class RewatchButton implements AddonInterface {
     }
 
     this.plyr.play();
-    this.destroyContainer();
   };
 
   public destroyContainer = () => {
-    if (this.overlayContainer) {
-      this.overlayContainer.parentElement.removeChild(this.overlayContainer);
+    if (this.overlayContainer !== null) {
       this.overlayContainer.remove();
+      this.overlayContainer = null;
+
+      this.removeListners();
     }
   };
 

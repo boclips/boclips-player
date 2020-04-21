@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.8.1] - 2020-04-21
+
+### Fixed
+
+- Fixing the loop when overlay container is destroyed.
+
 ## [2.8.0] - 2020-04-21
 
 ### Added
