@@ -45,15 +45,15 @@ export class RewatchButton implements AddonInterface {
 
     const rewatch = document.createElement('Button');
     rewatch.id = 'replay-overlay-button';
-    const label = document.createElement('div');
-    label.id = 'replay-overlay-label';
+    // const label = document.createElement('div');
+    // label.id = 'replay-overlay-label';
 
     rewatch.onclick = this.replayVideo;
-    label.innerHTML = 'Rewatch';
+    rewatch.innerHTML = 'Watch Again';
 
     this.getPlyrContainer().append(this.overlayContainer);
     this.overlayContainer.append(rewatch);
-    rewatch.append(label);
+    // rewatch.appendChild(label);
   };
 
   public replayVideo = () => {
