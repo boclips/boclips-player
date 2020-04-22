@@ -59,7 +59,7 @@ describe('Rewatch Button', () => {
   it('shows button at the end of a video', () => {
     plyr.__callEventCallback('ended');
 
-    expect(container.innerHTML.includes('Rewatch')).toBeTruthy();
+    expect(container.innerHTML.includes('Watch Again')).toBeTruthy();
   });
 
   it('goes back to the start when button is clicked', () => {
