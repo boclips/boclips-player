@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.8.2] - 2020-04-22
+
+### Fixed
+
+- Centering the rewatch button text and changing text to 'watch again'
+
 ## [2.8.1] - 2020-04-21
 
 ### Fixed
