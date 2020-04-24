@@ -1,4 +1,5 @@
 import deepmerge from 'deepmerge';
+import isPlainObject from 'is-plain-object';
 import { addListener as addResizeListener } from 'resize-detector';
 import uuid from 'uuid/v1';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
@@ -63,6 +64,7 @@ export class BoclipsPlayer implements PrivatePlayer {
 
     this.options = deepmerge.all([defaultOptions, options], {
       arrayMerge: (_, source) => source,
+      isMergeableObject: isPlainObject,
     }) as PlayerOptions;
 
     this.errorHandler = new ErrorHandler(this);

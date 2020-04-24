@@ -1,3 +1,4 @@
+import { GeneralButtonOptions } from './Plyr/Addons/GeneralButton/GeneralButton';
 import { HoverPreviewOptions } from './Plyr/Addons/HoverPreview/HoverPreview';
 import { SeekPreviewOptions } from './Plyr/Addons/SeekPreview/SeekPreview';
 import { SinglePlaybackOptions } from './Plyr/Addons/SinglePlayback/SinglePlayback';
@@ -27,6 +28,7 @@ export interface InterfaceOptions {
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
     rewatchButton?: boolean;
+    generalButton?: GeneralButtonOptions;
   };
   ratio?: '16:9' | '4:3';
 }
@@ -46,7 +48,8 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     seekPreview: true,
     hoverPreview: false,
     singlePlayback: true,
-    rewatchButton: false,
+    rewatchButton: true,
+    generalButton: null,
   },
   ratio: undefined,
 };

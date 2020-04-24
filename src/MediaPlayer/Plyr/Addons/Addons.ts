@@ -5,6 +5,7 @@ import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
 import { RewatchButton } from './RewatchButton/RewatchButton';
+import { GeneralButton } from './GeneralButton/GeneralButton';
 
 export interface AddonInterface {
   destroy: () => void;
@@ -28,4 +29,5 @@ export const Addons: Addon[] = [
   HoverPreview,
   SinglePlayback,
   RewatchButton,
+  GeneralButton,
 ];

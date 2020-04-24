@@ -43,6 +43,7 @@
     "date-fns": "^2.10.0",
     "deepmerge": "^4.2.2",
     "hls.js": "^0.13.2",
+    "is-plain-object": "^3.0.0",
     "iso8601-duration": "^1.2.0",
     "normalize.css": "^8.0.1",
     "plyr": "^3.5.10",
