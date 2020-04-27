@@ -6,6 +6,8 @@
 
   display: flex;
   flex-direction: row;
+  justify-content: center;
+  align-items: center;
 
   width: 100%;
   height: 100%;
@@ -13,48 +15,61 @@
   background-color: #3d4564;
 }
 
-#general-button {
+#general-buttons-container {
   z-index: 3;
-
   box-sizing: border-box;
-  width: 242px;
+
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+
+  width: auto;
   height: auto;
   margin-top: 42.5px;
 
   background-color: #3d4564;
   border: none;
   border-top: 2px solid #848fbb;
-  cursor: pointer;
-  margin-right: auto;
-  margin-left: auto;
-  display: flex;
-  flex-direction: row;
 }
-#share-icons-container {
+
+.icons-container {
+  position: relative;
+
   display: flex;
   flex-direction: row;
   justify-content: center;
-  margin-right: auto;
-  margin-left: auto;
-  height: 24px;
-  width: 68px;
+  width: 100%;
+  height: 100%;
   margin-top: 12.5px;
+  padding: 0 32px;
+
+  background-color: #3d4564;
+  border: none;
+  border-left: 2px solid #848fbb;
+  cursor: pointer;
 }
-#general-button-label {
-  height: 18px;
-  width: 37px;
-  margin-top: 3px;
-  margin-bottom: 3px;
-  margin-left: 6.5px;
-  color: #fafaff;
-  font-family: Heebo;
-  font-size: 14px;
-  font-weight: bold;
-  letter-spacing: 0;
-  line-height: 18px;
-  text-align: center;
+
+.icons-container:first-child {
+  border-left: none;
 }
+
 #general-button-icon {
   width: 24px;
   height: 24px;
+}
+
+#general-button-label {
+  width: 37px;
+  height: 18px;
+  margin-top: 3px;
+  margin-bottom: 3px;
+  margin-left: 6.5px;
+
+  color: #fafaff;
+  font-weight: bold;
+  font-size: 14px;
+  font-family: Heebo, Helvetica, Arial, sans-serif;
+  line-height: 18px;
+  letter-spacing: 0;
+  text-align: center;
 }

@@ -23,12 +23,14 @@ describe('Feature Enabling', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: ['restart'],
       addons: {
-        generalButton: {
-          child: '<h1>Test</h1>',
-          onClick: () => {
-            console.log('yay');
+        generalButton: [
+          {
+            child: '<h1>Test</h1>',
+            onClick: () => {
+              console.log('yay');
+            },
           },
-        },
+        ],
       },
     });
 
@@ -39,12 +41,14 @@ describe('Feature Enabling', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: [],
       addons: {
-        generalButton: {
-          child: '<h1>Test</h1>',
-          onClick: () => {
-            console.log('yay');
+        generalButton: [
+          {
+            child: '<h1>Test</h1>',
+            onClick: () => {
+              console.log('yay');
+            },
           },
-        },
+        ],
       },
     });
 
@@ -85,12 +89,14 @@ describe('options functionality', () => {
         hoverPreview: false,
         singlePlayback: true,
         rewatchButton: false,
-        generalButton: {
-          child,
-          onClick: () => {
-            console.log('yay');
+        generalButton: [
+          {
+            child,
+            onClick: () => {
+              console.log('passed');
+            },
           },
-        },
+        ],
       },
     });
   });
@@ -103,14 +109,14 @@ describe('options functionality', () => {
     plyr.__callEventCallback('ended');
 
     const mockOnPlay = jest.fn();
-    const button = container
-      .getElementsByTagName('button')
-      .namedItem('general-button') as HTMLButtonElement;
-    console.log(button);
-    button.click = mockOnPlay;
+    const button: HTMLButtonElement[] = Array.from(
+      container.getElementsByTagName('button'),
+    );
 
-    button.click();
-
-    expect(mockOnPlay).toHaveBeenCalledTimes(1);
+    button.forEach(elements => {
+      elements.click = mockOnPlay;
+      elements.click();
+    });
+    expect(mockOnPlay).toHaveBeenCalledTimes(button.length);
   });
 });

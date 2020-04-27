@@ -3,29 +3,31 @@
   top: 0;
   left: 0;
   z-index: 2;
-
-  display: grid;
+  display: flex;
   width: 100%;
   height: 100%;
-
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   background-color: #3d4564;
-  text-align: center;
 }
 
 #replay-overlay-button {
   width: 140px;
   height: 40px;
+  margin-right: auto;
+  margin-left: auto;
 
   color: #ffffff;
   font-weight: bold;
-  margin-right: auto;
-  margin-left: auto;
   font-size: 16px;
   font-family: Heebo, Helvetica, Arial, sans-serif;
   line-height: 24px;
   letter-spacing: 0;
   text-align: center;
   vertical-align: middle;
+
   background-color: #0e69ff;
   border: none;
   border-radius: 8px;

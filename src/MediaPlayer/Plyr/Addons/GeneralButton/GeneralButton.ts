@@ -16,8 +16,9 @@ export class GeneralButton implements AddonInterface {
     options: InterfaceOptions,
   ) => !!options.addons.generalButton && !options.controls.includes('restart');
 
-  private options: GeneralButtonOptions = null;
-  public generalButton: HTMLButtonElement = null;
+  public options: GeneralButtonOptions[] = [];
+  public generalButtonsContainer: HTMLDivElement = null;
+  public generalButtons: HTMLButtonElement[] = [];
   public inputContainer: HTMLElement = null;
   public overlayContainer: HTMLElement = null;
   private destroyed: boolean = false;
@@ -41,6 +42,7 @@ export class GeneralButton implements AddonInterface {
   private applyOptions = (options: InterfaceOptions) => {
     if (options.addons.generalButton !== null) {
       this.options = options.addons.generalButton;
+      console.log(this.options);
     }
     return;
   };
@@ -54,17 +56,28 @@ export class GeneralButton implements AddonInterface {
   };
 
   private createButton = () => {
-    this.generalButton = document.createElement('button');
-    this.generalButton.id = 'general-button';
-    this.generalButton.addEventListener('click', this.options.onClick);
+    this.options.forEach(option => {
+      const button = document.createElement('button');
+      button.className = 'icons-container';
+      button.addEventListener('click', option.onClick);
+      if (typeof option.child === 'string') {
+        button.innerHTML = option.child;
+      } else {
+        button.appendChild(option.child);
+      }
+      this.generalButtons.push(button);
+    });
 
-    if (typeof this.options.child === 'string') {
-      this.generalButton.innerHTML = this.options.child;
-    } else {
-      this.generalButton.appendChild(this.options.child);
-    }
-
+    this.createButtonsContainer();
     this.createOverlay();
+  };
+
+  private createButtonsContainer = () => {
+    this.generalButtonsContainer = document.createElement('div');
+    this.generalButtonsContainer.id = 'general-buttons-container';
+    this.generalButtons.forEach(button => {
+      this.generalButtonsContainer.appendChild(button);
+    });
   };
 
   private createOverlay = () => {
@@ -91,16 +104,14 @@ export class GeneralButton implements AddonInterface {
 
   public destroyContainer = () => {
     if (this.overlayContainer !== null) {
-      this.overlayContainer.remove();
       this.overlayContainer = null;
       this.removeListners();
     }
   };
 
   private appendElements = () => {
-    if (this.options.child !== null) {
-      this.overlayContainer.appendChild(this.generalButton);
-    }
+    this.overlayContainer.appendChild(this.generalButtonsContainer);
+    console.log(this.overlayContainer);
   };
 
   private getPlyrContainer = () => {
