@@ -20,7 +20,7 @@
     }
   }
 
-  input[type=range] {
+  input[type='range'] {
     color: @cta-blue;
   }
 
@@ -31,10 +31,29 @@
   .plyr__control {
     .plyr__tab-focus,
     &:hover,
-    &[aria-expanded=true] {
+    &[aria-expanded='true'] {
       color: #FFFFFF;
 
       background: @mid-blue;
+    }
+  }
+
+  &--youtube {
+    .plyr__control {
+      .plyr__tab-focus,
+      &:hover,
+      &[aria-expanded='true'] {
+        background: none;
+      }
+
+      &--overlaid {
+        background: none;
+
+        svg {
+          width: 70px;
+          height: 70px;
+        }
+      }
     }
   }
 

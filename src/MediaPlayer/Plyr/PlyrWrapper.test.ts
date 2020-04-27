@@ -62,6 +62,16 @@ describe('Instantiation', () => {
     expect(actualOptions.controls).toEqual(['play-large']);
   });
 
+  it('youtube plyr is instantiated with cutsom sprite iconUrl', () => {
+    mediaPlayer = new PlyrWrapper(mockPlayer);
+    mediaPlayer.configureWithVideo(
+      VideoFactory.sample(PlaybackFactory.youtubeSample()),
+    );
+    const actualOptions = mocked(Plyr).mock.calls[2][1]
+    expect(actualOptions.loadSprite).toEqual(false);
+    expect(actualOptions.iconUrl).toEqual('/youtube-sprite.svg');
+  });
+
   it('Constructs a Plyr given an element a video element within container', () => {
     expect(container.children.length).toEqual(1);
 

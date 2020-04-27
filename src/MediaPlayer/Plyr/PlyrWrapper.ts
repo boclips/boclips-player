@@ -364,6 +364,15 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.destroy();
     }
 
+    let youtubeSpriteSettings = {};
+    if (media.getAttribute('data-plyr-provider') === 'youtube') {
+      require('../../styles/youtube-sprite.svg');
+      youtubeSpriteSettings = {
+        loadSprite: false,
+        iconUrl: '/youtube-sprite.svg',
+      };
+    }
+
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
@@ -394,6 +403,7 @@ export default class PlyrWrapper implements MediaPlayer {
         },
       },
       ratio: this.getOptions().ratio,
+      ...youtubeSpriteSettings,
     }) as EnrichedPlyr;
 
     this.installPlyrEventListeners();
