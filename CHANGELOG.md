@@ -7,6 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.9.0] - 2020-04-27
+
+### Changed
+
+- YouTube videos now display the YouTube play icon
+
+### Removed
+- The play icon next to the seekbar
+
 ## [2.8.2] - 2020-04-22
 
 ### Fixed
