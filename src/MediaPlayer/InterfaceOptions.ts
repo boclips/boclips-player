@@ -34,7 +34,6 @@ export interface InterfaceOptions {
 export const defaultInterfaceOptions: InterfaceOptions = {
   controls: [
     'play-large',
-    'play',
     'progress',
     'current-time',
     'mute',
