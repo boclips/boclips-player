@@ -12,7 +12,6 @@ import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import { Addon, AddonInterface, Addons } from './Addons/Addons';
 import './PlyrWrapper.less';
-import '../../styles/youtube-sprite.svg';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -369,7 +368,7 @@ export default class PlyrWrapper implements MediaPlayer {
     if (media.getAttribute('data-plyr-provider') === 'youtube') {
       youtubeSpriteSettings = {
         loadSprite: false,
-        iconUrl: '/youtube-sprite.svg',
+        iconUrl: 'static/assets/youtube-sprite.svg',
       };
     }
 
