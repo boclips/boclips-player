@@ -21,7 +21,11 @@ export default class PlyrWrapper implements MediaPlayer {
   private playback: Playback = null;
 
   constructor(private readonly player: PrivatePlayer) {
-    this.createStreamPlyr();
+    if (this.getPlayerType() === 'YOUTUBE') {
+      this.createYoutubePlyr();
+    } else {
+      this.createStreamPlyr();
+    }
 
     window.addEventListener('beforeunload', this.handleBeforeUnload);
 
@@ -80,7 +84,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private createYoutubePlyr = (segmentStart?: number) => {
-    if (!isYoutubePlayback(this.playback)) {
+    if (this.playback && !isYoutubePlayback(this.playback)) {
       throw new Error('Unable to create YouTube Plyr for non-YouTube playback');
     }
 
@@ -89,16 +93,18 @@ export default class PlyrWrapper implements MediaPlayer {
     const media = document.createElement('div');
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('data-plyr-provider', 'youtube');
-    media.setAttribute('data-plyr-embed-id', this.playback.id);
-    if (segmentStart) {
-      media.setAttribute(
-        'data-plyr-config',
-        JSON.stringify({
-          youtube: {
-            start: segmentStart,
-          },
-        }),
-      );
+    if (this.playback) {
+      media.setAttribute('data-plyr-embed-id', this.playback.id);
+      if (segmentStart) {
+        media.setAttribute(
+          'data-plyr-config',
+          JSON.stringify({
+            youtube: {
+              start: segmentStart,
+            },
+          }),
+        );
+      }
     }
 
     this.player.getContainer().appendChild(media);
@@ -428,6 +434,8 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private getOptions = () => this.player.getOptions().interface;
+
+  private getPlayerType = () => this.player.getOptions().playerType;
 
   public getVideoContainer = () => this.plyr.media;
 
