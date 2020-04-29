@@ -19,7 +19,7 @@ export class GeneralButton implements AddonInterface {
     !!options.addons.generalButtons &&
     !options.controls.includes('restart') &&
     options.addons.generalButtons.length > 0 &&
-    options.addons.generalButtons.constructor === Array;
+    Array.isArray(options.addons.generalButtons);
 
   public options: GeneralButtonOptions[] = [];
   public generalButtonsContainer: HTMLDivElement = null;
