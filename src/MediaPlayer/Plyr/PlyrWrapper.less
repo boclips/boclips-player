@@ -54,6 +54,26 @@
   }
 }
 
+.plyr--youtube {
+  button.plyr__control--overlaid {
+    &,
+    &:hover,
+    &:focus {
+
+      width: 60px;
+      height: 70px;
+
+      background: url('resources/youtube-play.svg?inline') no-repeat transparent !important;
+      border-radius: 0 !important;
+
+      box-shadow: none !important;
+    }
+
+    svg {
+      display: none;
+    }
+  }
+}
 //Fix excess padding breaking play button
 @media (min-width: 480px) {
   .plyr--video .plyr__controls {
