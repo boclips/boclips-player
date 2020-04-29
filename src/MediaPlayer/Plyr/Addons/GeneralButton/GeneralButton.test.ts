@@ -36,8 +36,18 @@ describe('Feature Enabling', () => {
 
     expect(canBeEnabled).toBe(false);
   });
+  it('is not enabled when empty array is passed in', () => {
+    const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
+      controls: [],
+      addons: {
+        generalButtons: [],
+      },
+    });
 
-  it('it is enabled when turned on', () => {
+    expect(canBeEnabled).toBe(false);
+  });
+
+  it('is enabled when specified in options', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: [],
       addons: {
@@ -73,7 +83,6 @@ describe('options functionality', () => {
     plyr.elements.container = plyrContainer;
     // tslint:disable-next-line: no-unused-expression
     const child = document.createElement('div');
-    // const mockOnPlay = jest.fn();
 
     child.innerHTML = 'Share';
     // tslint:disable-next-line: no-unused-expression

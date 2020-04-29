@@ -1,4 +1,4 @@
-import { CreateOverlay } from './../SharedFeatures/SharedFeatures';
+import { EndOverlay } from './../SharedFeatures/SharedFeatures';
 import { AddonInterface } from '../Addons';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { EnrichedPlyr } from '../../../../types/plyr';
@@ -15,7 +15,11 @@ export class GeneralButton implements AddonInterface {
     _plyr: EnrichedPlyr,
     _playback: Playback,
     options: InterfaceOptions,
-  ) => !!options.addons.generalButtons && !options.controls.includes('restart');
+  ) =>
+    !!options.addons.generalButtons &&
+    !options.controls.includes('restart') &&
+    options.addons.generalButtons.length > 0 &&
+    options.addons.generalButtons.constructor === Array;
 
   public options: GeneralButtonOptions[] = [];
   public generalButtonsContainer: HTMLDivElement = null;
@@ -45,19 +49,12 @@ export class GeneralButton implements AddonInterface {
     if (this.destroyed) {
       return;
     }
-    if (
-      options.addons.generalButtons !== null &&
-      options.addons.generalButtons.constructor === Array
-    ) {
-      this.options = options.addons.generalButtons;
-    }
+    this.options = options.addons.generalButtons;
   };
 
   private setUp = () => {
-    if (this.options !== []) {
-      this.controlListners();
-      this.createButtonsContainer();
-    }
+    this.controlListners();
+    this.createButtonsContainer();
   };
   private controlListners = () => {
     this.plyr.on('play', this.destroyContainer);
@@ -67,10 +64,10 @@ export class GeneralButton implements AddonInterface {
   private createButtonsContainer = () => {
     this.generalButtonsContainer = document.createElement('div');
     this.generalButtonsContainer.id = 'general-buttons-container';
-    this.createButton();
+    this.createButtons();
   };
 
-  private createButton = () => {
+  private createButtons = () => {
     this.options.forEach(option => {
       const button = document.createElement('button');
       button.className = 'icons-container';
@@ -86,10 +83,7 @@ export class GeneralButton implements AddonInterface {
   };
 
   private createOverlay = () => {
-    CreateOverlay.containerExists(this.plyrContainer);
-    this.overlay = this.plyrContainer
-      .getElementsByTagName('button')
-      .namedItem('overlay');
+    this.overlay = EndOverlay.createIfNotExists(this.plyrContainer);
     this.appendElements();
   };
 

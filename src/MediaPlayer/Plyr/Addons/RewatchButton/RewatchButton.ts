@@ -2,7 +2,7 @@ import { AddonInterface } from '../Addons';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import './RewatchButton.less';
-import { CreateOverlay } from '../SharedFeatures/SharedFeatures';
+import { EndOverlay } from '../SharedFeatures/SharedFeatures';
 
 export class RewatchButton implements AddonInterface {
   public static canBeEnabled = (_, __, options: InterfaceOptions) =>
@@ -43,10 +43,7 @@ export class RewatchButton implements AddonInterface {
   };
 
   private createOverlay = () => {
-    CreateOverlay.containerExists(this.plyrContainer);
-    this.overlay = this.plyrContainer
-      .getElementsByTagName('button')
-      .namedItem('overlay');
+    this.overlay = EndOverlay.createIfNotExists(this.plyrContainer);
     this.createRewatchButton();
   };
 
