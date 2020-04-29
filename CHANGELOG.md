@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [2.9.1] - 2020-04-29
+
+### Added
+
+- New player option `playerType` to allow clients to request a youtube player by default
+
 ## [2.9.0] - 2020-04-27
 
 ### Changed
