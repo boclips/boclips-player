@@ -2,13 +2,16 @@ import { AddonInterface } from '../Addons';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import './RewatchButton.less';
+import { EndOverlay } from '../SharedFeatures/SharedFeatures';
 
 export class RewatchButton implements AddonInterface {
   public static canBeEnabled = (_, __, options: InterfaceOptions) =>
     !!options.addons.rewatchButton && !options.controls.includes('restart');
 
-  private overlayContainer: HTMLElement = null;
+  private overlay: HTMLElement = null;
   private destroyed: boolean = false;
+  public plyrContainer =
+    this.plyr && this.plyr.elements && this.plyr.elements.container;
 
   public constructor(private plyr: EnrichedPlyr) {
     this.addListeners();
@@ -39,21 +42,19 @@ export class RewatchButton implements AddonInterface {
     this.plyr.off('progress', this.destroyContainer);
   };
 
-  public createOverlay = () => {
-    this.overlayContainer = document.createElement('Button');
-    this.overlayContainer.id = 'replay-overlay';
+  private createOverlay = () => {
+    this.overlay = EndOverlay.createIfNotExists(this.plyrContainer);
+    this.createRewatchButton();
+  };
 
+  public createRewatchButton = () => {
     const rewatch = document.createElement('Button');
     rewatch.id = 'replay-overlay-button';
-    // const label = document.createElement('div');
-    // label.id = 'replay-overlay-label';
 
     rewatch.onclick = this.replayVideo;
     rewatch.innerHTML = 'Watch Again';
 
-    this.getPlyrContainer().append(this.overlayContainer);
-    this.overlayContainer.append(rewatch);
-    // rewatch.appendChild(label);
+    this.overlay.append(rewatch);
   };
 
   public replayVideo = () => {
@@ -65,19 +66,11 @@ export class RewatchButton implements AddonInterface {
   };
 
   public destroyContainer = () => {
-    if (this.overlayContainer !== null) {
-      this.overlayContainer.remove();
-      this.overlayContainer = null;
-
+    if (this.overlay !== null) {
+      this.overlay.remove();
+      this.overlay = null;
       this.removeListners();
     }
-  };
-
-  private getPlyrContainer = () => {
-    if (this.destroyed) {
-      return;
-    }
-    return this.plyr && this.plyr.elements && this.plyr.elements.container;
   };
 
   public destroy() {

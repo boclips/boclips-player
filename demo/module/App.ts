@@ -5,7 +5,27 @@ playerContainer.id = 'player-container';
 
 document.body.appendChild(playerContainer);
 
-const player = PlayerFactory.get(playerContainer);
+const player = PlayerFactory.get(playerContainer, {
+  interface: {
+    controls: [
+      'play-large',
+      'play',
+      'progress',
+      'current-time',
+      'mute',
+      'volume',
+      'captions',
+      'fullscreen',
+    ],
+    addons: {
+      seekPreview: true,
+      hoverPreview: false,
+      singlePlayback: true,
+      rewatchButton: true,
+      generalButtons: null,
+    },
+  },
+});
 
 player
   .loadVideo(
