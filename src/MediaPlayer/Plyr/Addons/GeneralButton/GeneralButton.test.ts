@@ -6,7 +6,7 @@ describe('Feature Enabling', () => {
   it('is not enabled when turned off', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: [],
-      addons: { generalButton: null },
+      addons: { generalButtons: null },
     });
 
     expect(canBeEnabled).toBe(false);
@@ -23,7 +23,7 @@ describe('Feature Enabling', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: ['restart'],
       addons: {
-        generalButton: [
+        generalButtons: [
           {
             child: '<h1>Test</h1>',
             onClick: () => {
@@ -41,7 +41,7 @@ describe('Feature Enabling', () => {
     const canBeEnabled = GeneralButton.canBeEnabled(null, null, {
       controls: [],
       addons: {
-        generalButton: [
+        generalButtons: [
           {
             child: '<h1>Test</h1>',
             onClick: () => {
@@ -59,6 +59,7 @@ describe('Feature Enabling', () => {
 describe('options functionality', () => {
   let plyr: MockedPlyr;
   let container: HTMLDivElement;
+  const mockOnPlay = jest.fn();
 
   beforeEach(() => {
     container = document.createElement('div') as any;
@@ -68,9 +69,12 @@ describe('options functionality', () => {
     container.appendChild(plyrContainer);
 
     plyr = new Plyr(plyrContainer) as MockedPlyr;
+
     plyr.elements.container = plyrContainer;
     // tslint:disable-next-line: no-unused-expression
     const child = document.createElement('div');
+    // const mockOnPlay = jest.fn();
+
     child.innerHTML = 'Share';
     // tslint:disable-next-line: no-unused-expression
     new GeneralButton(plyr, null, {
@@ -89,34 +93,40 @@ describe('options functionality', () => {
         hoverPreview: false,
         singlePlayback: true,
         rewatchButton: false,
-        generalButton: [
+        generalButtons: [
           {
             child,
             onClick: () => {
-              console.log('passed');
+              mockOnPlay();
             },
           },
         ],
       },
     });
   });
-  it('it shows generalbutton at the end of the video', () => {
+  it('shows generalbutton at the end of the video', () => {
     plyr.__callEventCallback('ended');
-
-    expect(container.innerHTML.includes('Share'));
+    const overlay = container
+      .getElementsByTagName('button')
+      .namedItem('overlay');
+    console.log(overlay.innerHTML);
+    expect(overlay.innerHTML.includes('Share')).toBeTruthy();
   });
   it('button onclick executes passed in function', () => {
     plyr.__callEventCallback('ended');
-
-    const mockOnPlay = jest.fn();
-    const button: HTMLButtonElement[] = Array.from(
+    const buttons: HTMLButtonElement[] = Array.from(
       container.getElementsByTagName('button'),
     );
+    const generalButtons = [];
 
-    button.forEach(elements => {
-      elements.click = mockOnPlay;
+    buttons.forEach(elements => {
+      if (elements.innerHTML.includes('icons-container')) {
+        generalButtons.push(elements);
+      }
+    });
+    buttons.forEach(elements => {
       elements.click();
     });
-    expect(mockOnPlay).toHaveBeenCalledTimes(button.length);
+    expect(mockOnPlay).toHaveBeenCalledTimes(generalButtons.length);
   });
 });

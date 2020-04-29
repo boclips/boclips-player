@@ -28,7 +28,7 @@ export interface InterfaceOptions {
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
     rewatchButton?: boolean;
-    generalButton?: GeneralButtonOptions[];
+    generalButtons?: GeneralButtonOptions[];
   };
   ratio?: '16:9' | '4:3';
 }
@@ -49,7 +49,7 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     hoverPreview: false,
     singlePlayback: true,
     rewatchButton: false,
-    generalButton: null,
+    generalButtons: null,
   },
   ratio: undefined,
 };
