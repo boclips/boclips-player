@@ -21,11 +21,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private playback: Playback = null;
 
   constructor(private readonly player: PrivatePlayer) {
-    if (this.getPlayerType() === 'YOUTUBE') {
-      this.createYoutubePlyr();
-    } else {
-      this.createStreamPlyr();
-    }
+    this.createStreamPlyr();
 
     window.addEventListener('beforeunload', this.handleBeforeUnload);
 
@@ -84,7 +80,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private createYoutubePlyr = (segmentStart?: number) => {
-    if (this.playback && !isYoutubePlayback(this.playback)) {
+    if (!isYoutubePlayback(this.playback)) {
       throw new Error('Unable to create YouTube Plyr for non-YouTube playback');
     }
 
@@ -93,18 +89,16 @@ export default class PlyrWrapper implements MediaPlayer {
     const media = document.createElement('div');
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('data-plyr-provider', 'youtube');
-    if (this.playback) {
-      media.setAttribute('data-plyr-embed-id', this.playback.id);
-      if (segmentStart) {
-        media.setAttribute(
-          'data-plyr-config',
-          JSON.stringify({
-            youtube: {
-              start: segmentStart,
-            },
-          }),
-        );
-      }
+    media.setAttribute('data-plyr-embed-id', this.playback.id);
+    if (segmentStart) {
+      media.setAttribute(
+        'data-plyr-config',
+        JSON.stringify({
+          youtube: {
+            start: segmentStart,
+          },
+        }),
+      );
     }
 
     this.player.getContainer().appendChild(media);
@@ -370,14 +364,6 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.destroy();
     }
 
-    let youtubeSpriteSettings = {};
-    if (media.getAttribute('data-plyr-provider') === 'youtube') {
-      youtubeSpriteSettings = {
-        loadSprite: false,
-        iconUrl: 'static/assets/youtube-sprite.svg',
-      };
-    }
-
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
@@ -408,7 +394,6 @@ export default class PlyrWrapper implements MediaPlayer {
         },
       },
       ratio: this.getOptions().ratio,
-      ...youtubeSpriteSettings,
     }) as EnrichedPlyr;
 
     this.installPlyrEventListeners();
@@ -434,8 +419,6 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private getOptions = () => this.player.getOptions().interface;
-
-  private getPlayerType = () => this.player.getOptions().playerType;
 
   public getVideoContainer = () => this.plyr.media;
 

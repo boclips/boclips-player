@@ -1,6 +1,5 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const srcPath = path.resolve(__dirname, '../src');
@@ -53,11 +52,5 @@ module.exports = {
       chunkFilename: '[id].css',
       filename: '[name].css',
     }),
-    new CopyPlugin([
-      {
-        from: './src/styles/youtube-sprite.svg',
-        to: 'static/assets',
-      }
-    ])
   ],
 };

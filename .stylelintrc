@@ -12,7 +12,6 @@
     ],
     "declaration-empty-line-before": null,
     "color-hex-length": "long",
-    "no-descending-specificity": null,
     "color-hex-case": "upper",
     "selector-pseudo-element-no-unknown": [
       true,

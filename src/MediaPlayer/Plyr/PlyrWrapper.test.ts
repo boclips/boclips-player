@@ -54,25 +54,12 @@ describe('Instantiation', () => {
   it('Plyr is configured according to the Player options', () => {
     mockPlayer = new BoclipsPlayer(container, {
       interface: { controls: ['play-large'] },
-      playerType: "YOUTUBE"
     });
 
     mediaPlayer = new PlyrWrapper(mockPlayer);
 
     const actualOptions = mocked(Plyr).mock.calls[1][1];
     expect(actualOptions.controls).toEqual(['play-large']);
-    expect(actualOptions.loadSprite).toEqual(false);
-    expect(actualOptions.iconUrl).toEqual('static/assets/youtube-sprite.svg');
-  });
-
-  it('youtube plyr is instantiated with custom sprite iconUrl', () => {
-    mediaPlayer = new PlyrWrapper(mockPlayer);
-    mediaPlayer.configureWithVideo(
-      VideoFactory.sample(PlaybackFactory.youtubeSample()),
-    );
-    const actualOptions = mocked(Plyr).mock.calls[2][1]
-    expect(actualOptions.loadSprite).toEqual(false);
-    expect(actualOptions.iconUrl).toEqual('static/assets/youtube-sprite.svg');
   });
 
   it('Constructs a Plyr given an element a video element within container', () => {

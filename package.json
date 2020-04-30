@@ -29,7 +29,6 @@
     "compile": "tsc -p tsconfig.all.json --noEmit",
     "demo:module": "./node_modules/.bin/webpack-dev-server --config demo/module/webpack.config.js",
     "demo:module-authorized": "./node_modules/.bin/webpack-dev-server --config demo/module-authorized/webpack.config.js",
-    "demo:module-youtube": "./node_modules/.bin/webpack-dev-server --config demo/module-youtube/webpack.config.js",
     "demo:static": "./node_modules/.bin/webpack-dev-server --config demo/static/webpack.config.js",
     "demo:static-several": "./node_modules/.bin/webpack-dev-server --config demo/static-several/webpack.config.js",
     "demo:unpkg": "./node_modules/.bin/webpack-dev-server --config demo/unpkg/webpack.config.js",
@@ -41,7 +40,6 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "axios": "^0.19.2",
-    "copy-webpack-plugin": "^5.1.1",
     "date-fns": "^2.10.0",
     "deepmerge": "^4.2.2",
     "hls.js": "^0.13.2",
