@@ -1,5 +1,6 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 
 const srcPath = path.resolve(__dirname, '../src');
@@ -49,8 +50,10 @@ module.exports = {
         exclude: /node_modules/,
         oneOf: [
           {
-            loader: ['file-loader', 'image-webpack-loader'],
-            resourceQuery: /inline/,
+            use: 'svg-inline-loader',
+          },
+          {
+            use: 'file-loader',
           },
         ],
       },
@@ -62,5 +65,11 @@ module.exports = {
       chunkFilename: '[id].css',
       filename: '[name].css',
     }),
+    new CopyPlugin([
+      {
+        from: './src/MediaPlayer/Plyr/resources/youtube-play.svg',
+        to: 'resources',
+      },
+    ]),
   ],
 };

@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.2] - 2020-04-30
+
+## Fix
+- Youtube play svg copied to `dist/`
+
 ## [3.0.1] - 2020-04-30
 
 ## No change
