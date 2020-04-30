@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.0] - 2020-04-30
+
+- Remove `playerType` and display the Youtube play icon without using it for Youtube videos
+
 ## [2.9.1] - 2020-04-29
 
 ### Added

@@ -44,6 +44,16 @@ module.exports = {
           },
         ],
       },
+      {
+        test: /.svg$/i,
+        exclude: /node_modules/,
+        oneOf: [
+          {
+            loader: ['file-loader', 'image-webpack-loader'],
+            resourceQuery: /inline/,
+          },
+        ],
+      },
     ],
   },
   plugins: [
