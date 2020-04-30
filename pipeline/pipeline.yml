@@ -75,15 +75,16 @@ jobs:
       password: ((npm.password))
       email: engineering@boclips.com
       path: dist
-  - put: github-release
-    params:
-      name: release/name
-      tag: release/name
-      body: release/notes
-      commitish: source/.git/ref
-  - put: version
-    params:
-      bump: patch
+  - in_parallel:
+    - put: github-release
+      params:
+        name: release/name
+        tag: release/name
+        body: release/notes
+        commitish: source/.git/ref
+    - put: version
+      params:
+        bump: patch
 
 resources:
 - name: source
