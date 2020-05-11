@@ -1,7 +1,7 @@
 import deepmerge from 'deepmerge';
 import isPlainObject from 'is-plain-object';
 import { addListener as addResizeListener } from 'resize-detector';
-import uuid from 'uuid/v1';
+import { v1 as uuidV1 } from 'uuid';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
@@ -39,7 +39,7 @@ export class BoclipsPlayer implements PrivatePlayer {
   private readonly errorHandler: ErrorHandler;
   private readonly boclipsClient: BoclipsApiClient;
   private video: Video;
-  private playerId: string = uuid();
+  private playerId: string = uuidV1();
 
   constructor(
     private readonly container: HTMLElement,
