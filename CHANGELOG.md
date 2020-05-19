@@ -7,19 +7,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [3.0.4] - 2020-05-19
+
+## Fix
+
+- Fix general buttons css to work in fullscreen.
+
 ## [3.0.3] - 2020-05-11
 
 ## Fix
+
 - We no longer deep require uuid/v1, as this has been deprecated in UUID package
 
 ## [3.0.2] - 2020-04-30
 
 ## Fix
+
 - Youtube play svg copied to `dist/`
 
 ## [3.0.1] - 2020-04-30
 
 ## No change
+
 - Fix release configuration
 
 ## [3.0.0] - 2020-04-30
@@ -39,6 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - YouTube videos now display the YouTube play icon
 
 ### Removed
+
 - The play icon next to the seekbar
 
 ## [2.8.2] - 2020-04-22
