@@ -9,6 +9,7 @@ export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
     destroy: jest.fn(),
     getCurrentTime: jest.fn(),
     getVideoContainer: jest.fn(),
+    onEnd: jest.fn(),
   }),
 );
 

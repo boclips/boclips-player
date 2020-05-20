@@ -15,6 +15,7 @@ import { HasClientDimensions } from '../../test-support/types';
 import { MediaPlayer } from '../MediaPlayer';
 import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
+import { MockedPlyr } from '../../../__mocks__/plyr';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
@@ -643,5 +644,18 @@ describe('Destruction', () => {
     beforeunload();
 
     expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledTimes(1);
+  });
+});
+describe('onEnd', () => {
+  it('calls the function passed into onEnd video ends', () => {
+    let plyr: MockedPlyr;
+    const plyrContainer = document.createElement('div') as any;
+    plyr = new Plyr(plyrContainer) as MockedPlyr;
+    const mockOnPlay = jest.fn();
+
+    mediaPlayer.onEnd(mockOnPlay());
+    plyr.__callEventCallback('ended');
+
+    expect(mockOnPlay).toHaveBeenCalledTimes(1);
   });
 });

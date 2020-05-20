@@ -13,6 +13,7 @@ export const BoclipsPlayer = jest
     const player = {
       destroy: jest.fn(),
       loadVideo: jest.fn(),
+      onEnd: jest.fn(),
       pause: jest.fn(),
       play: jest.fn(),
       getVideo: jest.fn().mockReturnValue(VideoFactory.sample()),

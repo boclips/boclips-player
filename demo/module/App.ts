@@ -22,7 +22,6 @@ const player = PlayerFactory.get(playerContainer, {
       hoverPreview: false,
       singlePlayback: true,
       rewatchButton: true,
-      generalButtons: null,
     },
   },
 });

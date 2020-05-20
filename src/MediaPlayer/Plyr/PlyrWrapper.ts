@@ -12,6 +12,7 @@ import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import { Addon, AddonInterface, Addons } from './Addons/Addons';
 import './PlyrWrapper.less';
+import { EndOverlay } from './Addons/SharedFeatures/SharedFeatures';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -319,6 +320,10 @@ export default class PlyrWrapper implements MediaPlayer {
 
   public pause = (): void => {
     this.plyr.pause();
+  };
+
+  public onEnd = (callback: (endOverlayId: string) => void) => {
+    this.plyr.on('ended', () => callback(EndOverlay.elementId));
   };
 
   public destroy = () => {
