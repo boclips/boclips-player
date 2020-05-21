@@ -20,6 +20,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private hasBeenDestroyed: boolean = false;
   private enabledAddons: AddonInterface[] = [];
   private playback: Playback = null;
+  private onEndCallback?: (endOverlayId: string) => void = null;
 
   constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
@@ -237,6 +238,10 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr.on('playing', forceShowCaption);
     this.plyr.on('captionsenabled', forceShowCaption);
     this.plyr.on('languagechange', forceShowCaption);
+
+    if (this.onEndCallback) {
+      this.plyr.on('ended', () => this.onEndCallback(EndOverlay.elementId));
+    }
   }
 
   public configureWithVideo = (
@@ -323,9 +328,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   public onEnd = (callback: (endOverlayId: string) => void): void => {
-    this.plyr.on('ended', () => {
-      callback(EndOverlay.elementId);
-    });
+    this.onEndCallback = callback;
   };
 
   public destroy = () => {
