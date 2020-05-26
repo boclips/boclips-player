@@ -242,7 +242,6 @@ export default class PlyrWrapper implements MediaPlayer {
     if (this.onEndCallback) {
       this.plyr.on('ended', () => {
         this.onEndCallback(EndOverlay.elementId);
-        EndOverlay.createIfNotExists(this.player.getContainer());
       });
     }
   }
@@ -330,11 +329,9 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr.pause();
   };
 
-  public onEnd = (callback: (endOverlayId: string) => void) => {
-    this.plyr.on('ended', () => {
-      callback(EndOverlay.elementId);
-      EndOverlay.createIfNotExists(this.player.getContainer());
-    });
+  public onEnd = (callback: (endOverlayId: string) => void): void => {
+    this.onEndCallback = callback;
+    EndOverlay.createIfNotExists(this.player.getContainer());
   };
 
   public destroy = () => {

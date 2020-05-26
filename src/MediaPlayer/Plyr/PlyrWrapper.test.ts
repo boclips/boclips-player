@@ -658,7 +658,7 @@ describe('onEnd', () => {
     plyr = new Plyr(plyrContainer) as MockedPlyr;
     plyr.elements.container = mockContainer;
   });
-  it('calls the function passed into onEnd video ends', () => {
+  it('calls the function passed into onEnd', () => {
     const mockOnPlay = jest.fn();
     mediaPlayer.onEnd(mockOnPlay());
     plyr.__callEventCallback('ended');

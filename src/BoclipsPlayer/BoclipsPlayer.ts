@@ -13,7 +13,6 @@ import { Video } from '../types/Video';
 import './BoclipsPlayer.less';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 import { Constants } from './Constants';
-import { EndOverlay } from '../MediaPlayer/Plyr/Addons/SharedFeatures/SharedFeatures';
 
 export interface Player {
   play: () => Promise<any>;
@@ -162,7 +161,6 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public onEnd = (callback: (overlayId: string) => void) => {
     this.mediaPlayer.onEnd(callback);
-    EndOverlay.createIfNotExists(this.getContainer());
   };
 
   public getContainer = () => this.container;
