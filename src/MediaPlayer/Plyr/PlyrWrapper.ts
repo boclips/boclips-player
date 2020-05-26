@@ -327,8 +327,11 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr.pause();
   };
 
-  public onEnd = (callback: (endOverlayId: string) => void): void => {
-    this.onEndCallback = callback;
+  public onEnd = (callback: (endOverlayId: string) => void) => {
+    this.plyr.on('ended', () => {
+      EndOverlay.createIfNotExists(this.player.getContainer());
+      callback(EndOverlay.elementId);
+    });
   };
 
   public destroy = () => {

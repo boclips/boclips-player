@@ -16,6 +16,7 @@ import { MediaPlayer } from '../MediaPlayer';
 import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
 import { MockedPlyr } from '../../../__mocks__/plyr';
+import eventually from '../../test-support/eventually';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
@@ -647,15 +648,28 @@ describe('Destruction', () => {
   });
 });
 describe('onEnd', () => {
-  it('calls the function passed into onEnd video ends', () => {
-    let plyr: MockedPlyr;
+  let plyr: MockedPlyr;
+  let mockContainer: HTMLDivElement;
+  beforeEach(() => {
     const plyrContainer = document.createElement('div') as any;
+    plyrContainer.__jsdomMockClientWidth = 700;
+    mockContainer = document.createElement('div') as any;
+    mockContainer.appendChild(plyrContainer);
     plyr = new Plyr(plyrContainer) as MockedPlyr;
+    plyr.elements.container = mockContainer;
+  });
+  it('calls the function passed into onEnd video ends', () => {
     const mockOnPlay = jest.fn();
-
     mediaPlayer.onEnd(mockOnPlay());
     plyr.__callEventCallback('ended');
-
     expect(mockOnPlay).toHaveBeenCalledTimes(1);
+  });
+  it('onEnd calls createIfNotExists to check if overlay exists', () => {
+    const mockOnPlay = jest.fn();
+    mediaPlayer.onEnd(mockOnPlay());
+    plyr.__callEventCallback('ended');
+    eventually(() => {
+      expect(mockContainer.innerHTML).toContain('overlay');
+    });
   });
 });
