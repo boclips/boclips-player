@@ -241,6 +241,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     if (this.onEndCallback) {
       this.plyr.on('ended', () => {
+        EndOverlay.createIfNotExists(this.player.getContainer());
         this.onEndCallback(EndOverlay.elementId);
       });
     }
@@ -330,7 +331,6 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   public onEnd = (callback: (endOverlayId: string) => void): void => {
-    EndOverlay.createIfNotExists(this.player.getContainer());
     this.onEndCallback = callback;
   };
 
