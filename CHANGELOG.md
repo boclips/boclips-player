@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [4.0.0] - 2020-05-29
+
+## Removed
+
+- Removed rewatch button.
+
 ## [3.0.4] - 2020-05-19
 
 ## Fix
