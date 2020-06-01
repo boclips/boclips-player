@@ -247,7 +247,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     if (this.onEndCallback) {
       this.plyr.on('ended', () => {
-        EndOverlay.createIfNotExists(this.player.getContainer());
+        EndOverlay.createIfNotExists(this.player.getContainer().firstChild);
         this.onEndCallback(EndOverlay.elementId);
       });
     }
