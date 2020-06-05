@@ -506,7 +506,7 @@ describe('Interaction events', () => {
   });
 });
 
-describe('UI Events', () => {
+describe('Fullscreen', () => {
   it('adds a --fullscreen class to the container on enterfullscreen', () => {
     expect(container.classList).not.toContain('plyr--fullscreen');
 
