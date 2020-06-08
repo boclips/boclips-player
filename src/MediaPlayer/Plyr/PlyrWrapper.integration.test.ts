@@ -2,12 +2,18 @@ import {
   BoclipsPlayer,
   PrivatePlayer,
 } from '../../BoclipsPlayer/BoclipsPlayer';
-
+import { MediaPlayer } from '../MediaPlayer';
+import PlyrWrapper from './PlyrWrapper';
+import {
+  PlaybackFactory,
+  VideoFactory,
+} from '../../test-support/TestFactories';
 jest.mock('../../Events/Analytics');
 jest.unmock('plyr');
 
 let container: HTMLElement = null;
 let player: PrivatePlayer;
+let mediaPlayer: MediaPlayer = null;
 
 describe('Emitting interaction events', () => {
   const testData = [
@@ -99,5 +105,25 @@ describe('Emitting interaction events', () => {
       'unmuted',
       {},
     );
+  });
+});
+
+describe('Render unmodified YouTube Player', () => {
+  it(`deactivating poster which prevents interaction with Youtube controls`, async () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+    player = new BoclipsPlayer(container, {
+      interface: { controls: ['mute'] },
+    });
+    mediaPlayer = new PlyrWrapper(player);
+    mediaPlayer.configureWithVideo(
+      VideoFactory.sample(PlaybackFactory.youtubeSample()),
+    );
+
+    expect(
+      // @ts-ignore
+      player.getContainer().getElementsByClassName('plyr__poster')[0].style
+        .display,
+    ).toEqual('none');
   });
 });

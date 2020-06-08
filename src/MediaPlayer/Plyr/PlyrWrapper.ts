@@ -137,7 +137,18 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.toggleControls(false);
     });
 
+    this.plyr.on('play', () => {
+      this.plyr.toggleControls(false);
+    });
+
     this.plyr.on('playing', event => {
+      if (this.playback !== undefined && isYoutubePlayback(this.playback)) {
+        const poster = this.player
+          .getContainer()
+          .querySelector('.plyr__poster') as HTMLDivElement;
+        if (poster) poster.style.display = 'none';
+      }
+
       this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
     });
 
@@ -149,7 +160,7 @@ export default class PlyrWrapper implements MediaPlayer {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
-    this.plyr.on('play', () => {
+    this.plyr.on('ended', () => {
       EndOverlay.destroyIfExists(this.player.getContainer().firstChild);
     });
 
@@ -287,7 +298,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
         this.plyr.on('playing', skipToStart);
         // Some browsers won't let you set the currentTime before the metadata
-        // has loaded, but it gives a slightly better experience on Chrome
+        // has loaded, but it gives a slightly better experience on Chrome\
         this.plyr.currentTime = segmentStart;
       }
 
@@ -388,7 +399,13 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
-      controls: this.getOptions().controls,
+      controls: isYoutubePlayback(this.playback)
+        ? ['play-large']
+        : this.getOptions().controls,
+      // @ts-ignore
+      youtube: isYoutubePlayback(this.playback)
+        ? { controls: 1 }
+        : { controls: 0 },
       duration: this.playback ? this.playback.duration : null,
       listeners: {
         fastForward: () => {
