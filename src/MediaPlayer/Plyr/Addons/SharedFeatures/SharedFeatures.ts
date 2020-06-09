@@ -1,25 +1,35 @@
 import './SharedFeatures.less';
+
 export class EndOverlay {
-  public static elementId: string = 'overlay';
+  public static overlayClassName: string = 'end-video-overlay';
 
   public static destroyIfExists = plyrContainer => {
-    const overlay = document.getElementById(EndOverlay.elementId);
-    if (overlay) {
-      plyrContainer.removeChild(overlay);
-    } else {
-      return;
-    }
+    let endOfVideoOverlay = null;
+    plyrContainer.className = 'plyr-container';
+
+    endOfVideoOverlay = document.querySelector(
+      '.' + plyrContainer.className + ' > .end-video-overlay',
+    );
+    console.log(endOfVideoOverlay);
+    plyrContainer.className = null;
+    if (endOfVideoOverlay) plyrContainer.removeChild(endOfVideoOverlay);
   };
 
   public static createIfNotExists = plyrContainer => {
-    let overlay = null;
-    if (document.getElementById(EndOverlay.elementId) !== null) {
-      overlay = document.getElementById(EndOverlay.elementId);
-    } else {
-      overlay = document.createElement('div');
-      overlay.id = EndOverlay.elementId;
+    let endOfVideoOverlay = null;
+    plyrContainer.className = 'plyr-container';
+
+    endOfVideoOverlay = document.querySelector(
+      '.' + plyrContainer.className + ' > .end-video-overlay',
+    );
+    plyrContainer.className = null;
+    if (endOfVideoOverlay) return endOfVideoOverlay;
+    else {
+      endOfVideoOverlay = document.createElement('div');
+      endOfVideoOverlay.className = EndOverlay.overlayClassName;
+
+      plyrContainer.appendChild(endOfVideoOverlay);
+      return endOfVideoOverlay;
     }
-    plyrContainer.appendChild(overlay);
-    return overlay;
   };
 }

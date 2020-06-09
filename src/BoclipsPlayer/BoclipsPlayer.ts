@@ -19,7 +19,7 @@ export interface Player {
   pause: () => void;
   loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
   destroy: () => void;
-  onEnd: (callback: (overlayId: string) => void) => void;
+  onEnd: (callback: (overlayClassName: string) => void) => void;
 }
 
 export interface PrivatePlayer extends Player {
@@ -159,7 +159,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     return this.mediaPlayer.destroy();
   };
 
-  public onEnd = (callback: (overlayId: string) => void) => {
+  public onEnd = (callback: (overlayClassName: string) => void) => {
     this.mediaPlayer.onEnd(callback);
   };
 

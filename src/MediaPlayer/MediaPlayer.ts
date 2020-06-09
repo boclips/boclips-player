@@ -21,5 +21,5 @@ export interface MediaPlayer {
   destroy: () => void;
   getVideoContainer: () => HTMLVideoElement | HTMLIFrameElement;
   getCurrentTime: () => number;
-  onEnd: (callback: (overlayId: string) => void) => void;
+  onEnd: (callback: (overlayClassName: string) => void) => void;
 }

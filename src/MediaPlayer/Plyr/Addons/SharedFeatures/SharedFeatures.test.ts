@@ -1,21 +1,54 @@
 import { EndOverlay } from './SharedFeatures';
 
-describe('Class creates or finds overlay and attaches to plyContainer', () => {
+describe('creating EndOfVideoOverlay', () => {
   let container: HTMLDivElement;
   beforeEach(() => {
     container = document.createElement('div') as any;
     const plyrContainer = document.createElement('div') as any;
     plyrContainer.__jsdomMockClientWidth = 700;
     container.appendChild(plyrContainer);
+    document.body.appendChild(container)
+
   });
+
   it('appends overlay to plyrContainer after EndOverlay is called', () => {
     EndOverlay.createIfNotExists(container);
-    expect(container.innerHTML.includes('overlay')).toBeTruthy();
+    expect(container.innerHTML.includes('end-video-overlay')).toBeTruthy();
   });
+
   it('finds exisiting overlay and appends to plyrContainer', () => {
-    document.body.innerHTML =
-      '<div>' + '  <button id="overlay">test</button>' + '</div>';
+    const endVideoOverlay = document.createElement('div');
+    endVideoOverlay.className = EndOverlay.overlayClassName;
+    endVideoOverlay.innerHTML = 'test';
+
+    container.appendChild(endVideoOverlay);
+
     EndOverlay.createIfNotExists(container);
     expect(container.innerHTML.includes('test')).toBeTruthy();
+  });
+});
+
+describe('removing endOfVideoOverlay', () => {
+  let container: HTMLDivElement;
+
+  beforeEach(() => {
+    container = document.createElement('div') as any;
+
+    const plyrContainer = document.createElement('div') as any;
+    plyrContainer.__jsdomMockClientWidth = 700;
+
+    const endVideoOverlay = document.createElement('div');
+    endVideoOverlay.className = EndOverlay.overlayClassName;
+
+    container.appendChild(endVideoOverlay);
+    container.appendChild(plyrContainer);
+    document.body.appendChild(container)
+  });
+
+  it('finds overlay and removes it from container', () => {
+    EndOverlay.destroyIfExists(container);
+    expect(
+      container.innerHTML.includes(EndOverlay.overlayClassName),
+    ).toBeFalsy();
   });
 });
