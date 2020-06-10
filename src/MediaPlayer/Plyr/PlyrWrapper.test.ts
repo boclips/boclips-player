@@ -36,7 +36,6 @@ const mockedPlyr = mocked(Plyr);
 function getLatestMockPlyrInstance() {
   return mockedPlyr.mock.instances[mockedPlyr.mock.instances.length - 1];
 }
-
 function getLatestMockPlyrConstructor() {
   return mockedPlyr.mock.calls[mockedPlyr.mock.calls.length - 1];
 }
@@ -648,11 +647,9 @@ describe('Destruction', () => {
     expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledTimes(1);
   });
 });
-
 describe('onEnd', () => {
   let plyr: MockedPlyr;
   let mockContainer: HTMLDivElement;
-
   beforeEach(() => {
     const plyrContainer = document.createElement('div') as any;
     plyrContainer.__jsdomMockClientWidth = 700;
@@ -661,20 +658,17 @@ describe('onEnd', () => {
     plyr = new Plyr(plyrContainer) as MockedPlyr;
     plyr.elements.container = mockContainer;
   });
-
   it('calls the function passed into onEnd', () => {
     const mockOnPlay = jest.fn();
     mediaPlayer.onEnd(mockOnPlay());
     plyr.__callEventCallback('ended');
     expect(mockOnPlay).toHaveBeenCalledTimes(1);
   });
-
   it('onEnd calls createIfNotExists to check if overlay exists', () => {
     const mockOnPlay = jest.fn();
     mediaPlayer.onEnd(mockOnPlay());
     plyr.__callEventCallback('ended');
     eventually(() => {
-      // TODO: This assertion does not work ...
       expect(mockContainer.innerHTML).toContain('overlay');
     });
   });

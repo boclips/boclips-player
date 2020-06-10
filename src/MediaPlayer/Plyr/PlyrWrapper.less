@@ -20,7 +20,7 @@
     }
   }
 
-  input[type='range'] {
+  input[type=range] {
     color: @cta-blue;
   }
 
@@ -31,7 +31,7 @@
   .plyr__control {
     .plyr__tab-focus,
     &:hover,
-    &[aria-expanded='true'] {
+    &[aria-expanded=true] {
       color: #FFFFFF;
 
       background: @mid-blue;
@@ -40,6 +40,10 @@
 
   .plyr--fullscreen & {
     font-size: 4.4vh;
+  }
+
+  .plyr__poster {
+    background-size: cover;
   }
 
   .plyr__video-wrapper {
@@ -55,12 +59,11 @@
     &,
     &:hover,
     &:focus {
+
       width: 60px;
       height: 70px;
 
-      background:
-        url('/resources/youtube-play.svg?inline') no-repeat
-        transparent !important;
+      background: url('/resources/youtube-play.svg?inline') no-repeat transparent !important;
       border-radius: 0 !important;
 
       box-shadow: none !important;
@@ -71,7 +74,6 @@
     }
   }
 }
-
 //Fix excess padding breaking play button
 @media (min-width: 480px) {
   .plyr--video .plyr__controls {

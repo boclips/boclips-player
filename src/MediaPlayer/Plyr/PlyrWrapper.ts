@@ -153,6 +153,49 @@ export default class PlyrWrapper implements MediaPlayer {
       EndOverlay.destroyIfExists(this.player.getContainer().firstChild);
     });
 
+    /**
+     * These events occur automatically without user intervention when the streams
+     * are loaded. It's currently not possible to determine whether a user caused
+     * this to happen
+     *
+     * @see https://github.com/sampotts/plyr/issues/1491
+     */
+    // this.plyr.on('captionsenabled', event => {
+    //   const plyr = event.detail.plyr;
+    //
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(plyr.currentTime, 'captionsEnabled', {
+    //       id: plyr.captions.currentTrackNode.id,
+    //       kind: plyr.captions.currentTrackNode.kind,
+    //       label: plyr.captions.currentTrackNode.label,
+    //       language: plyr.captions.currentTrackNode.language,
+    //     });
+    // });
+    //
+    // this.plyr.on('languagechange', event => {
+    //   const plyr = event.detail.plyr;
+    //
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(plyr.currentTime, 'captionsChanged', {
+    //       id: plyr.captions.currentTrackNode.id,
+    //       kind: plyr.captions.currentTrackNode.kind,
+    //       label: plyr.captions.currentTrackNode.label,
+    //       language: plyr.captions.currentTrackNode.language,
+    //     });
+    // });
+    //
+    // this.plyr.on('captionsdisabled', event => {
+    //   this.player
+    //     .getAnalytics()
+    //     .handleInteraction(
+    //       event.detail.plyr.currentTime,
+    //       'captionsDisabled',
+    //       {},
+    //     );
+    // });
+
     this.plyr.on('ratechange', event => {
       const plyr = event.detail.plyr;
 
@@ -230,30 +273,6 @@ export default class PlyrWrapper implements MediaPlayer {
       this.createStreamPlyr(segment && segment.start);
     } else {
       this.createYoutubePlyr(segment && segment.start);
-      this.plyr.on('playing', () => {
-        /**
-         * This is a workaround to show official youtube controls.
-         * The trick works by visually removing a CSS overlay which
-         * prevents events from being propagated.
-         *
-         * We found that this needs to happen at runtime, and cannot
-         * be achieved by setting CSS ahead of time. When doing so,
-         * the playback stops.
-         *
-         * With the current test setup it is not possible to access
-         * the underlying container. Therefore this behaviour cannot be tested.
-         *
-         * These may be good reasons to consider replacing plyr with vime-js,
-         * and apply a test first approach.
-         */
-        const poster = this.player
-          .getContainer()
-          .querySelector('.plyr__poster') as HTMLDivElement;
-
-        if (poster) {
-          poster.style.display = 'none';
-        }
-      });
     }
 
     if (segment) {
@@ -261,6 +280,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
       if (segmentStart) {
         const skipToStart = event => {
+          console.log('skipping to start', segmentStart);
           event.detail.plyr.currentTime = segmentStart;
           event.detail.plyr.off('playing', skipToStart);
         };
@@ -368,14 +388,7 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
       captions: { active: false, language: 'en', update: true },
-      /**
-       * This is necessary workaround to allow official youtube controls.
-       */
-      controls: isYoutubePlayback(this.playback)
-        ? ['play-large']
-        : this.getOptions().controls,
-      // @ts-ignore
-      youtube: isYoutubePlayback(this.playback) ? { controls: 1 } : undefined,
+      controls: this.getOptions().controls,
       duration: this.playback ? this.playback.duration : null,
       listeners: {
         fastForward: () => {
