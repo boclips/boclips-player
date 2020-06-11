@@ -7,13 +7,22 @@ describe('creating EndOfVideoOverlay', () => {
     const plyrContainer = document.createElement('div') as any;
     plyrContainer.__jsdomMockClientWidth = 700;
     container.appendChild(plyrContainer);
-    document.body.appendChild(container)
-
+    document.body.appendChild(container);
   });
 
   it('appends overlay to plyrContainer after EndOverlay is called', () => {
     EndOverlay.createIfNotExists(container);
-    expect(container.innerHTML.includes('end-video-overlay')).toBeTruthy();
+    expect(
+      container.innerHTML.includes(EndOverlay.overlayClassName),
+    ).toBeTruthy();
+  });
+
+  it('returned container contains the overlay', () => {
+    const retrievedOverlay = EndOverlay.createIfNotExists(container);
+
+    expect(
+      retrievedOverlay.className.includes(EndOverlay.overlayClassName),
+    ).toBeTruthy();
   });
 
   it('finds exisiting overlay and appends to plyrContainer', () => {
@@ -42,7 +51,7 @@ describe('removing endOfVideoOverlay', () => {
 
     container.appendChild(endVideoOverlay);
     container.appendChild(plyrContainer);
-    document.body.appendChild(container)
+    document.body.appendChild(container);
   });
 
   it('finds overlay and removes it from container', () => {

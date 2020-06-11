@@ -3,33 +3,35 @@ import './SharedFeatures.less';
 export class EndOverlay {
   public static overlayClassName: string = 'end-video-overlay';
 
-  public static destroyIfExists = plyrContainer => {
-    let endOfVideoOverlay = null;
-    plyrContainer.className = 'plyr-container';
+  public static destroyIfExists = (plyrContainer?: HTMLElement) => {
+    if (plyrContainer == null) {
+      return;
+    }
 
-    endOfVideoOverlay = document.querySelector(
-      '.' + plyrContainer.className + ' > .end-video-overlay',
+    const endOfVideoOverlay = plyrContainer.querySelector(
+      `.${EndOverlay.overlayClassName}`,
     );
-    console.log(endOfVideoOverlay);
-    plyrContainer.className = null;
-    if (endOfVideoOverlay) plyrContainer.removeChild(endOfVideoOverlay);
+
+    if (endOfVideoOverlay) {
+      plyrContainer.removeChild(endOfVideoOverlay);
+    }
   };
 
-  public static createIfNotExists = plyrContainer => {
-    let endOfVideoOverlay = null;
-    plyrContainer.className = 'plyr-container';
-
-    endOfVideoOverlay = document.querySelector(
-      '.' + plyrContainer.className + ' > .end-video-overlay',
+  public static createIfNotExists = (
+    plyrContainer?: HTMLElement,
+  ): HTMLDivElement => {
+    const endOfVideoOverlay = plyrContainer.querySelector<HTMLDivElement>(
+      `.${EndOverlay.overlayClassName}`,
     );
-    plyrContainer.className = null;
-    if (endOfVideoOverlay) return endOfVideoOverlay;
-    else {
-      endOfVideoOverlay = document.createElement('div');
-      endOfVideoOverlay.className = EndOverlay.overlayClassName;
 
-      plyrContainer.appendChild(endOfVideoOverlay);
+    if (endOfVideoOverlay) {
       return endOfVideoOverlay;
+    } else {
+      const newEndOfVideoOverlay = document.createElement('div');
+      newEndOfVideoOverlay.className = EndOverlay.overlayClassName;
+
+      plyrContainer.appendChild(newEndOfVideoOverlay);
+      return newEndOfVideoOverlay;
     }
   };
 }

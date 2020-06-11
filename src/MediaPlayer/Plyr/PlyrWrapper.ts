@@ -11,8 +11,8 @@ import { EnrichedPlyr } from '../../types/plyr';
 import { Video } from '../../types/Video';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import { Addon, AddonInterface, Addons } from './Addons/Addons';
-import './PlyrWrapper.less';
 import { EndOverlay } from './Addons/SharedFeatures/SharedFeatures';
+import './PlyrWrapper.less';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -20,7 +20,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private hasBeenDestroyed: boolean = false;
   private enabledAddons: AddonInterface[] = [];
   private playback: Playback = null;
-  private onEndCallback?: (overlayClassName: string) => void = null;
+  private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
 
   constructor(private readonly player: PrivatePlayer) {
     this.createStreamPlyr();
@@ -141,14 +141,14 @@ export default class PlyrWrapper implements MediaPlayer {
       this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
     });
     this.plyr.on('progress', () => {
-      EndOverlay.destroyIfExists(this.player.getContainer().firstChild);
+      EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
     this.plyr.on('pause', event => {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
     this.plyr.on('play', () => {
-      EndOverlay.destroyIfExists(this.player.getContainer().firstChild);
+      EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
     /**
@@ -247,8 +247,11 @@ export default class PlyrWrapper implements MediaPlayer {
 
     if (this.onEndCallback) {
       this.plyr.on('ended', () => {
-        EndOverlay.createIfNotExists(this.player.getContainer().firstChild);
-        this.onEndCallback(EndOverlay.overlayClassName);
+        const endOverlay = EndOverlay.createIfNotExists(
+          this.getPlyrDivContainer(),
+        );
+
+        this.onEndCallback(endOverlay);
       });
     }
   }
@@ -336,7 +339,7 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr.pause();
   };
 
-  public onEnd = (callback: (overlayClassName: string) => void): void => {
+  public onEnd = (callback: (endOverlay: HTMLDivElement) => void): void => {
     this.onEndCallback = callback;
   };
 
@@ -444,4 +447,8 @@ export default class PlyrWrapper implements MediaPlayer {
   public getCurrentTime = () => this.plyr.currentTime;
 
   public getEnabledAddons = () => this.enabledAddons;
+
+  private getPlyrDivContainer(): HTMLElement {
+    return this.player.getContainer().querySelector('.plyr');
+  }
 }
