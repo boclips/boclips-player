@@ -15,9 +15,6 @@ type Controls =
   | 'volume'
   | 'captions'
   | 'settings'
-  | 'pip'
-  | 'airplay'
-  | 'download'
   | 'fullscreen';
 
 export interface InterfaceOptions {
