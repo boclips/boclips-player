@@ -18,6 +18,9 @@ module.exports = {
     libraryTarget: 'umd',
   },
   resolve: {
+    alias: {
+      src: srcPath,
+    },
     extensions: ['.ts', '.tsx', '.js'],
   },
   module: {

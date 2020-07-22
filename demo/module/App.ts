@@ -27,7 +27,7 @@ const player = PlayerFactory.get(playerContainer, {
 
 player
   .loadVideo(
-    'https://api.staging-boclips.com/v1/videos/5c542ab85438cdbcb56ddceb',
+    'https://api.staging-boclips.com/v1/videos/5c7d04a9c4347d45194e098a',
   )
   .then(() => {
     return player.play();
