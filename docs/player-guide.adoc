@@ -228,13 +228,13 @@ for the user at the time that the player calls to the API. This is important as 
 responsibility to ensure that the token that is returned by `options.api.tokenFactory` is a valid token --
 failure to do so may result in a poor experience for the user.
 
-An example tokenFactory, using `boclips-js-security@2.0.1`:
+An example tokenFactory, using `boclips-js-security@3.2.2`:
 ```typescript
-import { authenticate } from 'boclips-js-security';
-import { isAuthenticated } from 'boclips-js-security/dist/src/authenticate';
-import getGlobalKeycloak from 'boclips-js-security/dist/src/helpers/getGlobalKeycloak';
 
-authenticate({
+import BoclipsSecurity from 'boclips-js-security';
+import { PlayerFactory } from '../../src/index';
+
+const boclipsSecurity = BoclipsSecurity.createInstance({
   onLogin: () => {
     console.log('Successfully authenticated');
     renderPlayer();
@@ -245,27 +245,12 @@ authenticate({
   authEndpoint: 'https://login.staging-boclips.com/auth',
 });
 
-function tokenFactory() {
-  return new Promise<string>(resolve => {
-    return getGlobalKeycloak()
-      .updateToken(5)
-      .success(() => {
-        if (isAuthenticated()) {
-          resolve(getGlobalKeycloak().token);
-        } else {
-          throw new Error('Oh no - not authenticated!');
-        }
-      })
-      .error(() => {
-        throw new Error('Fatal authentication error occurred.');
-      });
-  });
-
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory },
+    api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
   });
 };
+
 ```
 
 [WARNING]

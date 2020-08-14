@@ -68,11 +68,13 @@ module.exports = {
       chunkFilename: '[id].css',
       filename: '[name].css',
     }),
-    new CopyPlugin([
-      {
-        from: './src/MediaPlayer/Plyr/resources/youtube-play.svg',
-        to: 'resources',
-      },
-    ]),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: './src/MediaPlayer/Plyr/resources/youtube-play.svg',
+          to: 'resources',
+        },
+      ],
+    }),
   ],
 };

@@ -1,6 +1,5 @@
-import { authenticate } from 'boclips-js-security';
-import { isAuthenticated } from 'boclips-js-security/dist/src/authenticate';
-import getGlobalKeycloak from 'boclips-js-security/dist/src/helpers/getGlobalKeycloak';
+
+import BoclipsSecurity from 'boclips-js-security';
 import { PlayerFactory } from '../../src/index';
 
 const playerContainer = document.createElement('div');
@@ -8,7 +7,7 @@ playerContainer.id = 'player-container';
 
 document.body.appendChild(playerContainer);
 
-authenticate({
+const boclipsSecurity = BoclipsSecurity.createInstance({
   onLogin: () => {
     console.log('Successfully authenticated');
     renderPlayer();
@@ -19,26 +18,9 @@ authenticate({
   authEndpoint: 'https://login.staging-boclips.com/auth',
 });
 
-function tokenFactory() {
-  return new Promise<string>(resolve => {
-    return getGlobalKeycloak()
-      .updateToken(5)
-      .success(() => {
-        if (isAuthenticated()) {
-          resolve(getGlobalKeycloak().token);
-        } else {
-          throw new Error('Oh no - not authenticated!');
-        }
-      })
-      .error(() => {
-        throw new Error('Fatal authentication error occurred.');
-      });
-  });
-}
-
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory },
+    api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
   });
 
   player
