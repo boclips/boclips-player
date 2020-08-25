@@ -47,7 +47,7 @@ When this library is loaded via a script tag on a web page it exposes the `Playe
 
 You can instantiate a Player by providing a HTML container, this will encapsulate the video player. The `Player` API allows you to load videos programmatically.
 
-You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide/index.html#resources-video-access[Video Access] for more information.
+You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
 
 [source,html]
 ----
@@ -60,36 +60,21 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
 <body>
 <div id="container"></div>
 <script type="text/javascript">
+    const tokenFactory = ()=> {
+        return fetch('your-service.com/token')
+        .then(response => response.json())
+        .then(data => data.token);
+        };
+
     const container = document.querySelector('#container');
-    const player = Boclips.PlayerFactory.get(container);
+    const player = Boclips.PlayerFactory.get(container, {
+    api: { tokenFactory },
+  });
     player.loadVideo('https://path.to.our/video/endpoint/1');
 </script>
 </body>
 </html>
-----
 
-==== Data Driven
-
-You may also instantiate multiple players on a single page using the `data-boclips-player-container` attribute on the container elements.
-
-You must add a `data-boplayer-video-uri` attribute to point to the video URI endpoint. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
-
-[source,html]
-----
-<html>
-<head>
-    <title>Plain Demo</title>
-    <script src="https://unpkg.com/boclips-player/dist/boclips-player.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boclips-player/dist/boclips-player.css" type="text/css"/>
-</head>
-<body>
-    <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/1"></div>
-    <div data-boclips-player-container data-boplayer-video-uri="https://path.to.our/video/endpoint/2"></div>
-    <script>
-      Boclips.PlayerFactory.scan();
-    </script>
-</body>
-</html>
 ----
 
 [[module-import]]
@@ -104,10 +89,6 @@ interface PlayerFactory {
         container: HTMLElement | string,
         options: Partial<PlayerOptions> = {}
     ) => Player;
-    getSeveral: (
-        containers: Array<HTMLElement | string> | string,
-    ) => Player[];
-    scan: () => Player[];
 }
 
 interface Player {
@@ -126,6 +107,38 @@ interface PlayerOptions {
     interface: Partial<InterfaceOptions>;
 }
 ----
+[source,typescript]
+----
+import { PlayerFactory } from '../../src/index';
+
+const tokenFactory = (): Promise<string> => {
+    return fetch('your-service.com/token')
+        .then(response => response.json())
+        .then(data => data.token);
+    };
+
+function renderPlayer() {
+    const player = PlayerFactory.get(playerContainer, {
+        api: { tokenFactory },
+    });
+
+    player.loadVideo('https://path.to.our/video/endpoint/1')
+};
+----
+
+[[authentication]]
+=== Authentication
+
+The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
+
+The player takes a token factory which is responsible for generating a valid user token. We recommend the token factory sends a request to your backend service, that then handles getting a token from boclips.
+
+
+[WARNING]
+====
+`options.api.tokenFactory`  is important as tokens do expire. It is your
+responsibility to ensure that the token that is returned by `options.api.tokenFactory` is a valid token -- failure to do so may result in a poor experience for the user.
+====
 
 === Player Options
 
@@ -200,11 +213,11 @@ type SinglePlaybackOptions = boolean;
 interface ApiOptions {
     /**
      * This callback should return a Promise which resolves a string to be used as the users authentication token.
-     * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#overview-authentication
+     * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
      *
      * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
      */
-    tokenFactory?: () => Promise<string>;
+    tokenFactory: () => Promise<string>;
 }
 ----
 
@@ -217,47 +230,6 @@ interface AnalyticsOptions {
     handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
 }
 ----
-
-[[authentication]]
-== Authentication
-
-The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
-
-The Player allows the users token to be passed in as a `Promise<string>` in order to generate a valid token
-for the user at the time that the player calls to the API. This is important as tokens do expire, it is your
-responsibility to ensure that the token that is returned by `options.api.tokenFactory` is a valid token --
-failure to do so may result in a poor experience for the user.
-
-An example tokenFactory, using `boclips-js-security@3.2.2`:
-```typescript
-
-import BoclipsSecurity from 'boclips-js-security';
-import { PlayerFactory } from '../../src/index';
-
-const boclipsSecurity = BoclipsSecurity.createInstance({
-  onLogin: () => {
-    console.log('Successfully authenticated');
-    renderPlayer();
-  },
-  realm: 'boclips',
-  clientId: 'teachers',
-  mode: 'login-required',
-  authEndpoint: 'https://login.staging-boclips.com/auth',
-});
-
-function renderPlayer() {
-  const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
-  });
-};
-
-```
-
-[WARNING]
-====
-`options.api.tokenFactory` is currently optional, however in a future release it will become mandatory.
-====
-
 
 [[analytics]]
 == Analytics

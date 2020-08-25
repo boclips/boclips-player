@@ -18,9 +18,15 @@ const boclipsSecurity = BoclipsSecurity.createInstance({
   authEndpoint: 'https://login.staging-boclips.com/auth',
 });
 
+const tokenFactory = (): Promise<string> => {
+  return fetch('your-service.com/token')
+    .then(response => response.json())
+    .then(data => data.token);
+};
+
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
+    api: { tokenFactory },
   });
 
   player
