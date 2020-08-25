@@ -47,7 +47,7 @@ When this library is loaded via a script tag on a web page it exposes the `Playe
 
 You can instantiate a Player by providing a HTML container, this will encapsulate the video player. The `Player` API allows you to load videos programmatically.
 
-You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
+You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide/index.html#resources-video-access[Video Access] for more information.
 
 [source,html]
 ----
