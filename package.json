@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@types/chai": "^4.2.10",
-    "@types/jest": "^25.1.4",
+    "@types/jest": "^26.0.14",
     "audit-ci": "^3.1.1",
     "axios-logger": "^2.3.1",
     "axios-mock-adapter": "^1.17.0",
