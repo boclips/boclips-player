@@ -271,5 +271,3 @@ All analytics data should be anonymised.
 BSD 3-Clause "New" or "Revised" License
 
 Copyright (c) 2019, Knowledgemotion Ltd All rights reserved.
-
-this is test change
