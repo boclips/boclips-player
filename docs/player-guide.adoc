@@ -206,6 +206,25 @@ interface HoverPreviewOptions {
 type SinglePlaybackOptions = boolean;
 ----
 
+==== Playback Options
+[source,typescript]
+----
+interface PlaybackSegment {
+  /**
+   * The number of seconds into the video that the segment starts
+   */
+  start?: number;
+
+  /**
+   * The number of seconds into the video that the segment ends
+   */
+  end?: number;
+}
+----
+
+The PlaybackSegment interface is a wrapper for two params specifying when a video should start and end, and can be provided as the second argument
+when calling loadVideo. This determines the video's start and end time but does not prevent users from manually selecting other segments of the video.
+
 ==== Boclips API Options
 
 [source,typescript]
