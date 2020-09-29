@@ -225,6 +225,12 @@ interface PlaybackSegment {
 The PlaybackSegment interface is a wrapper for two params specifying when a video should start and end, and can be provided as the second argument
 when calling loadVideo. This determines the video's start and end time but does not prevent users from manually selecting other segments of the video.
 
+`start` defines when the video begins in seconds. The value must be positive.
+Giving it a negative value results with the player displaying the spinner and no video.
+
+`end` defines when the video stops. Giving is a negative value doesn't affect the behaviour of the player.
+It needs to be greater than the value for `start` field to restrict the video length.
+
 ==== Boclips API Options
 
 [source,typescript]
