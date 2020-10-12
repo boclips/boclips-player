@@ -46,7 +46,7 @@
     "is-plain-object": "^3.0.0",
     "iso8601-duration": "^1.2.0",
     "normalize.css": "^8.0.1",
-    "plyr": "^3.5.10",
+    "plyr": "^3.6.2",
     "resize-detector": "^0.2.0",
     "urijs": "^1.19.2",
     "uuid": "^7.0.2"
