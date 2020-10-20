@@ -130,6 +130,24 @@ describe('Creating a playback event', () => {
     });
   });
 
+  it('metadata can be a function producing a value', () => {
+    const metadata = {
+      query: () => 'test',
+      simple: 'hello',
+    };
+
+    return boclipsClient.emitPlaybackEvent(15, 30, metadata).then(() => {
+      const requests = MockFetchVerify.getHistory().post;
+      expect(requests).toHaveLength(1);
+
+      const request = requests[0];
+      expect(JSON.parse(request.data)).toMatchObject({
+        query: 'test',
+        simple: 'hello',
+      });
+    });
+  });
+
   it('does not allow overriding of properties via metadata', () => {
     const metadata = {
       segmentStartSeconds: 100000000,
