@@ -40,7 +40,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     }
 
     const event: PlaybackEvent = {
-      ...metadata,
+      ...this.getCurrentMetadata(metadata),
       videoId: video.id,
       videoDurationSeconds: video.playback.duration,
       segmentStartSeconds,
@@ -90,6 +90,16 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
         console.error(error);
       });
   };
+
+  private getCurrentMetadata = (metadata: { [key: string]: any } = {}) =>
+    Object.entries(metadata)
+      .map(([key, value]) =>
+        typeof value === 'function' ? [key, value()] : [key, value],
+      )
+      .reduce(
+        (accumulator, [key, value]) => ({ ...accumulator, [key]: value }),
+        {},
+      );
 
   private buildHeaders = async () => {
     const headers: { Authorization?: string; 'Boclips-User-Id'?: string } = {};
