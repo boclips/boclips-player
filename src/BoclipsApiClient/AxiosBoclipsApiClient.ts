@@ -102,7 +102,11 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
       );
 
   private buildHeaders = async () => {
-    const headers: { Authorization?: string; 'Boclips-User-Id'?: string } = {};
+    const headers: {
+      Authorization?: string;
+      'Boclips-User-Id'?: string;
+      'Boclips-Referer'?: string;
+    } = {};
 
     if (this.getOptions().tokenFactory) {
       const token = await this.getOptions()
@@ -135,6 +139,8 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
         headers['Boclips-User-Id'] = userId;
       }
     }
+
+    headers['Boclips-Referer'] = window.location.href;
 
     return headers;
   };
