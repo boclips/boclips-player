@@ -52,6 +52,7 @@ export default class PlyrWrapper implements MediaPlayer {
         'poster',
         this.playback.links.thumbnail.getTemplatedLink({
           thumbnailWidth: this.player.getContainer().clientWidth,
+          thumbnailHeight: this.player.getContainer().clientHeight,
         }),
       );
     }
