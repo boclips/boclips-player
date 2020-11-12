@@ -42,9 +42,6 @@ module.exports = {
           'css-loader',
           {
             loader: 'less-loader',
-            options: {
-              javascriptEnabled: true,
-            },
           },
         ],
       },
