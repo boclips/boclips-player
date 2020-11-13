@@ -40,7 +40,7 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "axios": "^0.19.2",
-    "date-fns": "^2.10.0",
+    "date-fns": "^2.16.1",
     "deepmerge": "^4.2.2",
     "hls.js": "^0.13.2",
     "is-plain-object": "^3.0.0",
