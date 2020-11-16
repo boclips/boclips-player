@@ -1,4 +1,4 @@
-import { format } from 'date-fns';
+import { formatDuration } from './../../../../utils/durationFormatter';
 import { Playback } from '../../../../types/Playback';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import { getBoundedValue, withPx } from '../../../../utils';
@@ -239,12 +239,7 @@ export class SeekPreview implements AddonInterface {
   private updateTimeLabel = (seconds: number) => {
     const label = this.container.querySelector('.seek-thumbnail__time');
 
-    let pattern = 'm:ss';
-    if (seconds >= 60 * 60) {
-      pattern = 'h:mm:ss';
-    }
-
-    label.textContent = format(seconds * 1000, pattern);
+    label.textContent = formatDuration(Math.ceil(seconds));
   };
 
   private getPlyrProgressBar = () =>

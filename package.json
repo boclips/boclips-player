@@ -24,6 +24,7 @@
     "lib"
   ],
   "scripts": {
+    "analyse": "webpack --config webpack-config/webpack.analyse.js",
     "audit": "audit-ci -m",
     "build": "./scripts/build.sh",
     "compile": "tsc -p tsconfig.all.json --noEmit",
@@ -40,7 +41,6 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "axios": "^0.19.2",
-    "date-fns": "^2.10.0",
     "deepmerge": "^4.2.2",
     "hls.js": "^0.13.2",
     "is-plain-object": "^3.0.0",
@@ -49,7 +49,8 @@
     "plyr": "^3.5.10",
     "resize-detector": "^0.2.0",
     "urijs": "^1.19.2",
-    "uuid": "^7.0.2"
+    "uuid": "^7.0.2",
+    "webpack-bundle-analyzer": "^4.1.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.10",
