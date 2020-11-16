@@ -40,6 +40,7 @@
   },
   "typings": "lib/index.d.ts",
   "dependencies": {
+    "@types/url-template": "^2.0.28",
     "axios": "^0.19.2",
     "deepmerge": "^4.2.2",
     "hls.js": "^0.13.2",
@@ -48,7 +49,7 @@
     "normalize.css": "^8.0.1",
     "plyr": "^3.5.10",
     "resize-detector": "^0.2.0",
-    "urijs": "^1.19.2",
+    "url-template": "^2.0.8",
     "uuid": "^7.0.2",
     "webpack-bundle-analyzer": "^4.1.0"
   },

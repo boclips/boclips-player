@@ -1,5 +1,4 @@
-import URI from 'urijs';
-import 'urijs/src/URITemplate';
+import URLTemplate from 'url-template';
 
 export class Link {
   private link: RawLink;
@@ -15,7 +14,7 @@ export class Link {
   public getTemplatedLink(paramKeysValues: {
     [paramName: string]: any;
   }): string {
-    return URI.expand(this.link.href, paramKeysValues).href();
+    return URLTemplate.parse(this.link.href).expand(paramKeysValues);
   }
 
   public isTemplated(): boolean {
