@@ -21,13 +21,14 @@ const player = PlayerFactory.get(playerContainer, {
       seekPreview: true,
       hoverPreview: false,
       singlePlayback: true,
+      videoLengthPreview:true,
     },
   },
 });
 
 player
   .loadVideo(
-    'https://api.staging-boclips.com/v1/videos/5c7d04a9c4347d45194e098a',
+    'https://api.staging-boclips.com/v1/videos/5df9250eff99916ded943b0e',
   )
   .then(() => {
     return player.play();
