@@ -1,4 +1,4 @@
-import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { VideoFactory } from '../test-support/TestFactories';

@@ -1,5 +1,5 @@
 import { addListener } from 'resize-detector';
-import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { mocked } from 'ts-jest/utils';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';

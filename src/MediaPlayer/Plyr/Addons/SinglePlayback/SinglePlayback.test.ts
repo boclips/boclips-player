@@ -1,5 +1,5 @@
 import Plyr from 'plyr';
-import { MaybeMocked } from 'ts-jest/dist/util/testing';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
 import { mocked } from 'ts-jest/utils';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { EventBus } from '../../../../Events/EventBus';
