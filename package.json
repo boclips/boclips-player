@@ -48,7 +48,7 @@
     "iso8601-duration": "^1.2.0",
     "normalize.css": "^8.0.1",
     "plyr": "^3.6.3",
-    "resize-detector": "^0.2.2",
+    "resize-detector": "0.2.0",
     "url-template": "^2.0.8",
     "uuid": "^8.3.1",
     "webpack-bundle-analyzer": "^4.2.0"
