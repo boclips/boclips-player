@@ -51,7 +51,7 @@
     "resize-detector": "^0.2.0",
     "url-template": "^2.0.8",
     "uuid": "^7.0.2",
-    "webpack-bundle-analyzer": "^4.1.0"
+    "webpack-bundle-analyzer": "^4.2.0"
   },
   "devDependencies": {
     "@types/chai": "^4.2.10",
