@@ -1,5 +1,5 @@
 import deepmerge from 'deepmerge';
-import isPlainObject from 'is-plain-object';
+import { isPlainObject } from 'is-plain-object';
 import { addListener as addResizeListener } from 'resize-detector';
 import { v1 as uuidV1 } from 'uuid';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
