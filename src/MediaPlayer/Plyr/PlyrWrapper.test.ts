@@ -429,68 +429,6 @@ describe('Interaction events', () => {
     );
   });
 
-  it.skip('Captions are turned on', () => {
-    mockPlyr.currentTime = 124;
-    mockPlyr.captions = {
-      currentTrackNode: {
-        kind: 'Captions',
-        label: 'English',
-        language: 'en',
-        id: '',
-      },
-    };
-
-    mockPlyr.__callEventCallback('captionsenabled');
-
-    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-      124,
-      'captionsEnabled',
-      {
-        kind: 'Captions',
-        label: 'English',
-        language: 'en',
-        id: '',
-      },
-    );
-  });
-
-  it.skip('Captions change language', () => {
-    mockPlyr.currentTime = 124;
-    mockPlyr.captions = {
-      currentTrackNode: {
-        kind: 'Captions',
-        label: 'Dutch',
-        language: 'nl',
-        id: '123',
-      },
-    };
-
-    mockPlyr.__callEventCallback('languagechange');
-
-    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-      125,
-      'captionsChanged',
-      {
-        kind: 'Captions',
-        label: 'Dutch',
-        language: 'nl',
-        id: '123',
-      },
-    );
-  });
-
-  it.skip('Captions are turned off', () => {
-    mockPlyr.currentTime = 125;
-
-    mockPlyr.__callEventCallback('captionsdisabled');
-
-    expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-      125,
-      'captionsDisabled',
-      {},
-    );
-  });
-
   it('Speed of the playback changes', () => {
     mockPlyr.currentTime = 125;
     mockPlyr.speed = 1.25;
