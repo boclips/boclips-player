@@ -66,7 +66,7 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   };
 
-  private initialiseStreamingTechnique = (segmentStart?: number) => {
+  private initialiseStreamingTechnique = async (segmentStart?: number) => {
     this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
 
     if (!this.streamingTechnique || !isStreamPlayback(this.playback)) {
@@ -75,7 +75,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.streamingTechnique.initialise(this.playback, segmentStart);
 
-    this.plyr.on('play', event => {
+    this.plyr.on('play', (event) => {
       const plyr = event.detail.plyr;
 
       this.streamingTechnique.startLoad(plyr.currentTime);
@@ -110,7 +110,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private installPlyrEventListeners() {
-    this.plyr.on('enterfullscreen', event => {
+    this.plyr.on('enterfullscreen', (event) => {
       this.handleEnterFullscreen();
 
       this.player
@@ -122,7 +122,7 @@ export default class PlyrWrapper implements MediaPlayer {
         );
     });
 
-    this.plyr.on('exitfullscreen', event => {
+    this.plyr.on('exitfullscreen', (event) => {
       this.handleExitFullscreen();
 
       this.player
@@ -138,7 +138,7 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.toggleControls(false);
     });
 
-    this.plyr.on('playing', event => {
+    this.plyr.on('playing', (event) => {
       this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
     });
 
@@ -146,7 +146,7 @@ export default class PlyrWrapper implements MediaPlayer {
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
-    this.plyr.on('pause', event => {
+    this.plyr.on('pause', (event) => {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
@@ -154,7 +154,7 @@ export default class PlyrWrapper implements MediaPlayer {
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
-    this.plyr.on('ratechange', event => {
+    this.plyr.on('ratechange', (event) => {
       const plyr = event.detail.plyr;
 
       this.player
@@ -164,7 +164,7 @@ export default class PlyrWrapper implements MediaPlayer {
         });
     });
 
-    this.plyr.on('error', event => {
+    this.plyr.on('error', (event) => {
       const eventDetailsPlyr = event.detail.plyr as EnrichedPlyr;
       const mediaError = eventDetailsPlyr.media.error;
 
@@ -189,7 +189,8 @@ export default class PlyrWrapper implements MediaPlayer {
      *
      * @see https://github.com/sampotts/plyr/issues/994 et al.
      */
-    const forceShowCaption = () =>
+    const forceShowCaption = () => {
+      console.log('ZZZZZ');
       setTimeout(() => {
         if (
           this.plyr &&
@@ -199,7 +200,15 @@ export default class PlyrWrapper implements MediaPlayer {
         ) {
           this.plyr.captions.currentTrackNode.mode = 'showing';
         }
+        // if(
+        //     this.plyr.captions.currentTrackNode.label.includes('auto-generated')
+        // ) {
+        //
+        //   this.plyr.media.parentElement.parentElement.classList.add('disable-cc');
+        //   this.plyr.captions.currentTrackNode.mode = 'disabled';
+        // }
       }, 50);
+    };
 
     this.plyr.on('playing', forceShowCaption);
     this.plyr.on('captionsenabled', forceShowCaption);
@@ -220,6 +229,8 @@ export default class PlyrWrapper implements MediaPlayer {
     { playback }: Video,
     segment?: PlaybackSegment,
   ) => {
+    console.log(playback);
+
     if (this.hasBeenDestroyed) {
       return;
     }
@@ -264,7 +275,7 @@ export default class PlyrWrapper implements MediaPlayer {
       const segmentStart = segment.start || 0;
 
       if (segmentStart) {
-        const skipToStart = event => {
+        const skipToStart = (event) => {
           event.detail.plyr.currentTime = segmentStart;
           event.detail.plyr.off('playing', skipToStart);
         };
@@ -276,7 +287,7 @@ export default class PlyrWrapper implements MediaPlayer {
       }
 
       if (segment.end && segment.end > segmentStart) {
-        const autoStop = event => {
+        const autoStop = (event) => {
           const plyr = event.detail.plyr;
 
           if (plyr.currentTime >= segment.end) {
@@ -310,12 +321,12 @@ export default class PlyrWrapper implements MediaPlayer {
     const maybePromise = this.plyr.play();
 
     if (maybePromise) {
-      return maybePromise.catch(error => {
+      return maybePromise.catch((error) => {
         console.error('Unable to Play.', error, JSON.stringify(error));
       });
     }
 
-    return new Promise(resolve => resolve());
+    return new Promise((resolve) => resolve());
   };
 
   public pause = (): void => {
@@ -426,7 +437,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private destroyAddons = () => {
-    this.enabledAddons.forEach(addon => addon.destroy());
+    this.enabledAddons.forEach((addon) => addon.destroy());
     this.enabledAddons = [];
   };
 

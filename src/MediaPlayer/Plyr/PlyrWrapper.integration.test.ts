@@ -27,7 +27,7 @@ describe('Emitting interaction events', () => {
     },
   ];
 
-  testData.forEach(data => {
+  testData.forEach((data) => {
     it(`emits an interaction event when ${data.when}`, () => {
       container = document.createElement('div');
       document.body.appendChild(container);
