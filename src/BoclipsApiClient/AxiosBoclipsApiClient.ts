@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { APIError } from '../ErrorHandler/ErrorHandler';
+import { Logger } from '../Logger';
+import { NullLogger } from '../NullLogger';
 import {
   InteractionEventPayload,
   PlaybackEvent,
@@ -13,7 +15,10 @@ import { BoclipsApiClient } from './BoclipsApiClient';
 export class AxiosBoclipsApiClient implements BoclipsApiClient {
   private readonly axios;
 
-  public constructor(private readonly player: PrivatePlayer) {
+  public constructor(
+    private readonly player: PrivatePlayer,
+    private logger: Logger = new NullLogger(),
+  ) {
     this.axios = axios.create();
   }
 
@@ -22,7 +27,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
 
     return this.axios
       .get(uri, { headers, withCredentials: true })
-      .then(response => response.data)
+      .then((response) => response.data)
       .then(convertVideoResource);
   };
 
@@ -32,8 +37,8 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     metadata: { [key: string]: any } = {},
   ): Promise<void> => {
     const headers = await this.buildHeaders();
-
     const video = this.player.getVideo();
+    const logger = this.logger;
 
     if (!video) {
       return Promise.resolve();
@@ -52,8 +57,8 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
         headers,
         withCredentials: true,
       })
-      .catch(error => {
-        console.error(error);
+      .catch((error) => {
+        logger.error(error);
       });
   };
 
@@ -86,7 +91,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
         event,
         { headers },
       )
-      .catch(error => {
+      .catch((error) => {
         console.error(error);
       });
   };
@@ -111,7 +116,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     if (this.getOptions().tokenFactory) {
       const token = await this.getOptions()
         .tokenFactory()
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           throw {
             type: 'API_ERROR',
@@ -127,7 +132,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
     if (this.getOptions().userIdFactory) {
       const userId = await this.getOptions()
         .userIdFactory()
-        .catch(error => {
+        .catch((error) => {
           console.error(error);
           throw {
             type: 'API_ERROR',

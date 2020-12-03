@@ -1,6 +1,7 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
 import { Constants } from '../BoclipsPlayer/Constants';
+import { ConsoleLogger } from '../ConsoleLogger';
 
 export class BoclipsPlayerFactory {
   public static get(
@@ -23,7 +24,7 @@ export class BoclipsPlayerFactory {
       'true',
     );
 
-    return new BoclipsPlayer(container, options);
+    return new BoclipsPlayer(container, new ConsoleLogger(), options);
   }
 
   public static getSeveral(
@@ -40,12 +41,12 @@ export class BoclipsPlayerFactory {
         );
       }
     } else {
-      players = containers.map(container =>
+      players = containers.map((container) =>
         BoclipsPlayerFactory.get(container),
       );
     }
 
-    return players.filter(player => !!player);
+    return players.filter((player) => !!player);
   }
 
   public static scan(): BoclipsPlayer[] {

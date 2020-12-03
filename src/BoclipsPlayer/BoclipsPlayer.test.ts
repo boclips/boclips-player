@@ -12,6 +12,7 @@ import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
+import { NullLogger } from '../NullLogger';
 
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');
@@ -222,7 +223,7 @@ describe('BoclipsPlayer', () => {
         },
       };
 
-      player = new BoclipsPlayer(container, options);
+      player = new BoclipsPlayer(container, new NullLogger(), options);
 
       expect(Analytics).toHaveBeenCalledWith(player);
     });
@@ -232,7 +233,7 @@ describe('BoclipsPlayer', () => {
         interface: { controls: ['captions', 'duration'] },
       };
 
-      player = new BoclipsPlayer(container, options);
+      player = new BoclipsPlayer(container, new NullLogger(), options);
 
       expect(player.getOptions().interface.controls).toEqual([
         'captions',

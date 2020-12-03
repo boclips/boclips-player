@@ -16,6 +16,7 @@ import { MediaPlayer } from '../MediaPlayer';
 import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
 import { MockedPlyr } from '../../../__mocks__/plyr';
+import { NullLogger } from '../../NullLogger';
 import eventually from '../../test-support/eventually';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
@@ -54,12 +55,12 @@ beforeEach(() => {
 });
 
 describe('Instantiation', () => {
-  it('Plyr is configured according to the Player options', () => {
-    mockPlayer = new BoclipsPlayer(container, {
+  it('is configured according to the provided options', () => {
+    mockPlayer = new BoclipsPlayer(container, new NullLogger(), {
       interface: { controls: ['play-large'] },
     });
 
-    mediaPlayer = new PlyrWrapper(mockPlayer);
+    mediaPlayer = new PlyrWrapper(mockPlayer, {});
 
     const actualOptions = mocked(Plyr).mock.calls[1][1];
     expect(actualOptions.controls).toEqual(['play-large']);

@@ -2,6 +2,7 @@ import {
   BoclipsPlayer,
   PrivatePlayer,
 } from '../../BoclipsPlayer/BoclipsPlayer';
+import { NullLogger } from '../../NullLogger';
 
 jest.mock('../../Events/Analytics');
 jest.unmock('plyr');
@@ -27,12 +28,12 @@ describe('Emitting interaction events', () => {
     },
   ];
 
-  testData.forEach(data => {
+  testData.forEach((data) => {
     it(`emits an interaction event when ${data.when}`, () => {
       container = document.createElement('div');
       document.body.appendChild(container);
 
-      player = new BoclipsPlayer(container, {
+      player = new BoclipsPlayer(container, new NullLogger(), {
         interface: { controls: data.controls as any },
       });
 
@@ -58,7 +59,7 @@ describe('Emitting interaction events', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    player = new BoclipsPlayer(container, {
+    player = new BoclipsPlayer(container, new NullLogger(), {
       interface: { controls: ['mute'] },
     });
 
@@ -81,7 +82,7 @@ describe('Emitting interaction events', () => {
     container = document.createElement('div');
     document.body.appendChild(container);
 
-    player = new BoclipsPlayer(container, {
+    player = new BoclipsPlayer(container, new NullLogger(), {
       interface: { controls: ['mute'] },
     });
 

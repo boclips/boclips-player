@@ -1,5 +1,6 @@
 import Plyr from 'plyr';
 import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
+import { PlayerOptions } from '../../BoclipsPlayer/PlayerOptions';
 import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
 import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
@@ -22,14 +23,17 @@ export default class PlyrWrapper implements MediaPlayer {
   private playback: Playback = null;
   private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
 
-  constructor(private readonly player: PrivatePlayer) {
+  constructor(
+    private readonly player: PrivatePlayer,
+    private readonly options: PlayerOptions,
+  ) {
     this.createStreamPlyr();
 
     window.addEventListener('beforeunload', this.handleBeforeUnload);
 
     if (
-      this.getOptions().controls.indexOf('mute') !== -1 &&
-      this.getOptions().controls.indexOf('volume') === -1
+      this.options.controls.indexOf('mute') !== -1 &&
+      this.options.controls.indexOf('volume') === -1
     ) {
       this.player.getContainer().classList.add('plyr--only-mute');
     }
@@ -75,7 +79,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.streamingTechnique.initialise(this.playback, segmentStart);
 
-    this.plyr.on('play', event => {
+    this.plyr.on('play', (event) => {
       const plyr = event.detail.plyr;
 
       this.streamingTechnique.startLoad(plyr.currentTime);
@@ -110,7 +114,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private installPlyrEventListeners() {
-    this.plyr.on('enterfullscreen', event => {
+    this.plyr.on('enterfullscreen', (event) => {
       this.handleEnterFullscreen();
 
       this.player
@@ -122,7 +126,7 @@ export default class PlyrWrapper implements MediaPlayer {
         );
     });
 
-    this.plyr.on('exitfullscreen', event => {
+    this.plyr.on('exitfullscreen', (event) => {
       this.handleExitFullscreen();
 
       this.player
@@ -138,7 +142,7 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.toggleControls(false);
     });
 
-    this.plyr.on('playing', event => {
+    this.plyr.on('playing', (event) => {
       this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
     });
 
@@ -146,7 +150,7 @@ export default class PlyrWrapper implements MediaPlayer {
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
-    this.plyr.on('pause', event => {
+    this.plyr.on('pause', (event) => {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
@@ -154,7 +158,7 @@ export default class PlyrWrapper implements MediaPlayer {
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 
-    this.plyr.on('ratechange', event => {
+    this.plyr.on('ratechange', (event) => {
       const plyr = event.detail.plyr;
 
       this.player
@@ -164,7 +168,7 @@ export default class PlyrWrapper implements MediaPlayer {
         });
     });
 
-    this.plyr.on('error', event => {
+    this.plyr.on('error', (event) => {
       const eventDetailsPlyr = event.detail.plyr as EnrichedPlyr;
       const mediaError = eventDetailsPlyr.media.error;
 
@@ -264,7 +268,7 @@ export default class PlyrWrapper implements MediaPlayer {
       const segmentStart = segment.start || 0;
 
       if (segmentStart) {
-        const skipToStart = event => {
+        const skipToStart = (event) => {
           event.detail.plyr.currentTime = segmentStart;
           event.detail.plyr.off('playing', skipToStart);
         };
@@ -276,7 +280,7 @@ export default class PlyrWrapper implements MediaPlayer {
       }
 
       if (segment.end && segment.end > segmentStart) {
-        const autoStop = event => {
+        const autoStop = (event) => {
           const plyr = event.detail.plyr;
 
           if (plyr.currentTime >= segment.end) {
@@ -310,12 +314,12 @@ export default class PlyrWrapper implements MediaPlayer {
     const maybePromise = this.plyr.play();
 
     if (maybePromise) {
-      return maybePromise.catch(error => {
+      return maybePromise.catch((error) => {
         console.error('Unable to Play.', error, JSON.stringify(error));
       });
     }
 
-    return new Promise(resolve => resolve());
+    return new Promise((resolve) => resolve());
   };
 
   public pause = (): void => {
@@ -369,15 +373,16 @@ export default class PlyrWrapper implements MediaPlayer {
       this.plyr.destroy();
     }
 
+    let debug = this.player.getOptions().debug;
+    console.log('ASDFASDFASDFASDFASDFASDFASDFASDF', this.player);
+    let controls = this.getOptions().controls;
     this.plyr = new Plyr(media, {
-      debug: this.player.getOptions().debug,
+      debug: debug,
       captions: { active: false, language: 'en', update: true },
       /**
        * This is necessary workaround to allow official youtube controls.
        */
-      controls: isYoutubePlayback(this.playback)
-        ? ['play-large']
-        : this.getOptions().controls,
+      controls: isYoutubePlayback(this.playback) ? ['play-large'] : controls,
       // @ts-ignore
       youtube: isYoutubePlayback(this.playback) ? { controls: 1 } : undefined,
       duration: this.playback ? this.playback.duration : null,
@@ -426,7 +431,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private destroyAddons = () => {
-    this.enabledAddons.forEach(addon => addon.destroy());
+    this.enabledAddons.forEach((addon) => addon.destroy());
     this.enabledAddons = [];
   };
 
