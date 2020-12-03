@@ -53,6 +53,8 @@ describe('BoclipsPlayer', () => {
     expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
   });
 
+  // This test triggers the UnhandledPromiseRejectionWarning because the result
+  // of retrieveVideo is undefined
   it('Will auto load the video based on data attribute on container', () => {
     const uri = '/v1/videos/177';
 
@@ -98,7 +100,7 @@ describe('BoclipsPlayer', () => {
     const video = VideoFactory.sample();
 
     boclipsClient.retrieveVideo.mockReturnValue(
-      new Promise(resolve => resolve(video)),
+      new Promise((resolve) => resolve(video)),
     );
 
     return player.loadVideo(uri).then(() => {
@@ -164,7 +166,7 @@ describe('BoclipsPlayer', () => {
 
     beforeEach(() => {
       boclipsClient.retrieveVideo.mockReturnValue(
-        new Promise(resolve => resolve(video)),
+        new Promise((resolve) => resolve(video)),
       );
     });
 
@@ -200,7 +202,7 @@ describe('BoclipsPlayer', () => {
   describe('passes through media player methods', () => {
     const passThroughMethods = ['destroy', 'play', 'pause'];
 
-    passThroughMethods.forEach(method => {
+    passThroughMethods.forEach((method) => {
       it(`Will destroy the media player when ${method} is called`, () => {
         player[method]();
 
