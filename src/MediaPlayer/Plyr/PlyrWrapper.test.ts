@@ -54,15 +54,11 @@ beforeEach(() => {
 });
 
 describe('Instantiation', () => {
-  it('Plyr is configured according to the Player options', () => {
-    mockPlayer = new BoclipsPlayer(container, {
-      interface: { controls: ['play-large'] },
-    });
-
-    mediaPlayer = new PlyrWrapper(mockPlayer);
-
-    const actualOptions = mocked(Plyr).mock.calls[1][1];
-    expect(actualOptions.controls).toEqual(['play-large']);
+  it('is configured according to the provided options', () => {
+    const actualOptions = mockedPlyr.mock.calls[0][1];
+    expect(actualOptions.controls).toEqual(
+      expect.arrayContaining(['play-large']),
+    );
   });
 
   it('Constructs a Plyr given an element a video element within container', () => {

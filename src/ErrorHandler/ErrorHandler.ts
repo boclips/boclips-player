@@ -1,6 +1,8 @@
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import './ErrorHandler.less';
 import ErrorIcon from './ErrorIcon';
+import { NullLogger } from '../NullLogger';
+import { Logger } from '../Logger';
 
 export interface ErrorHandlerInstance {
   handleError: (error: Error) => void;
@@ -42,7 +44,10 @@ export type Error = APIError | PlaybackError | HLSError | UnknownError;
 export class ErrorHandler implements ErrorHandlerInstance {
   public static readonly CONTAINER_CLASS = 'error';
 
-  public constructor(private player: PrivatePlayer) {}
+  public constructor(
+    private player: PrivatePlayer,
+    private logger: Logger = new NullLogger(),
+  ) {}
 
   public clearError = () => {
     const errorContainer = this.player
@@ -59,7 +64,7 @@ export class ErrorHandler implements ErrorHandlerInstance {
     error.hasOwnProperty('payload');
 
   public handleError = (error: Error) => {
-    console.error(error);
+    this.logger.error(error);
 
     if (!error.fatal) {
       return;

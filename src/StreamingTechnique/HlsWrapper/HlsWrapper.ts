@@ -2,6 +2,8 @@ import Hls from 'hls.js';
 import { PrivatePlayer as Player } from '../../BoclipsPlayer/BoclipsPlayer';
 import { StreamPlayback } from '../../types/Playback';
 import { StreamingTechnique } from '../StreamingTechnique';
+import { Logger } from '../../Logger';
+import { NullLogger } from '../../NullLogger';
 
 export class HlsWrapper implements StreamingTechnique {
   private hls: Hls = null;
@@ -11,7 +13,10 @@ export class HlsWrapper implements StreamingTechnique {
 
   public static isSupported = () => Hls.isSupported();
 
-  constructor(private player: Player) {}
+  constructor(
+    private player: Player,
+    private readonly logger: Logger = new NullLogger(),
+  ) {}
 
   public initialise = (
     playback: StreamPlayback,
@@ -85,7 +90,7 @@ export class HlsWrapper implements StreamingTechnique {
     }
 
     if (!fatal) {
-      console.warn(
+      this.logger.warn(
         `A non-fatal playback error occurred during playback of ${video.id}.`,
         error,
       );
@@ -109,14 +114,14 @@ export class HlsWrapper implements StreamingTechnique {
         }
       }
 
-      console.warn(
+      this.logger.warn(
         `A fatal network error encountered during playback of ${video.id}, try to recover.`,
         error,
       );
 
       this.hls.startLoad(this.player.getMediaPlayer().getCurrentTime());
     } else if (error.type === Hls.ErrorTypes.MEDIA_ERROR) {
-      console.warn(
+      this.logger.warn(
         `A fatal media error encountered during playback of ${video.id}, try to recover.`,
         error,
       );
@@ -134,14 +139,14 @@ export class HlsWrapper implements StreamingTechnique {
     );
   };
 
-  private increaseErrorCount = errorDetail => {
+  private increaseErrorCount = (errorDetail) => {
     if (!this.errorCount[errorDetail]) {
       this.errorCount[errorDetail] = 0;
     }
     this.errorCount[errorDetail] = this.errorCount[errorDetail] + 1;
   };
 
-  private handleFatalHlsError = error => {
+  private handleFatalHlsError = (error) => {
     this.hls.destroy();
 
     this.player.getErrorHandler().handleError({

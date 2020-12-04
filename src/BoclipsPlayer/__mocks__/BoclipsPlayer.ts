@@ -5,6 +5,7 @@ import { MockMediaPlayer } from '../../MediaPlayer/__mocks__/MediaPlayerFactory'
 import { VideoFactory } from '../../test-support/TestFactories';
 import { PrivatePlayer } from '../BoclipsPlayer';
 import { defaultOptions } from '../PlayerOptions';
+import { NullLogger } from '../../NullLogger';
 
 // noinspection JSUnusedGlobalSymbols
 export const BoclipsPlayer = jest
@@ -28,7 +29,7 @@ export const BoclipsPlayer = jest
 
     const client = new AxiosBoclipsApiClient(player);
     const analytics = new Analytics(player);
-    const errorHandler = new ErrorHandler(player);
+    const errorHandler = new ErrorHandler(player, new NullLogger());
 
     player.getClient = () => client;
     player.getAnalytics = () => analytics;

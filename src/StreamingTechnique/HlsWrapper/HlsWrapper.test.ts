@@ -176,7 +176,7 @@ describe('Error Handling', () => {
       Hls.ErrorDetails.MANIFEST_PARSING_ERROR,
     ];
 
-    manifestErrors.forEach(errorDetails => {
+    manifestErrors.forEach((errorDetails) => {
       it(`tries to reload the source when an ${errorDetails} occurs`, () => {
         hlsTechnique.initialise(streamPlayback, -1);
 

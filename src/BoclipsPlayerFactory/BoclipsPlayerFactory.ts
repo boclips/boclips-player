@@ -1,11 +1,14 @@
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
 import { Constants } from '../BoclipsPlayer/Constants';
+import { Logger } from '../Logger';
+import { ConsoleLogger } from '../ConsoleLogger';
 
 export class BoclipsPlayerFactory {
   public static get(
     container: HTMLElement | string,
     options: Partial<PlayerOptions> = {},
+    logger: Logger = new ConsoleLogger(),
   ): BoclipsPlayer {
     if (typeof container === 'string') {
       container = document.querySelector(container) as HTMLElement;
@@ -23,7 +26,7 @@ export class BoclipsPlayerFactory {
       'true',
     );
 
-    return new BoclipsPlayer(container, options);
+    return new BoclipsPlayer(container, options, logger);
   }
 
   public static getSeveral(
@@ -40,12 +43,12 @@ export class BoclipsPlayerFactory {
         );
       }
     } else {
-      players = containers.map(container =>
+      players = containers.map((container) =>
         BoclipsPlayerFactory.get(container),
       );
     }
 
-    return players.filter(player => !!player);
+    return players.filter((player) => !!player);
   }
 
   public static scan(): BoclipsPlayer[] {

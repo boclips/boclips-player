@@ -4,6 +4,8 @@ import { addListener as addResizeListener } from 'resize-detector';
 import { v1 as uuidV1 } from 'uuid';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
+import { Logger } from '../Logger';
+import { NullLogger } from '../NullLogger';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
 import { MediaPlayer, PlaybackSegment } from '../MediaPlayer/MediaPlayer';
@@ -45,6 +47,7 @@ export class BoclipsPlayer implements PrivatePlayer {
   constructor(
     private readonly container: HTMLElement,
     options: DeepPartial<PlayerOptions> = {},
+    private readonly logger: Logger = new NullLogger(),
   ) {
     if (false === container instanceof Node) {
       throw Error(
@@ -53,7 +56,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     }
 
     if (!document.contains(container)) {
-      console.warn(
+      logger.warn(
         `Container element ${container} should be a node within the document body.`,
       );
     }
@@ -68,8 +71,8 @@ export class BoclipsPlayer implements PrivatePlayer {
       isMergeableObject: isPlainObject,
     }) as PlayerOptions;
 
-    this.errorHandler = new ErrorHandler(this);
-    this.boclipsClient = new AxiosBoclipsApiClient(this);
+    this.errorHandler = new ErrorHandler(this, this.logger);
+    this.boclipsClient = new AxiosBoclipsApiClient(this, this.logger);
     this.analytics = new Analytics(this);
     this.mediaPlayer = new (MediaPlayerFactory.get())(this);
 
@@ -117,7 +120,7 @@ export class BoclipsPlayer implements PrivatePlayer {
         this.video = video;
         this.mediaPlayer.configureWithVideo(video, segment);
       })
-      .catch(error => {
+      .catch((error) => {
         if (this.errorHandler.isDefinedError(error)) {
           this.errorHandler.handleError(error);
           return;
