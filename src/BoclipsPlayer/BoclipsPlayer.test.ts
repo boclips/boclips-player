@@ -291,20 +291,20 @@ describe('BoclipsPlayer', () => {
     });
 
     it('sets the fontsize to be 4% of the height', () => {
-      const callback = mocked(addListener).mock.calls[0][1];
+      const callback = mocked(addListener).mock.calls[0][1].bind(container);
 
       container.__jsdomMockClientHeight = 10;
-      callback();
+      callback(container);
 
       expect(container.style.fontSize).toEqual(12 + 'px');
 
       container.__jsdomMockClientHeight = 700;
-      callback();
+      callback(container);
 
       expect(container.style.fontSize).toEqual(700 * 0.04 + 'px');
 
       container.__jsdomMockClientHeight = 1200;
-      callback();
+      callback(container);
 
       expect(container.style.fontSize).toEqual(1200 * 0.04 + 'px');
     });
