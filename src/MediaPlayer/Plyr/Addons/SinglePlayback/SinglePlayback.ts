@@ -41,7 +41,7 @@ export class SinglePlayback implements AddonInterface {
     });
   };
 
-  private handleEmittedPlaybackEvent = payload => {
+  private handleEmittedPlaybackEvent = (payload) => {
     if (payload.addonId === this.addonId) {
       return;
     }
