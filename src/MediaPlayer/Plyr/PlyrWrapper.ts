@@ -208,6 +208,9 @@ export default class PlyrWrapper implements MediaPlayer {
           this.plyr.captions.currentTrackNode.mode = 'showing';
         }
         if (
+          this.plyr &&
+          this.plyr.captions &&
+          this.plyr.captions.currentTrackNode &&
           this.plyr.captions.currentTrackNode.label.includes(
             'auto-generated',
           ) &&
