@@ -2,7 +2,7 @@ import { BoclipsPlayerFactory } from './BoclipsPlayerFactory';
 import { Logger } from '../Logger';
 import { NullLogger } from '../NullLogger';
 
-let nullLogger: Logger = new NullLogger();
+const nullLogger: Logger = new NullLogger();
 
 describe('getting a single player', () => {
   let container: HTMLElement;

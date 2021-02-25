@@ -31,7 +31,7 @@ describe('retrieve video', () => {
 
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
-    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) =>
+    return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
       expect(video).toMatchObject({
         id: videoResource.id,
         playback: {
@@ -56,7 +56,7 @@ describe('retrieve video', () => {
 
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
-    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) =>
+    return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
       expect(video).toMatchObject({
         id: video.id,
         playback: {
@@ -266,7 +266,7 @@ describe('With authorisation', () => {
     });
   });
 
-  it('Will fail gracefully if a token factory throws an exception', (done) => {
+  it('Will fail gracefully if a token factory throws an exception', done => {
     const uri = '/v1/videos/177';
 
     const videoResource = VideoResourceFactory.youtubeSample();
@@ -281,7 +281,7 @@ describe('With authorisation', () => {
       },
     } as any) as PlayerOptions);
 
-    return boclipsClient.retrieveVideo(uri).catch((error) => {
+    return boclipsClient.retrieveVideo(uri).catch(error => {
       expect(error).not.toBeNull();
       done();
     });

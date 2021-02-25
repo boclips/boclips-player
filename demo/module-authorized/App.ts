@@ -1,4 +1,3 @@
-
 import BoclipsSecurity from 'boclips-js-security';
 import { PlayerFactory } from '../../src/index';
 

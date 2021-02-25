@@ -43,7 +43,7 @@ describe('Video Length Preview', () => {
           playback,
           {
             addons: {
-              videoLengthPreview: videoLengthPreview,
+              videoLengthPreview,
             },
           } as InterfaceOptions,
         );
@@ -51,7 +51,7 @@ describe('Video Length Preview', () => {
         expect(actual).toEqual(expected);
       });
     });
-  })
+  });
 
   describe('video-length-preview renders', () => {
     beforeEach(() => {
@@ -61,35 +61,36 @@ describe('Video Length Preview', () => {
 
       plyr = new Plyr(plyrContainer) as MockedPlyr;
       plyr.elements.container = plyrContainer;
-    })
+    });
     const getVideoLengthPreview = (playback = PlaybackFactory.streamSample()) =>
       new VideoLengthPreview(plyr, playback as any);
 
-    const findVideoLengthPreview = () => (plyr.elements.container.querySelector(
-      '.video-length-preview',
-    ) as HTMLDivElement);
+    const findVideoLengthPreview = () =>
+      plyr.elements.container.querySelector(
+        '.video-length-preview',
+      ) as HTMLDivElement;
 
     it('shows the video-length-preview before video is played', () => {
       const playback = PlaybackFactory.streamSample({ duration: 124 });
 
-      getVideoLengthPreview(playback)
+      getVideoLengthPreview(playback);
 
-      expect(findVideoLengthPreview().innerHTML).toEqual('2:04')
-    })
+      expect(findVideoLengthPreview().innerHTML).toEqual('2:04');
+    });
     it('destroys the video-length-preview after video is played', () => {
       const playback = PlaybackFactory.streamSample();
 
-      getVideoLengthPreview(playback)
+      getVideoLengthPreview(playback);
 
-      expect(findVideoLengthPreview()).not.toBeNull()
+      expect(findVideoLengthPreview()).not.toBeNull();
 
       plyr.__callEventCallback('play');
 
-      expect(findVideoLengthPreview()).toBeNull()
+      expect(findVideoLengthPreview()).toBeNull();
 
       plyr.__callEventCallback('pause');
 
-      expect(findVideoLengthPreview()).toBeNull()
-    })
-  })
-})
+      expect(findVideoLengthPreview()).toBeNull();
+    });
+  });
+});
