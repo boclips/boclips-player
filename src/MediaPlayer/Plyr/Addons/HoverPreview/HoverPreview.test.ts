@@ -253,11 +253,6 @@ describe('HoverPreview', () => {
     });
   });
 
-  describe('animation', () => {
-    it.todo('will animate while mouse hovering');
-    it.todo('will not animate while loading');
-  });
-
   describe('destruction', () => {
     it('will destroy itself when user clicks play', () => {
       getHoverPreview();
