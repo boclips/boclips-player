@@ -58,7 +58,7 @@
     "@types/jest": "^26.0.20",
     "@webpack-cli/serve": "^1.1.0",
     "audit-ci": "^3.1.1",
-    "axios-logger": "^2.4.0",
+    "axios-logger": "^2.5.0",
     "axios-mock-adapter": "^1.19.0",
     "boclips-js-security": "^6.0.0",
     "chai": "^4.2.0",
