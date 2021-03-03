@@ -27,6 +27,18 @@ export class VideoLengthPreview implements AddonInterface {
     this.addListeners();
   }
 
+  public hide = () => {
+    if (this.container) {
+      this.container.style.visibility = 'hidden';
+    }
+  };
+
+  public unHide = () => {
+    if (this.container) {
+      this.container.style.visibility = 'visible';
+    }
+  };
+
   public destroy = () => {
     if (this.destroyed) {
       return;
@@ -34,6 +46,8 @@ export class VideoLengthPreview implements AddonInterface {
     this.getPlyrContainer().removeChild(this.container);
     this.container = null;
     this.getPlyrContainer().removeEventListener('play', this.destroy);
+    this.getPlyrContainer().removeEventListener('enterfullscreen', this.hide);
+    this.getPlyrContainer().removeEventListener('exitfullscreen', this.unHide);
     this.destroyed = true;
   };
 
@@ -46,6 +60,8 @@ export class VideoLengthPreview implements AddonInterface {
 
   private addListeners = () => {
     this.plyr.on('play', this.destroy);
+    this.plyr.on('enterfullscreen', this.hide);
+    this.plyr.on('exitfullscreen', this.unHide);
   };
 
   private getPlyrContainer = () =>

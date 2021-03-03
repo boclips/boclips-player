@@ -92,5 +92,19 @@ describe('Video Length Preview', () => {
 
       expect(findVideoLengthPreview()).toBeNull();
     });
+
+    it('hides and unhides the video-length-preview when you toggle fullscreen', () => {
+      const playback = PlaybackFactory.streamSample();
+
+      getVideoLengthPreview(playback);
+
+      plyr.__callEventCallback('enterfullscreen');
+
+      expect(findVideoLengthPreview().style.visibility).toEqual('hidden');
+
+      plyr.__callEventCallback('exitfullscreen');
+
+      expect(findVideoLengthPreview().style.visibility).toEqual('visible');
+    });
   });
 });
