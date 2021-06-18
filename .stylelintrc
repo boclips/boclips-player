@@ -1,15 +1,8 @@
 {
   "extends": [
-    "stylelint-config-standard",
-    "stylelint-config-rational-order"
+    "stylelint-config-standard"
   ],
   "rules": {
-    "plugin/rational-order": [
-      true,
-      {
-        "empty-line-between-groups": true
-      }
-    ],
     "declaration-empty-line-before": null,
     "color-hex-length": "long",
     "color-hex-case": "upper",
