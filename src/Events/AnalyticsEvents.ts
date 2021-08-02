@@ -10,7 +10,7 @@ export interface PlaybackEvent extends PlayerEvent {
 }
 
 export interface PlayerInteractedWithEvent<
-  T extends keyof InteractionEventPayload
+  T extends keyof InteractionEventPayload,
 > extends PlayerEvent {
   currentTime: number;
   subtype: T;

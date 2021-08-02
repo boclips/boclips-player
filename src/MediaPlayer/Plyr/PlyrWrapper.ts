@@ -403,6 +403,7 @@ export default class PlyrWrapper implements MediaPlayer {
       // @ts-ignore
       youtube: isYoutubePlayback(this.playback) ? { controls: 1 } : undefined,
       duration: this.playback ? this.playback.duration : null,
+      tooltips: { controls: true, seek: true },
       listeners: {
         fastForward: () => {
           this.player

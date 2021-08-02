@@ -9,7 +9,7 @@ module.exports = merge(common, {
   mode: 'development',
   devServer: {
     port: 8081,
-    contentBase: distPath,
+    static: distPath,
   },
   devtool: 'inline-source-map',
 });

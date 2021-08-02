@@ -63,7 +63,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
   };
 
   public emitPlayerInteractionEvent = async <
-    T extends keyof InteractionEventPayload
+    T extends keyof InteractionEventPayload,
   >(
     currentTime: number,
     type: T,

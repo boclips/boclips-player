@@ -197,7 +197,8 @@ export class SeekPreview implements AddonInterface {
   private updatePreview = (cursorX: number) => {
     this.updateDimensions();
 
-    const clientRect: ClientRect = this.getPlyrProgressBar().getBoundingClientRect();
+    const clientRect: ClientRect =
+      this.getPlyrProgressBar().getBoundingClientRect();
 
     this.updatePosition(cursorX);
 
@@ -219,7 +220,8 @@ export class SeekPreview implements AddonInterface {
   }
 
   private updatePosition(cursorX: number) {
-    const parentClientRect = this.container.parentElement.getBoundingClientRect();
+    const parentClientRect =
+      this.container.parentElement.getBoundingClientRect();
     this.container.style.left = withPx(cursorX - parentClientRect.left);
   }
 
