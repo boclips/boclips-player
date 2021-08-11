@@ -92,12 +92,12 @@ interface PlayerFactory {
 }
 
 interface Player {
-    play: () => Promise<void>;
-    pause: () => void;
-    loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
-    destroy: () => void;
-    getPlayerId: () => string;
-    getOptions: () => Partial<PlayerOptions>;
+  play: () => Promise<any>;
+  pause: () => void;
+  loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
+  destroy: () => void;
+  onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
+  onError: (callback: (error: BoclipsError) => void) => void;
 }
 
 interface PlayerOptions {
@@ -109,7 +109,7 @@ interface PlayerOptions {
 ----
 [source,typescript]
 ----
-import { PlayerFactory } from '../../src/index';
+import { PlayerFactory } from 'boclips-player';
 
 const tokenFactory = (): Promise<string> => {
     return fetch('your-service.com/token')
@@ -122,7 +122,15 @@ function renderPlayer() {
         api: { tokenFactory },
     });
 
-    player.loadVideo('https://path.to.our/video/endpoint/1')
+    player.onError((error) => {
+       // do something with error
+
+      // remove the error element from the player
+      player.getErrorHandler().clearError()
+    });
+
+    player.loadVideo('https://path.to.our/video/endpoint')
+
 };
 ----
 
