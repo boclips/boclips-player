@@ -1,3 +1,4 @@
+import { BoclipsError } from './../ErrorHandler/BoclipsPlayerError';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
 import { addListener as addResizeListener } from 'resize-detector';
@@ -164,6 +165,10 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public onEnd = (callback: (endOverlay: HTMLDivElement) => void) => {
     this.mediaPlayer.onEnd(callback);
+  };
+
+  public onError = (callback: (error: BoclipsError) => void) => {
+    this.errorHandler.onError(callback);
   };
 
   public getContainer = () => this.container;

@@ -1,10 +1,13 @@
+import { APIError } from './../../lib/ErrorHandler/ErrorHandler.d';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { Error, ErrorHandler } from './ErrorHandler';
+import { ErrorHandler } from './ErrorHandler';
+import { BoclipsAPIError } from './BoclipsPlayerError';
+import { InternalError } from './InternalError';
 
 describe('error message handling', () => {
   let container: HTMLElement;
   let player: PrivatePlayer;
-  let errorHandler;
+  let errorHandler: ErrorHandler;
   beforeEach(() => {
     container = document.createElement('section');
     player = new BoclipsPlayer(container);
@@ -15,7 +18,7 @@ describe('error message handling', () => {
     when: string;
     expectTitle: string;
     expectBody: string;
-    error: Error;
+    error: InternalError;
   }> = [
     {
       when: '404 API error',
@@ -83,14 +86,14 @@ describe('error message handling', () => {
       },
     });
 
-    errorHandler.clearError(container);
+    errorHandler.clearError();
 
     const errorContainer = container.querySelector('.error');
     expect(errorContainer).toBeFalsy();
   });
 
   it('only displays one error at a time', () => {
-    const error = {
+    const error: APIError = {
       type: 'API_ERROR',
       fatal: true,
       payload: {
@@ -104,6 +107,26 @@ describe('error message handling', () => {
 
     const errorContainers = container.querySelectorAll('.error');
     expect(errorContainers).toHaveLength(1);
+  });
+
+  it('calls passed in onError callback', () => {
+    const errorCallback = jest.fn();
+    errorHandler.onError(errorCallback);
+
+    const error: APIError = {
+      type: 'API_ERROR',
+      fatal: true,
+      payload: {
+        statusCode: 404,
+      },
+    };
+
+    errorHandler.handleError(error);
+    expect(errorCallback).toHaveBeenCalledWith({
+      message: 'Error retrieving video from API',
+      statusCode: 404,
+      type: 'API_ERROR',
+    } as BoclipsAPIError);
   });
 
   const expectError = (title: string, body: string) => {

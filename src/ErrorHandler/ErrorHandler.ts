@@ -1,48 +1,23 @@
+import { ErrorConverter } from './ErrorConverter';
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import './ErrorHandler.less';
 import ErrorIcon from './ErrorIcon';
 import { NullLogger } from '../NullLogger';
 import { Logger } from '../Logger';
+import { InternalError } from './InternalError';
+import { BoclipsError } from './BoclipsPlayerError';
 
 export interface ErrorHandlerInstance {
-  handleError: (error: Error) => void;
+  handleError: (error: InternalError) => void;
   clearError: () => void;
   isDefinedError: (error: any) => boolean;
+  onError: (callback: (error: BoclipsError) => void) => void;
 }
-
-export interface APIError {
-  fatal: boolean;
-  type: 'API_ERROR';
-  payload: {
-    statusCode: number;
-  };
-}
-
-interface PlaybackError {
-  fatal: boolean;
-  type: 'PLAYBACK_ERROR';
-  payload: {
-    code: number;
-    message: string;
-  };
-}
-
-interface HLSError {
-  fatal: boolean;
-  type: 'NETWORK_ERROR' | 'MEDIA_ERROR' | 'MUX_ERROR' | 'OTHER_ERROR';
-  payload: any;
-}
-
-interface UnknownError {
-  fatal: true;
-  type: 'UNKNOWN_ERROR';
-  payload: any;
-}
-
-export type Error = APIError | PlaybackError | HLSError | UnknownError;
 
 export class ErrorHandler implements ErrorHandlerInstance {
   public static readonly CONTAINER_CLASS = 'error';
+  public static readonly CONTAINER_ID = 'boclips-error-container';
+  private onErrorCallback?: (error: BoclipsError) => void;
 
   public constructor(
     private player: PrivatePlayer,
@@ -58,12 +33,16 @@ export class ErrorHandler implements ErrorHandlerInstance {
     }
   };
 
-  public isDefinedError = (error: any): error is Error =>
+  public onError = (callback: (error: BoclipsError) => void) => {
+    this.onErrorCallback = callback;
+  };
+
+  public isDefinedError = (error: any): error is InternalError =>
     error.hasOwnProperty('fatal') &&
     error.hasOwnProperty('type') &&
     error.hasOwnProperty('payload');
 
-  public handleError = (error: Error) => {
+  public handleError = (error: InternalError) => {
     this.logger.error(error);
 
     if (!error.fatal) {
@@ -92,6 +71,10 @@ export class ErrorHandler implements ErrorHandlerInstance {
         'Please try again later',
       );
     }
+
+    if (this.onErrorCallback && typeof this.onErrorCallback === 'function') {
+      this.onErrorCallback(ErrorConverter.convert(error));
+    }
   };
 
   private renderErrorContainer = (title: string, content: string) => {
@@ -108,6 +91,7 @@ export class ErrorHandler implements ErrorHandlerInstance {
     text.appendChild(bodyElement);
 
     const errorContainer = document.createElement('section');
+    errorContainer.id = ErrorHandler.CONTAINER_ID;
     errorContainer.classList.add(ErrorHandler.CONTAINER_CLASS);
 
     errorContainer.insertAdjacentHTML('afterbegin', ErrorIcon);

@@ -4,3 +4,5 @@ export { BoclipsPlayerFactory as PlayerFactory } from './BoclipsPlayerFactory/Bo
 export { Player } from './BoclipsPlayer/BoclipsPlayer';
 // noinspection JSUnusedGlobalSymbols
 export { PlayerOptions } from './BoclipsPlayer/PlayerOptions';
+
+export * from './ErrorHandler/BoclipsPlayerError';

@@ -1,6 +1,5 @@
 import axios from 'axios';
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import { APIError } from '../ErrorHandler/ErrorHandler';
 import { Logger } from '../Logger';
 import { NullLogger } from '../NullLogger';
 import {
@@ -11,6 +10,7 @@ import {
 import { Video } from '../types/Video';
 import convertVideoResource from '../utils/convertVideoResource';
 import { BoclipsApiClient } from './BoclipsApiClient';
+import { APIError } from '../ErrorHandler/InternalError';
 
 export class AxiosBoclipsApiClient implements BoclipsApiClient {
   private readonly axios;
