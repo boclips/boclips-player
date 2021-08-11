@@ -23,6 +23,7 @@ export interface Player {
   loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
   destroy: () => void;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
+  onError: (callback: (error: BoclipsError) => void) => void;
 }
 
 export interface PrivatePlayer extends Player {

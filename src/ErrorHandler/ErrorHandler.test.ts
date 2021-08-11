@@ -1,8 +1,7 @@
-import { APIError } from './../../lib/ErrorHandler/ErrorHandler.d';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { ErrorHandler } from './ErrorHandler';
 import { BoclipsAPIError } from './BoclipsPlayerError';
-import { InternalError } from './InternalError';
+import { APIError, InternalError } from './InternalError';
 
 describe('error message handling', () => {
   let container: HTMLElement;
@@ -14,12 +13,12 @@ describe('error message handling', () => {
     errorHandler = new ErrorHandler(player);
   });
 
-  const testData: Array<{
+  const testData: {
     when: string;
     expectTitle: string;
     expectBody: string;
     error: InternalError;
-  }> = [
+  }[] = [
     {
       when: '404 API error',
       expectTitle: 'Video Unavailable',

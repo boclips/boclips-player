@@ -1,7 +1,7 @@
 import { BoclipsAPIError } from './BoclipsPlayerError';
-import { HLSError, PlaybackError } from './InternalError';
+import { APIError, HLSError, PlaybackError } from './InternalError';
 import { ErrorConverter } from './ErrorConverter';
-import { APIError } from './../../lib/ErrorHandler/ErrorHandler.d';
+
 describe('ErrorConverter', () => {
   it('converts api errors to something more meaningful', () => {
     const apiError: APIError = {
