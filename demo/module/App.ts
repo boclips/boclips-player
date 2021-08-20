@@ -26,9 +26,12 @@ const player = PlayerFactory.get(playerContainer, {
   },
 });
 
+const segments = { start: 60, end: 63 };
+
 player
   .loadVideo(
     'https://api.staging-boclips.com/v1/videos/5df9250eff99916ded943b0e',
+    segments,
   )
   .then(() => {
     return player.play();

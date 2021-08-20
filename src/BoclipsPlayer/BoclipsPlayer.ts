@@ -24,6 +24,7 @@ export interface Player {
   destroy: () => void;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
   onError: (callback: (error: BoclipsError) => void) => void;
+  getMediaPlayer: () => any;
 }
 
 export interface PrivatePlayer extends Player {
@@ -107,7 +108,10 @@ export class BoclipsPlayer implements PrivatePlayer {
     }
   };
 
-  public loadVideo = async (videoUri: string, segment?: PlaybackSegment) => {
+  public loadVideo = async (
+    videoUri: string,
+    segment?: PlaybackSegment,
+  ): Promise<any> => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
       return;
     }

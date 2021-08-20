@@ -15,6 +15,7 @@ import { EndOverlay } from './Addons/SharedFeatures/SharedFeatures';
 import './PlyrWrapper.less';
 import { Logger } from '../../Logger';
 import { NullLogger } from '../../NullLogger';
+import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -300,18 +301,42 @@ export default class PlyrWrapper implements MediaPlayer {
         const autoStop = (event) => {
           const plyr = event.detail.plyr;
 
-          if (plyr.currentTime >= segment.end) {
+          if (
+            plyr.currentTime >= segment.end ||
+            plyr.currentTime <= segment.start
+          ) {
+            this.plyr.currentTime = segmentStart;
             plyr.pause();
 
             if (this.streamingTechnique) {
               this.streamingTechnique.stopLoad();
             }
 
-            plyr.off('timeupdate', autoStop);
+            // plyr.off('timeupdate', autoStop);
           }
         };
+
         this.plyr.on('timeupdate', autoStop);
       }
+
+      // console.log(this.plyr.currentTime);
+
+      // const displayBlocker = (event) => {
+      //   const plyr = event.detail.plyr;
+      //   // const errorHandler = new ErrorHandler(this.player);
+      //
+      //   if (
+      //     plyr.currentTime < segment.start ||
+      //     plyr.currentTime > segment.end
+      //   ) {
+      //     console.log('block');
+      //     // errorHandler.blockDisplay(this.plyr, segment.start, segment.end);
+      //     this.plyr.pause();
+      //   }
+      // };
+      // this.plyr.play();
+      // this.plyr.pause();
+      // this.plyr.on('timeupdate', displayBlocker);
     }
   };
 
@@ -461,6 +486,8 @@ export default class PlyrWrapper implements MediaPlayer {
   public getVideoContainer = () => this.plyr.media;
 
   public getCurrentTime = () => this.plyr.currentTime;
+
+  public getDuration = () => this.playback;
 
   public getEnabledAddons = () => this.enabledAddons;
 
