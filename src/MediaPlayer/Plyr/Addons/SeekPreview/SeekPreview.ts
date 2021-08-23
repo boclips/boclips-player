@@ -5,6 +5,7 @@ import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
 import './SeekPreview.less';
+import { PlaybackSegment } from '../../../MediaPlayer';
 
 export interface SeekPreviewOptions {
   /**
@@ -22,6 +23,27 @@ export const defaultSeekPreviewOptions: SeekPreviewOptions = {
 };
 
 export class SeekPreview implements AddonInterface {
+  private options: SeekPreviewOptions = null;
+  private container: HTMLDivElement = null;
+  private window: HTMLDivElement;
+  private width: number;
+  private height: number;
+  private destroyed: boolean = false;
+  private imageRatio: number;
+  private segment: PlaybackSegment = null;
+
+  public constructor(
+    private plyr: EnrichedPlyr,
+    private playback: Playback,
+    options: InterfaceOptions,
+  ) {
+    this.applyOptions(options);
+    this.hidePlyrSeek();
+
+    this.installPlyrListeners();
+    this.createContainer();
+  }
+
   public static canBeEnabled = (
     plyr: EnrichedPlyr,
     playback: Playback | null,
@@ -37,26 +59,9 @@ export class SeekPreview implements AddonInterface {
     );
   };
 
-  private options: SeekPreviewOptions = null;
-  private container: HTMLDivElement = null;
-  private window: HTMLDivElement;
-  private width: number;
-  private height: number;
-  private destroyed: boolean = false;
-  private imageRatio: number;
-
-  public constructor(
-    private plyr: EnrichedPlyr,
-    private playback: Playback,
-    options: InterfaceOptions,
-  ) {
-    this.applyOptions(options);
-
-    this.hidePlyrSeek();
-
-    this.installPlyrListeners();
-    this.createContainer();
-  }
+  public updateSegment = (segment: PlaybackSegment) => {
+    this.segment = segment;
+  };
 
   public destroy = () => {
     if (this.destroyed) {
@@ -122,6 +127,16 @@ export class SeekPreview implements AddonInterface {
 
   private handleMousemove = (event: MouseEvent) => {
     if (this.hasBeenDestroyed()) {
+      return;
+    }
+    const clientRect: ClientRect =
+      this.getPlyrProgressBar().getBoundingClientRect();
+
+    const seekTime = this.calculateSeekTime(clientRect, event.pageX);
+    if (
+      this.segment &&
+      (seekTime < this.segment.start || seekTime > this.segment.end)
+    ) {
       return;
     }
 

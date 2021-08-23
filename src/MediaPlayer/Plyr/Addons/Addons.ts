@@ -1,6 +1,7 @@
 import { Playback } from '../../../types/Playback';
 import { InterfaceOptions } from '../../InterfaceOptions';
 import { EnrichedPlyr } from '../../../types/plyr';
+import { PlaybackSegment } from '../../MediaPlayer';
 import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
@@ -8,6 +9,7 @@ import { VideoLengthPreview } from './VideoLengthPreview/VideoLengthPreview';
 
 export interface AddonInterface {
   destroy: () => void;
+  updateSegment: (segment: PlaybackSegment) => void;
 }
 
 export interface Addon {

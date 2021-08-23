@@ -2,6 +2,7 @@ import { Playback } from '../../../../types/Playback';
 import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { EnrichedPlyr } from '../../../../types/plyr';
+import { PlaybackSegment } from '../../../MediaPlayer';
 
 import { AddonInterface } from '../Addons';
 import './HoverPreview.less';
@@ -31,6 +32,18 @@ export const defaultHoverPreviewOptions: HoverPreviewOptions = {
 };
 
 export class HoverPreview implements AddonInterface {
+  public constructor(
+    private plyr: EnrichedPlyr,
+    private playback: Playback,
+    options: InterfaceOptions,
+  ) {
+    this.applyOptions(options);
+
+    this.createContainer();
+
+    this.addListeners();
+  }
+
   public static canBeEnabled = (
     _,
     playback: Playback | null,
@@ -51,18 +64,6 @@ export class HoverPreview implements AddonInterface {
   private image: HTMLImageElement;
   private destroyed: boolean = false;
   private imageRatio: number;
-
-  public constructor(
-    private plyr: EnrichedPlyr,
-    private playback: Playback,
-    options: InterfaceOptions,
-  ) {
-    this.applyOptions(options);
-
-    this.createContainer();
-
-    this.addListeners();
-  }
 
   public destroy = () => {
     if (this.destroyed) {
@@ -228,4 +229,6 @@ export class HoverPreview implements AddonInterface {
     this.plyr && this.plyr.elements && this.plyr.elements.container;
 
   private hasBeenDestroyed = (): boolean => this.destroyed;
+
+  public updateSegment = (_: PlaybackSegment): void => {};
 }

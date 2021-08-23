@@ -7,6 +7,7 @@ export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
     play: jest.fn().mockReturnValue(new Promise(noop)),
     pause: jest.fn(),
     destroy: jest.fn(),
+    getSegment: jest.fn(),
     getCurrentTime: jest.fn(),
     getVideoContainer: jest.fn(),
     onEnd: jest.fn(),

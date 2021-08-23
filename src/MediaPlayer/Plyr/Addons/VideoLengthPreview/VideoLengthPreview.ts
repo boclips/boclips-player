@@ -2,6 +2,7 @@ import { Playback } from '../../../../types/Playback';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import './VideoLengthPreview.less';
+import { PlaybackSegment } from '../../../MediaPlayer';
 
 import { AddonInterface } from '../Addons';
 import { formatDuration } from '../../../../utils/durationFormatter';
@@ -66,4 +67,6 @@ export class VideoLengthPreview implements AddonInterface {
 
   private getPlyrContainer = () =>
     this.plyr && this.plyr.elements && this.plyr.elements.container;
+
+  updateSegment = (_: PlaybackSegment): void => {};
 }

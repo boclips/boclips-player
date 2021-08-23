@@ -107,7 +107,10 @@ export class BoclipsPlayer implements PrivatePlayer {
     }
   };
 
-  public loadVideo = async (videoUri: string, segment?: PlaybackSegment) => {
+  public loadVideo = async (
+    videoUri: string,
+    segment?: PlaybackSegment,
+  ): Promise<any> => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
       return;
     }

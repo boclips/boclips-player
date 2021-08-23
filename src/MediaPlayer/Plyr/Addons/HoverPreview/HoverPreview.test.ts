@@ -19,7 +19,7 @@ beforeEach(() => {
 const getHoverPreview = (playback = PlaybackFactory.streamSample()) =>
   new HoverPreview(plyr, playback, {
     addons: { hoverPreview: true },
-  } as any);
+  } as InterfaceOptions);
 
 describe('Feature Enabling', () => {
   const testData = [
@@ -152,7 +152,9 @@ describe('Options', () => {
     it(`is set to ${message}`, () => {
       const addon = new HoverPreview(plyr, PlaybackFactory.streamSample(), {
         controls: null,
-        addons: { hoverPreview: input },
+        addons: {
+          hoverPreview: input,
+        },
       });
 
       expect(addon.getOptions()).toEqual(expected);
