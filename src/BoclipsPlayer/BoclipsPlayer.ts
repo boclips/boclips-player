@@ -107,7 +107,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     }
   };
 
-  public loadVideo = async (videoUri: string, segment?: PlaybackSegment) => {
+  public loadVideo = async (videoUri: string): Promise<any> => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
       return;
     }
@@ -120,7 +120,7 @@ export class BoclipsPlayer implements PrivatePlayer {
         this.errorHandler.clearError();
 
         this.video = video;
-        this.mediaPlayer.configureWithVideo(video, segment);
+        this.mediaPlayer.configureWithVideo(video);
       })
       .catch((error) => {
         if (this.errorHandler.isDefinedError(error)) {

@@ -12,7 +12,7 @@ import {
   VideoFactory,
 } from '../../test-support/TestFactories';
 import { HasClientDimensions } from '../../test-support/types';
-import { MediaPlayer } from '../MediaPlayer';
+import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
 import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
 import { MockedPlyr } from '../../../__mocks__/plyr';
@@ -125,62 +125,6 @@ describe('Stream Playback', () => {
 
     expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
   });
-
-  describe('with a playback segment', () => {
-    it('does not restrict streamingTechnique load when there is no start time', () => {
-      const segment = {
-        end: 60,
-      };
-
-      mediaPlayer.configureWithVideo(video, segment);
-
-      expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
-        video.playback,
-        undefined,
-      );
-
-      mockPlyr = getLatestMockPlyrInstance();
-      mockPlyr.__callEventCallback('play');
-
-      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(undefined);
-    });
-
-    it('restricts the initial streamingTechnique load when a playback segment is provided', () => {
-      const segment = {
-        start: 30,
-        end: 60,
-      };
-
-      mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
-
-      expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
-        video.playback,
-        segment.start,
-      );
-
-      mockPlyr = getLatestMockPlyrInstance();
-      mockPlyr.__callEventCallback('play');
-
-      expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
-        segment.start,
-      );
-    });
-
-    it('stops streamingTechnique from loading when it is automatically paused', () => {
-      const segment = {
-        start: 30,
-        end: 60,
-      };
-
-      mediaPlayer.configureWithVideo(VideoFactory.sample(), segment);
-
-      mockPlyr = getLatestMockPlyrInstance();
-      mockPlyr.currentTime = 60;
-      mockPlyr.__callEventCallback('timeupdate');
-
-      expect(mockStreamingTechnique.stopLoad).toHaveBeenCalled();
-    });
-  });
 });
 
 describe('YouTube Playback', () => {
@@ -194,6 +138,17 @@ describe('YouTube Playback', () => {
 });
 
 describe('Playback restriction', () => {
+  const setupMockPlayer = (segment: PlaybackSegment) => {
+    mockedPlyr.mockClear();
+    mocked(StreamingTechniqueFactory.get(mockPlayer));
+    mockPlayer = mocked(
+      new BoclipsPlayer(container, { interface: { controls: [] }, segment }),
+    );
+    mediaPlayer = new PlyrWrapper(mockPlayer);
+
+    mockPlyr = getLatestMockPlyrInstance();
+  };
+
   const testData = [
     { type: 'Stream', segmentedVideo: VideoFactory.sample() },
     {
@@ -208,8 +163,9 @@ describe('Playback restriction', () => {
         const segment = {
           start: 30,
         };
+        setupMockPlayer(segment);
 
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
         expect(mockPlyr.currentTime).toEqual(segment.start);
@@ -219,8 +175,8 @@ describe('Playback restriction', () => {
         const segment = {
           start: 30,
         };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        setupMockPlayer(segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
         // Some browsers won't set currentTime if it hasn't loaded the data
@@ -235,8 +191,8 @@ describe('Playback restriction', () => {
         const segment = {
           end: 60,
         };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        setupMockPlayer(segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
         mockPlyr.currentTime = 60;
@@ -249,14 +205,14 @@ describe('Playback restriction', () => {
         const segment = {
           end: 60,
         };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        setupMockPlayer(segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
         mockPlyr.currentTime = 60;
         mockPlyr.__callEventCallback('timeupdate');
 
-        expect(mockPlyr.pause).toBeCalledTimes(1);
+        expect(mockPlyr.pause).toBeCalledTimes(2);
 
         mockPlyr.currentTime = 65;
         mockPlyr.__callEventCallback('timeupdate');
@@ -269,8 +225,8 @@ describe('Playback restriction', () => {
           start: 45,
           end: 20,
         };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        setupMockPlayer(segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
 
@@ -285,8 +241,8 @@ describe('Playback restriction', () => {
           start: 30,
           end: 60,
         };
-
-        mediaPlayer.configureWithVideo(segmentedVideo, segment);
+        setupMockPlayer(segment);
+        mediaPlayer.configureWithVideo(segmentedVideo);
 
         mockPlyr = getLatestMockPlyrInstance();
         expect(mockPlyr.currentTime).toEqual(30);
@@ -294,7 +250,7 @@ describe('Playback restriction', () => {
         mockPlyr.currentTime = 60;
         mockPlyr.__callEventCallback('timeupdate');
 
-        expect(mockPlyr.pause).toHaveBeenCalledTimes(1);
+        expect(mockPlyr.pause).toHaveBeenCalledTimes(2);
 
         mediaPlayer.configureWithVideo(
           VideoFactory.sample(PlaybackFactory.youtubeSample()),
@@ -611,5 +567,88 @@ describe('onEnd', () => {
       // TODO: This assertion does not work ...
       expect(mockContainer.innerHTML).toContain('overlay');
     });
+  });
+});
+describe('with a playback segment', () => {
+  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+  const setupMockPlayer = (segment: PlaybackSegment) => {
+    mockedPlyr.mockClear();
+    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
+    mockPlayer = mocked(
+      new BoclipsPlayer(container, { interface: { controls: [] }, segment }),
+    );
+    mediaPlayer = new PlyrWrapper(mockPlayer);
+
+    mockPlyr = getLatestMockPlyrInstance();
+  };
+
+  it('does not restrict streamingTechnique load when there is no start time', () => {
+    const segment = {
+      end: 60,
+    };
+    setupMockPlayer(segment);
+    mediaPlayer.configureWithVideo(video);
+
+    expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+      video.playback,
+      undefined,
+    );
+
+    mockPlyr = getLatestMockPlyrInstance();
+    mockPlyr.__callEventCallback('play');
+
+    expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(undefined);
+  });
+
+  it('restricts the initial streamingTechnique load when a playback segment is provided', () => {
+    const segment = {
+      start: 30,
+      end: 60,
+    };
+    setupMockPlayer(segment);
+    mediaPlayer.configureWithVideo(VideoFactory.sample());
+
+    expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
+      video.playback,
+      segment.start,
+    );
+
+    mockPlyr = getLatestMockPlyrInstance();
+    mockPlyr.__callEventCallback('play');
+
+    expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(
+      segment.start,
+    );
+  });
+
+  it('stops streamingTechnique from loading when it is automatically paused', () => {
+    const segment = {
+      start: 30,
+      end: 60,
+    };
+    setupMockPlayer(segment);
+    mediaPlayer.configureWithVideo(VideoFactory.sample());
+
+    mockPlyr = getLatestMockPlyrInstance();
+    mockPlyr.currentTime = 60;
+    mockPlyr.__callEventCallback('timeupdate');
+
+    expect(mockStreamingTechnique.stopLoad).toHaveBeenCalled();
+  });
+
+  it('Will not allow play outside of the segment start', () => {
+    const segment = {
+      start: 30,
+      end: 50,
+    };
+
+    setupMockPlayer(segment);
+    mediaPlayer.configureWithVideo(VideoFactory.sample());
+
+    mockPlyr = getLatestMockPlyrInstance();
+    mockPlyr.currentTime = 51;
+    mockPlyr.__callEventCallback('play');
+
+    expect(mockPlyr.play).not.toHaveBeenCalled();
   });
 });

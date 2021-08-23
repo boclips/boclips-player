@@ -3,12 +3,13 @@ import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import { Link } from '../../../../types/Link';
 import { Playback } from '../../../../types/Playback';
-import { InterfaceOptions } from '../../../InterfaceOptions';
 import {
   defaultSeekPreviewOptions,
   SeekPreview,
   SeekPreviewOptions,
 } from './SeekPreview';
+import { AddonOptions } from '../../../../BoclipsPlayer/PlayerOptions';
+import { PlaybackSegment } from '../../../MediaPlayer';
 
 let container;
 let plyr: MockedPlyr;
@@ -171,8 +172,12 @@ describe('Options', () => {
   testData.forEach(({ message, input, expected }) => {
     it(`is set to ${message}`, () => {
       const addon = new SeekPreview(plyr, PlaybackFactory.streamSample(), {
-        controls: null,
-        addons: { seekPreview: input },
+        interface: {
+          controls: null,
+          addons: {
+            seekPreview: input,
+          },
+        },
       });
 
       expect(addon.getOptions()).toEqual(expected);
@@ -181,15 +186,17 @@ describe('Options', () => {
 });
 
 describe('Usage', () => {
-  const createSeekPreview = (seekPreviewOptions?: SeekPreviewOptions) =>
+  const createSeekPreview = (
+    seekPreviewOptions?: SeekPreviewOptions,
+    segment?: PlaybackSegment,
+  ) =>
     new SeekPreview(
       plyr,
       PlaybackFactory.streamSample({
         duration: 100,
         links: {
           videoPreview: new Link({
-            href:
-              'http://path/to/thumbnail/api/slices/{thumbnailCount}/width/{thumbnailWidth}',
+            href: 'http://path/to/thumbnail/api/slices/{thumbnailCount}/width/{thumbnailWidth}',
             templated: true,
           }),
           thumbnail: new Link({
@@ -199,10 +206,13 @@ describe('Usage', () => {
         } as Playback['links'],
       }),
       {
-        addons: {
-          seekPreview: seekPreviewOptions || true,
+        interface: {
+          addons: {
+            seekPreview: seekPreviewOptions || true,
+          },
         },
-      } as InterfaceOptions,
+        segment: segment || {},
+      } as AddonOptions,
     );
 
   it('loads a placeholder image while loading the larger image', () => {
@@ -238,9 +248,8 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
-      '.seek-thumbnail',
-    );
+    const previewContainer: HTMLElement =
+      plyr.elements.container.querySelector('.seek-thumbnail');
     expect(previewContainer).toBeTruthy();
 
     expect(previewContainer.style.left).toEqual('-20px');
@@ -257,9 +266,8 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
-      '.seek-thumbnail',
-    );
+    const previewContainer: HTMLElement =
+      plyr.elements.container.querySelector('.seek-thumbnail');
     expect(previewContainer).toBeTruthy();
 
     const img: HTMLImageElement = previewContainer.querySelector('img');
@@ -280,9 +288,8 @@ describe('Usage', () => {
 
     mousemoveListener({ pageX: 30 });
 
-    const previewContainer: HTMLElement = plyr.elements.container.querySelector(
-      '.seek-thumbnail',
-    );
+    const previewContainer: HTMLElement =
+      plyr.elements.container.querySelector('.seek-thumbnail');
     expect(previewContainer).toBeTruthy();
 
     const img: HTMLImageElement = previewContainer.querySelector('img');
@@ -395,7 +402,6 @@ describe('Usage', () => {
 
     expect(hiddenContainer).toBeTruthy();
   });
-
   describe('events', () => {
     it('resets itself on enterfullscreen', () => {
       plyr.elements.container.__jsdomMockClientWidth = 700;
@@ -443,6 +449,38 @@ describe('Usage', () => {
 
       expect(seekPreviewContainerAfter).toBeTruthy();
       expect(seekPreviewContainerAfter.style.width).toEqual(`${700 * 0.25}px`);
+    });
+  });
+  describe(`segmenting`, () => {
+    let mousemoveListener;
+    beforeEach(() => {
+      createSeekPreview({ frameCount: 10 }, { start: 60, end: 90 });
+      plyr.elements.container.__jsdomMockClientWidth = 1400;
+      mousemoveListener = plyr.elements.progress.__eventListeners.mousemove[0];
+    });
+
+    it(`hides when before the segment`, () => {
+      mousemoveListener({ pageX: 50 });
+
+      expect(
+        plyr.elements.container.querySelector('.seek-thumbnail--hidden'),
+      ).toBeTruthy();
+    });
+
+    it(`displays when within the segment`, () => {
+      mousemoveListener({ pageX: 115 });
+
+      expect(
+        plyr.elements.container.querySelector('.seek-thumbnail__image'),
+      ).toBeTruthy();
+    });
+
+    it(`hides when after the segment`, () => {
+      mousemoveListener({ pageX: 145 });
+
+      expect(
+        plyr.elements.container.querySelector('.seek-thumbnail--hidden'),
+      ).toBeTruthy();
     });
   });
 });

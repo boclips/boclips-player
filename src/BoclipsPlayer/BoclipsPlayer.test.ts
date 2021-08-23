@@ -5,7 +5,6 @@ import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
 import { Analytics } from '../Events/Analytics';
-import { PlaybackSegment } from '../MediaPlayer/MediaPlayer';
 import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
 import { VideoFactory } from '../test-support/TestFactories';
 import { DeepPartial } from '../types/Utils';
@@ -27,7 +26,7 @@ describe('BoclipsPlayer', () => {
   beforeEach(() => {
     container = document.createElement('div') as any;
     document.body.appendChild(container);
-    player = new BoclipsPlayer(container);
+    player = new BoclipsPlayer(container, { segment: {} });
     boclipsClient = mocked(AxiosBoclipsApiClient).mock.results[0].value;
   });
 
@@ -100,7 +99,7 @@ describe('BoclipsPlayer', () => {
     const video = VideoFactory.sample();
 
     boclipsClient.retrieveVideo.mockReturnValue(
-      new Promise(resolve => resolve(video)),
+      new Promise((resolve) => resolve(video)),
     );
 
     return player.loadVideo(uri).then(() => {
@@ -166,7 +165,7 @@ describe('BoclipsPlayer', () => {
 
     beforeEach(() => {
       boclipsClient.retrieveVideo.mockReturnValue(
-        new Promise(resolve => resolve(video)),
+        new Promise((resolve) => resolve(video)),
       );
     });
 
@@ -180,29 +179,12 @@ describe('BoclipsPlayer', () => {
         expect(actualVideo).toEqual(video);
       });
     });
-
-    it('Will configure the media player with a video and soft playback restriction', () => {
-      const playbackSegment: PlaybackSegment = {
-        start: 10,
-        end: 30,
-      };
-      return player.loadVideo(uri, playbackSegment).then(() => {
-        const calls = mocked(player.getMediaPlayer().configureWithVideo).mock
-          .calls;
-        expect(calls).toHaveLength(1);
-        const actualVideo = calls[0][0] as Video;
-        expect(actualVideo).toBeTruthy();
-        expect(actualVideo).toEqual(video);
-        const actualSegment = calls[0][1];
-        expect(actualSegment).toEqual(playbackSegment);
-      });
-    });
   });
 
   describe('passes through media player methods', () => {
     const passThroughMethods = ['destroy', 'play', 'pause'];
 
-    passThroughMethods.forEach(method => {
+    passThroughMethods.forEach((method) => {
       it(`Will destroy the media player when ${method} is called`, () => {
         player[method]();
 

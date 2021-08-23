@@ -5,6 +5,7 @@ import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
 import { VideoLengthPreview } from './VideoLengthPreview/VideoLengthPreview';
+import { AddonOptions } from '../../../BoclipsPlayer/PlayerOptions';
 
 export interface AddonInterface {
   destroy: () => void;
@@ -19,7 +20,7 @@ export interface Addon {
   new (
     plyr: EnrichedPlyr,
     playback: Playback,
-    options: InterfaceOptions,
+    options: AddonOptions,
   ): AddonInterface;
 }
 

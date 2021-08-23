@@ -1,20 +1,20 @@
 import { v1 as uuidV1 } from 'uuid';
 import { EventBus } from '../../../../Events/EventBus';
 import { EnrichedPlyr } from '../../../../types/plyr';
-import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
+import { InterfaceOptions } from '../../../InterfaceOptions';
 
 export type SinglePlaybackOptions = boolean;
 
 export class SinglePlayback implements AddonInterface {
+  public constructor(private readonly plyr: EnrichedPlyr, _, __) {
+    this.addEventListeners();
+  }
+
   public static canBeEnabled = (_, __, options: InterfaceOptions) =>
     options.addons.singlePlayback;
 
   private readonly addonId = uuidV1();
-
-  public constructor(private readonly plyr: EnrichedPlyr, _, __) {
-    this.addEventListeners();
-  }
 
   private addEventListeners = () => {
     this.plyr.on('playing', this.handlePlyrPlaying);

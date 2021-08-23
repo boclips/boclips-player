@@ -5,6 +5,8 @@ import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
 import './SeekPreview.less';
+import { PlaybackSegment } from '../../../MediaPlayer';
+import { AddonOptions } from '../../../../BoclipsPlayer/PlayerOptions';
 
 export interface SeekPreviewOptions {
   /**
@@ -44,14 +46,15 @@ export class SeekPreview implements AddonInterface {
   private height: number;
   private destroyed: boolean = false;
   private imageRatio: number;
+  private segment: PlaybackSegment = null;
 
   public constructor(
     private plyr: EnrichedPlyr,
     private playback: Playback,
-    options: InterfaceOptions,
+    options: AddonOptions,
   ) {
-    this.applyOptions(options);
-
+    this.applyOptions(options.interface);
+    this.segment = options.segment;
     this.hidePlyrSeek();
 
     this.installPlyrListeners();
@@ -122,6 +125,16 @@ export class SeekPreview implements AddonInterface {
 
   private handleMousemove = (event: MouseEvent) => {
     if (this.hasBeenDestroyed()) {
+      return;
+    }
+    const clientRect: ClientRect =
+      this.getPlyrProgressBar().getBoundingClientRect();
+
+    const seekTime = this.calculateSeekTime(clientRect, event.pageX);
+    if (
+      this.segment &&
+      (seekTime < this.segment.start || seekTime > this.segment.end)
+    ) {
       return;
     }
 

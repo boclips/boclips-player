@@ -17,8 +17,9 @@ export interface PlaybackSegment {
 export interface MediaPlayer {
   play: () => Promise<void>;
   pause: () => void;
-  configureWithVideo: (video: Video, segment?: PlaybackSegment) => void;
+  configureWithVideo: (video: Video) => void;
   destroy: () => void;
+  getSegment: () => PlaybackSegment;
   getVideoContainer: () => HTMLVideoElement | HTMLIFrameElement;
   getCurrentTime: () => number;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;

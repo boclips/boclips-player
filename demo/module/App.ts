@@ -4,6 +4,7 @@ const playerContainer = document.createElement('div');
 playerContainer.id = 'player-container';
 
 document.body.appendChild(playerContainer);
+const segments = { start: 120, end: 180 };
 
 const player = PlayerFactory.get(playerContainer, {
   interface: {
@@ -24,11 +25,13 @@ const player = PlayerFactory.get(playerContainer, {
       videoLengthPreview: true,
     },
   },
+  segment: segments,
 });
 
 player
   .loadVideo(
     'https://api.staging-boclips.com/v1/videos/5df9250eff99916ded943b0e',
+    segments,
   )
   .then(() => {
     return player.play();

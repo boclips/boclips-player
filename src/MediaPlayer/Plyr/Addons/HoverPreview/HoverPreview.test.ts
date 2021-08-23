@@ -4,6 +4,7 @@ import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import { HasClientDimensions } from '../../../../test-support/types';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { defaultHoverPreviewOptions, HoverPreview } from './HoverPreview';
+import { AddonOptions } from '../../../../BoclipsPlayer/PlayerOptions';
 
 let plyr: MockedPlyr;
 
@@ -18,8 +19,10 @@ beforeEach(() => {
 
 const getHoverPreview = (playback = PlaybackFactory.streamSample()) =>
   new HoverPreview(plyr, playback, {
-    addons: { hoverPreview: true },
-  } as any);
+    interface: {
+      addons: { hoverPreview: true },
+    },
+  } as AddonOptions);
 
 describe('Feature Enabling', () => {
   const testData = [
@@ -151,8 +154,12 @@ describe('Options', () => {
   testData.forEach(({ message, input, expected }) => {
     it(`is set to ${message}`, () => {
       const addon = new HoverPreview(plyr, PlaybackFactory.streamSample(), {
-        controls: null,
-        addons: { hoverPreview: input },
+        interface: {
+          controls: null,
+          addons: {
+            hoverPreview: input,
+          },
+        },
       });
 
       expect(addon.getOptions()).toEqual(expected);
