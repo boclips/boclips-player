@@ -280,4 +280,6 @@ describe('HoverPreview', () => {
       expect(plyr.elements.container.children).not.toContain(container);
     });
   });
+
+  describe(`segmenting`, () => {});
 });

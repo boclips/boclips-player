@@ -4,7 +4,6 @@ import './ErrorHandler.less';
 import ErrorIcon from './ErrorIcon';
 import { NullLogger } from '../NullLogger';
 import { Logger } from '../Logger';
-import { EnrichedPlyr } from '../types/plyr';
 import { InternalError } from './InternalError';
 import { BoclipsError } from './BoclipsPlayerError';
 
@@ -42,20 +41,6 @@ export class ErrorHandler implements ErrorHandlerInstance {
     error.hasOwnProperty('fatal') &&
     error.hasOwnProperty('type') &&
     error.hasOwnProperty('payload');
-
-  public blockDisplay = (
-    player: EnrichedPlyr,
-    segmentStart: number,
-    segmentEnd: number,
-  ) => {
-    this.renderBlockView(
-      'Video Unavailable',
-      'You must log in to view this video',
-      player,
-      segmentStart,
-      segmentEnd,
-    );
-  };
 
   public handleError = (error: InternalError) => {
     this.logger.error(error);
@@ -107,51 +92,6 @@ export class ErrorHandler implements ErrorHandlerInstance {
 
     const errorContainer = document.createElement('section');
     errorContainer.id = ErrorHandler.CONTAINER_ID;
-    errorContainer.classList.add(ErrorHandler.CONTAINER_CLASS);
-
-    errorContainer.insertAdjacentHTML('afterbegin', ErrorIcon);
-    errorContainer.appendChild(text);
-
-    this.clearError();
-    this.player.getContainer().prepend(errorContainer);
-  };
-
-  private renderBlockView = (
-    title: string,
-    content: string,
-    player: EnrichedPlyr,
-    start,
-    end,
-  ) => {
-    const titleElement = document.createElement('h1');
-    titleElement.classList.add('title');
-    titleElement.textContent = title;
-
-    const bodyElement = document.createElement('p');
-    bodyElement.classList.add('body');
-    bodyElement.textContent = content;
-
-    const startEl = document.createElement('button');
-    const endEl = document.createElement('button');
-
-    const startOnClick = () => {
-      player.currentTime = start;
-      player.pause();
-      document.querySelector('.error').remove();
-    };
-
-    startEl.textContent = start;
-    startEl.addEventListener('click', startOnClick);
-    endEl.textContent = end;
-
-    const text = document.createElement('div');
-    text.appendChild(titleElement);
-    text.appendChild(bodyElement);
-
-    text.appendChild(startEl);
-    text.appendChild(endEl);
-
-    const errorContainer = document.createElement('section');
     errorContainer.classList.add(ErrorHandler.CONTAINER_CLASS);
 
     errorContainer.insertAdjacentHTML('afterbegin', ErrorIcon);

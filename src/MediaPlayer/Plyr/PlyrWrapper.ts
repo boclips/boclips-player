@@ -1,6 +1,5 @@
 import Plyr from 'plyr';
 import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
-import { ErrorHandler } from '../../ErrorHandler/ErrorHandler';
 import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
 import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
@@ -286,7 +285,6 @@ export default class PlyrWrapper implements MediaPlayer {
     if (this.segment) {
       this.updateAddonSegments(segment);
       const segmentStart = this.segment.start || 0;
-      let blockPlayback = false;
 
       if (segmentStart) {
         const skipToStart = (event) => {
@@ -301,47 +299,30 @@ export default class PlyrWrapper implements MediaPlayer {
       }
 
       if (this.segment.end && this.segment.end > segmentStart) {
-        const autoStop = (event) => {
-          const plyr = event.detail.plyr;
-
-          if (
-            plyr.currentTime >= this.segment.end ||
-            plyr.currentTime <= this.segment.start
-          ) {
-            this.plyr.currentTime = segmentStart;
-            plyr.pause();
-            blockPlayback = true;
-
-            if (this.streamingTechnique) {
-              this.streamingTechnique.stopLoad();
-            }
-          }
-        };
-
-        this.plyr.on('timeupdate', autoStop);
-      }
-
-      if (blockPlayback) {
-        this.plyr.pause();
-        this.plyr.on('timeupdate', this.displayBlocker);
+        this.plyr.on('seeking', this.autoStop);
+        this.plyr.on('timeupdate', this.autoStop);
       }
     }
   };
 
-  private displayBlocker = (event) => {
+  private autoStop = (event) => {
     const plyr = event.detail.plyr;
-    const errorHandler = new ErrorHandler(this.player);
 
-    if (
-      plyr.currentTime < this.segment.start ||
-      plyr.currentTime > this.segment.end
-    ) {
-      errorHandler.blockDisplay(
-        this.plyr,
-        this.segment.start,
-        this.segment.end,
-      );
-      this.plyr.pause();
+    if (plyr.currentTime > this.segment.end) {
+      plyr.pause();
+      this.stopStreamingTechnique();
+      plyr.currentTime = this.segment.end;
+    }
+    if (plyr.currentTime < this.segment.start) {
+      plyr.pause();
+      this.stopStreamingTechnique();
+      plyr.currentTime = this.segment.start;
+    }
+  };
+
+  private stopStreamingTechnique = () => {
+    if (this.streamingTechnique) {
+      this.streamingTechnique.stopLoad();
     }
   };
 
