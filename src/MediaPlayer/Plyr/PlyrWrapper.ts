@@ -186,18 +186,18 @@ export default class PlyrWrapper implements MediaPlayer {
       }
     });
 
-    /**
-     * Current Plyr and HLS versions have a bug when the video has multiple captions. This seems to stem from a
-     * timing issue loading the TextTrack content. It seems to not initialise the first TextTrack properly, and
-     * leaves the mode 'disabled'.
-     * As the Plyr is unable to show the first caption, we force the mode whenever the video starts playing, or the
-     * captions are enabled, if captions are active.
-     *
-     * @see https://github.com/sampotts/plyr/issues/994 et al.
-     */
-
+    // /**
+    //  * Current Plyr and HLS versions have a bug when the video has multiple captions. This seems to stem from a
+    //  * timing issue loading the TextTrack content. It seems to not initialise the first TextTrack properly, and
+    //  * leaves the mode 'disabled'.
+    //  * As the Plyr is unable to show the first caption, we force the mode whenever the video starts playing, or the
+    //  * captions are enabled, if captions are active.
+    //  *
+    //  * @see https://github.com/sampotts/plyr/issues/994 et al.
+    //  */
+    //
     const playerContainer = this.player.getContainer();
-
+    //
     const forceShowCaption = () => {
       setTimeout(() => {
         if (
@@ -206,7 +206,9 @@ export default class PlyrWrapper implements MediaPlayer {
           this.plyr.captions.active &&
           this.plyr.captions.currentTrackNode
         ) {
-          this.plyr.captions.currentTrackNode.mode = 'showing';
+          const trackNode = this.plyr.captions.currentTrackNode;
+          if (!trackNode || !trackNode.activeCues) return;
+          trackNode.mode = 'showing';
         }
         if (
           this.plyr &&
@@ -220,11 +222,9 @@ export default class PlyrWrapper implements MediaPlayer {
           playerContainer.classList.add('disable-cc');
           this.plyr.captions.currentTrackNode.mode = 'disabled';
         }
-      }, 50);
+      }, 500);
     };
 
-    this.plyr.on('playing', forceShowCaption);
-    this.plyr.on('captionsenabled', forceShowCaption);
     this.plyr.on('languagechange', forceShowCaption);
 
     if (this.onEndCallback) {
@@ -404,7 +404,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
-      captions: { active: false, language: 'en', update: true },
+      captions: { active: false, update: true },
       /**
        * This is necessary workaround to allow official youtube controls.
        */
