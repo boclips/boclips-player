@@ -239,7 +239,7 @@ export default class PlyrWrapper implements MediaPlayer {
   }
 
   public configureWithVideo = (
-    { playback }: Video,
+    { playback, title, description, id }: Video,
     segment?: PlaybackSegment,
   ) => {
     if (this.hasBeenDestroyed) {
@@ -302,6 +302,30 @@ export default class PlyrWrapper implements MediaPlayer {
         this.plyr.on('seeking', this.autoStop);
         this.plyr.on('timeupdate', this.autoStop);
       }
+    }
+
+    if (title && description) {
+      const titleElement = document.createElement('div');
+      const descriptionElement = document.createElement('div');
+      const titleId = id + 'title';
+      const descriptionId = id + 'description';
+
+      titleElement.setAttribute('id', titleId);
+      titleElement.classList.add('not-visible-sr');
+      titleElement.innerHTML = `${title}. Video. `;
+
+      descriptionElement.setAttribute('id', descriptionId);
+      descriptionElement.classList.add('not-visible-sr');
+      descriptionElement.innerHTML = description;
+
+      this.plyr.elements.container.append(titleElement);
+      this.plyr.elements.container.append(descriptionElement);
+
+      this.plyr.elements.container.setAttribute('aria-labelledby', titleId);
+      this.plyr.elements.container.setAttribute(
+        'aria-describedby',
+        descriptionId,
+      );
     }
   };
 

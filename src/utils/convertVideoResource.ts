@@ -8,6 +8,8 @@ const convertVideoResource = (data: any): Video => ({
   links: {
     self: new Link(data._links.self),
   },
+  title: data.title,
+  description: data.description,
 });
 
 export default convertVideoResource;

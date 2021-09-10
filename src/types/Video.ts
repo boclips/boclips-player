@@ -8,4 +8,6 @@ export interface Video {
   id: string;
   playback: PlaybackType;
   links: VideoLinks;
+  title: string;
+  description: string;
 }

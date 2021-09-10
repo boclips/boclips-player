@@ -32,7 +32,7 @@
     .plyr__tab-focus,
     &:hover,
     &[aria-expanded='true'] {
-      color: #FFFFFF;
+      color: #ffffff;
 
       background: @mid-blue;
     }
@@ -58,7 +58,8 @@
       width: 60px;
       height: 70px;
 
-      background: url(https://storage.googleapis.com/youtube-icon/youtube-play.svg) no-repeat transparent !important;
+      background: url(https://storage.googleapis.com/youtube-icon/youtube-play.svg)
+        no-repeat transparent !important;
       border-radius: 0 !important;
 
       box-shadow: none !important;
@@ -70,6 +71,11 @@
   }
 }
 
+.not-visible-sr {
+  visibility: hidden;
+  position: absolute;
+  left: -9999px;
+}
 //Fix excess padding breaking play button
 @media (min-width: 480px) {
   .plyr--video .plyr__controls {
@@ -83,8 +89,8 @@
 }
 
 .disable-cc {
-  button[data-plyr="captions"],
-  button[data-plyr="settings"] {
+  button[data-plyr='captions'],
+  button[data-plyr='settings'] {
     display: none !important;
   }
 }
