@@ -1,5 +1,6 @@
 import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
+import { Video } from '../types/Video';
 
 export class PlaybackFactory {
   public static streamSample = (
@@ -48,8 +49,10 @@ export class PlaybackFactory {
 export class VideoFactory {
   public static sample = (
     playback: Playback = PlaybackFactory.streamSample(),
-  ) => ({
+  ): Video => ({
     id: 'video-id',
+    title: 'title',
+    description: 'description',
     playback,
     links: {
       self: new Link({

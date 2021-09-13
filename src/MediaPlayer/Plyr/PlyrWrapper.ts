@@ -305,27 +305,27 @@ export default class PlyrWrapper implements MediaPlayer {
     }
 
     if (title && description) {
-      const titleElement = document.createElement('div');
-      const descriptionElement = document.createElement('div');
-      const titleId = id + 'title';
-      const descriptionId = id + 'description';
+      const container = this.plyr.elements.container;
+      if (container instanceof Element) {
+        const titleElement = document.createElement('div');
+        const descriptionElement = document.createElement('div');
+        const titleId = id + '-title';
+        const descriptionId = id + '-description';
 
-      titleElement.setAttribute('id', titleId);
-      titleElement.classList.add('not-visible-sr');
-      titleElement.innerHTML = `${title}. Video. `;
+        titleElement.setAttribute('id', titleId);
+        titleElement.classList.add('not-visible-sr');
+        titleElement.innerHTML = `${title}. Video. `;
 
-      descriptionElement.setAttribute('id', descriptionId);
-      descriptionElement.classList.add('not-visible-sr');
-      descriptionElement.innerHTML = description;
+        descriptionElement.setAttribute('id', descriptionId);
+        descriptionElement.classList.add('not-visible-sr');
+        descriptionElement.innerHTML = description;
 
-      this.plyr.elements.container.append(titleElement);
-      this.plyr.elements.container.append(descriptionElement);
+        container.appendChild(titleElement);
+        container.appendChild(descriptionElement);
 
-      this.plyr.elements.container.setAttribute('aria-labelledby', titleId);
-      this.plyr.elements.container.setAttribute(
-        'aria-describedby',
-        descriptionId,
-      );
+        container.setAttribute('aria-labelledby', titleId);
+        container.setAttribute('aria-describedby', descriptionId);
+      }
     }
   };
 

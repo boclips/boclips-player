@@ -31,7 +31,7 @@ describe('retrieve video', () => {
 
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
-    return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
+    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) =>
       expect(video).toMatchObject({
         id: videoResource.id,
         playback: {
@@ -56,7 +56,7 @@ describe('retrieve video', () => {
 
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
-    return boclipsClient.retrieveVideo('/v1/videos/177').then(video =>
+    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) =>
       expect(video).toMatchObject({
         id: video.id,
         playback: {
@@ -249,11 +249,11 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         tokenFactory: jest.fn().mockResolvedValue('test-bearer-token'),
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
@@ -266,22 +266,22 @@ describe('With authorisation', () => {
     });
   });
 
-  it('Will fail gracefully if a token factory throws an exception', done => {
+  it('Will fail gracefully if a token factory throws an exception', (done) => {
     const uri = '/v1/videos/177';
 
     const videoResource = VideoResourceFactory.youtubeSample();
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         tokenFactory: jest
           .fn()
           .mockRejectedValue(new Error('Some fatal authorization error')),
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
-    return boclipsClient.retrieveVideo(uri).catch(error => {
+    boclipsClient.retrieveVideo(uri).catch((error) => {
       expect(error).not.toBeNull();
       done();
     });
@@ -294,11 +294,11 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         tokenFactory: jest.fn().mockResolvedValue(null),
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
@@ -318,11 +318,11 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         userIdFactory: undefined,
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
@@ -340,11 +340,11 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
     return boclipsClient.retrieveVideo(uri).then(() => {
       const requests = MockFetchVerify.getHistory().get;
@@ -362,11 +362,11 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.post(uri, undefined, 201);
 
-    player.getOptions.mockReturnValue(({
+    player.getOptions.mockReturnValue({
       api: {
         userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
       },
-    } as any) as PlayerOptions);
+    } as any as PlayerOptions);
 
     return boclipsClient.emitPlaybackEvent(0, 10).then(() => {
       const requests = MockFetchVerify.getHistory().post;
