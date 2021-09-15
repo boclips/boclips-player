@@ -427,7 +427,7 @@ export default class PlyrWrapper implements MediaPlayer {
     }
 
     this.plyr = new Plyr(media, {
-      debug: this.player.getOptions().debug,
+      debug: true,
       captions: { active: false, update: true },
       /**
        * This is necessary workaround to allow official youtube controls.
@@ -444,6 +444,12 @@ export default class PlyrWrapper implements MediaPlayer {
           this.player
             .getAnalytics()
             .handleInteraction(this.plyr.currentTime, 'jumpedForward', {});
+
+          const remainingTime = this.plyr.duration - this.plyr.currentTime;
+          if (remainingTime <= 10) {
+            this.plyr.currentTime = this.plyr.duration - 0.3; // this is a very important number.
+            return false;
+          }
           return true;
         },
         rewind: () => {
