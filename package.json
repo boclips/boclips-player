@@ -41,7 +41,7 @@
   "typings": "lib/index.d.ts",
   "dependencies": {
     "@types/url-template": "^2.0.28",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "deepmerge": "^4.2.2",
     "hls.js": "^1.0.10",
     "is-plain-object": "^5.0.0",
