@@ -29,11 +29,11 @@ const player = PlayerFactory.get(playerContainer, {
 
 player
   .loadVideo('https://api.boclips.com/v1/videos/5c54d7cfd8eafeecae20ef1d')
-  // .then(() => {
-  //   return player.play();
-  // })
-  // .then(() => {
-  //   setTimeout(() => {
-  //     player.pause();
-  //   }, 10000);
-  // });
+  .then(() => {
+    return player.play();
+  })
+  .then(() => {
+    setTimeout(() => {
+      player.pause();
+    }, 10000);
+  });
