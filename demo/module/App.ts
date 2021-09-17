@@ -16,6 +16,7 @@ const player = PlayerFactory.get(playerContainer, {
       'volume',
       'captions',
       'fullscreen',
+      'settings',
     ],
     addons: {
       seekPreview: true,
@@ -27,14 +28,12 @@ const player = PlayerFactory.get(playerContainer, {
 });
 
 player
-  .loadVideo(
-    'https://api.staging-boclips.com/v1/videos/5df9250eff99916ded943b0e',
-  )
-  .then(() => {
-    return player.play();
-  })
-  .then(() => {
-    setTimeout(() => {
-      player.pause();
-    }, 10000);
-  });
+  .loadVideo('https://api.boclips.com/v1/videos/5c54d7cfd8eafeecae20ef1d')
+  // .then(() => {
+  //   return player.play();
+  // })
+  // .then(() => {
+  //   setTimeout(() => {
+  //     player.pause();
+  //   }, 10000);
+  // });
