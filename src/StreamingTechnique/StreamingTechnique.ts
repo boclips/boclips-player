@@ -5,4 +5,5 @@ export interface StreamingTechnique {
   destroy: () => void;
   startLoad: (startTime: number) => void;
   stopLoad: () => void;
+  changeCaptions: (trackNumber: number) => void;
 }

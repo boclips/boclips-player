@@ -496,6 +496,19 @@ describe('Playback restriction', () => {
         },
       );
     });
+
+    it('updates the streaming captions when the captions are changed', () => {
+      const segment = {
+        end: 60,
+      };
+      setupMockPlayer();
+      mediaPlayer.configureWithVideo(video, segment);
+      mockPlyr.currentTrack = 0;
+
+      mockPlyr.__callEventCallback('languagechange');
+
+      expect(mockStreamingTechnique.changeCaptions).toHaveBeenCalledWith(0);
+    });
   });
 
   describe('Fullscreen', () => {

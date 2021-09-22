@@ -226,6 +226,11 @@ export default class PlyrWrapper implements MediaPlayer {
     };
 
     this.plyr.on('languagechange', forceShowCaption);
+    this.plyr.on('languagechange', (e) => {
+      if (this.streamingTechnique) {
+        this.streamingTechnique.changeCaptions(e.detail.plyr.currentTrack);
+      }
+    });
 
     if (this.onEndCallback) {
       this.plyr.on('ended', () => {

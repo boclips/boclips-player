@@ -5,6 +5,7 @@ export const MockStreamingTechnique: StreamingTechnique = {
   startLoad: jest.fn(),
   stopLoad: jest.fn(),
   destroy: jest.fn(),
+  changeCaptions: jest.fn(),
 };
 
 // noinspection JSUnusedGlobalSymbols

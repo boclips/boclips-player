@@ -11,5 +11,14 @@ module.exports = merge(common, {
     port: 8081,
     static: distPath,
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
+  module: {
+    rules: [
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
+    ],
+  },
 });

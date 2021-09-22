@@ -18,6 +18,14 @@ export class HlsWrapper implements StreamingTechnique {
     private readonly logger: Logger = new NullLogger(),
   ) {}
 
+  public changeCaptions = (trackNumber: number) => {
+    if (!this.canCallHls()) {
+      return;
+    }
+
+    this.hls.subtitleTrack = trackNumber;
+  };
+
   public initialise = (
     playback: StreamPlayback,
     startPosition: number = -1,

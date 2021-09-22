@@ -16,6 +16,7 @@ const player = PlayerFactory.get(playerContainer, {
       'volume',
       'captions',
       'fullscreen',
+      'settings',
     ],
     addons: {
       seekPreview: true,
