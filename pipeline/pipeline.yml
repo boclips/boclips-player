@@ -129,3 +129,9 @@ resource_types:
   type: docker-image
   source:
     repository: idahobean/npm-resource
+
+- name: github-release
+  type: registry-image
+  source:
+    repository: concourse/github-release-resource
+    tag: "1.6.4-ubuntu-20210922"
