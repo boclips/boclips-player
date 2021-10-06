@@ -107,6 +107,13 @@ interface PlayerOptions {
     interface: Partial<InterfaceOptions>;
 }
 ----
+
+[[authentication]]
+=== Authentication
+
+The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
+
+The player takes a token factory which is responsible for generating a valid user token. We recommend the token factory sends a request to your backend service, that then handles getting a token from boclips.
 [source,typescript]
 ----
 import { PlayerFactory } from 'boclips-player';
@@ -133,13 +140,6 @@ function renderPlayer() {
 
 };
 ----
-
-[[authentication]]
-=== Authentication
-
-The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
-
-The player takes a token factory which is responsible for generating a valid user token. We recommend the token factory sends a request to your backend service, that then handles getting a token from boclips.
 
 
 [WARNING]
