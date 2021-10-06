@@ -254,46 +254,30 @@ interface ApiOptions {
 }
 ----
 
+[[analytics]]
+== Analytics
+
+In order for us to provide you with insights into the way in which your users watch our curated videos, you can provide the player with user IDs.
+
+This allows us to provide you with usage statistics for each of your users. This information will also allow us to personalise and tailor your Boclips experience and content to your user's usage patterns.
+
+We also expose an onSegmentPlayback callback that you can use for your own internal analytics
+
+Any information provided will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
+
 ==== Analytics Options
 
 [source,typescript]
 ----
 interface AnalyticsOptions {
-    metadata: { [key: string]: any };
-    handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
-}
-----
-
-[[analytics]]
-== Analytics
-
-In order to gain insights into the way in which our users watch our curated videos, the player reports basic view stats back to our backend systems. This information helps us to personalise the Boclips experience in the long-term.
-
-Detailed information on these tracking mechanisms may be gleaned by inspecting the source code of this project.
-
-Where appropriate we will ask you to enrich these events with extra data. See <<analytics-metadata>>
-
-Any information provided will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
-
-[[analytics-metadata]]
-=== Additional Metadata
-
-To gain the best insights we ask that you provide extra data about the circumstance that this player is being used.
-
-When initialising the player, you may pass metadata into the analytics module. For example, what user is watching the video:
-
-[source,typescript]
-----
-const options = {
-    analytics: {
-        metadata: {
+    metadata: {
             userId: user.id
-        }
-    }
-}
+        };
+    handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
 
-const player = Boclips.PlayerFactory.get(document.querySelector('#player-container'), options);
+    const player = Boclips.PlayerFactory.get(document.querySelector('#player-container'), options);
 player.loadVideo(video);
+}
 ----
 
 All analytics data should be anonymised.
