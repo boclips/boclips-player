@@ -199,6 +199,8 @@ export default class PlyrWrapper implements MediaPlayer {
     const playerContainer = this.player.getContainer();
     //
     const forceShowCaption = () => {
+      const currentTime = this.plyr.currentTime;
+
       setTimeout(() => {
         if (
           this.plyr &&
@@ -207,8 +209,13 @@ export default class PlyrWrapper implements MediaPlayer {
           this.plyr.captions.currentTrackNode
         ) {
           const trackNode = this.plyr.captions.currentTrackNode;
-          if (!trackNode || !trackNode.activeCues) return;
           trackNode.mode = 'showing';
+
+          this.plyr.restart();
+          this.plyr.pause();
+          setTimeout(() => {
+            this.plyr.currentTime = currentTime;
+          }, 50);
         }
         if (
           this.plyr &&
@@ -222,7 +229,7 @@ export default class PlyrWrapper implements MediaPlayer {
           playerContainer.classList.add('disable-cc');
           this.plyr.captions.currentTrackNode.mode = 'disabled';
         }
-      }, 500);
+      }, 50);
     };
 
     this.plyr.on('languagechange', forceShowCaption);
