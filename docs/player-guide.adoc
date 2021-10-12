@@ -52,29 +52,35 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
 [source,html]
 ----
 <html>
-<head>
+  <head>
     <title>Plain Demo</title>
-    <script src="https://unpkg.com/boclips-player/dist/boclips-player.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boclips-player/dist/boclips-player.css" type="text/css"/>
-</head>
-<body>
-<div id="container"></div>
-<script type="text/javascript">
-    const tokenFactory = ()=> {
-        return fetch('your-service.com/token')
-        .then(response => response.json())
-        .then(data => data.token);
-        };
+    <script
+      src="https://unpkg.com/boclips-player/dist/boclips-player.js"
+      type="text/javascript"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boclips-player/dist/boclips-player.css"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <div id="container"></div>
+    <script type="text/javascript">
+      const tokenFactory = () => {
+        return fetch("your-service.com/token")
+          .then(response => response.json())
+          .then(data => data.token);
+      };
 
-    const container = document.querySelector('#container');
-    const player = Boclips.PlayerFactory.get(container, {
-    api: { tokenFactory },
-  });
-    player.loadVideo('https://path.to.our/video/endpoint/1');
-</script>
-</body>
+      const container = document.querySelector("#container");
+      const player = Boclips.PlayerFactory.get(container, {
+        api: { tokenFactory }
+      });
+      player.loadVideo("https://path.to.our/video/endpoint/1");
+    </script>
+  </body>
 </html>
-
 ----
 
 [[module-import]]
@@ -85,10 +91,10 @@ You can use the boclips-player as a module in your JavaScript application.
 [source,typescript]
 ----
 interface PlayerFactory {
-    get: (
-        container: HTMLElement | string,
-        options: Partial<PlayerOptions> = {}
-    ) => Player;
+  get: (
+    container: HTMLElement | string,
+    options: Partial<PlayerOptions> = {}
+  ) => Player;
 }
 
 interface Player {
@@ -101,10 +107,10 @@ interface Player {
 }
 
 interface PlayerOptions {
-    analytics: Partial<AnalyticsOptions>;
-    api: Partial<ApiOptions>;
-    debug: boolean;
-    interface: Partial<InterfaceOptions>;
+  analytics: Partial<AnalyticsOptions>;
+  api: Partial<ApiOptions>;
+  debug: boolean;
+  interface: Partial<InterfaceOptions>;
 }
 ----
 
@@ -116,29 +122,28 @@ The Boclips API requires authentication in order to accurately track viewer attr
 The player takes a token factory which is responsible for generating a valid user token. We recommend the token factory sends a request to your backend service, that then handles getting a token from boclips.
 [source,typescript]
 ----
-import { PlayerFactory } from 'boclips-player';
+import { PlayerFactory } from "boclips-player";
 
 const tokenFactory = (): Promise<string> => {
-    return fetch('your-service.com/token')
-        .then(response => response.json())
-        .then(data => data.token);
-    };
+  return fetch("your-service.com/token")
+    .then(response => response.json())
+    .then(data => data.token);
+};
 
 function renderPlayer() {
-    const player = PlayerFactory.get(playerContainer, {
-        api: { tokenFactory },
-    });
+  const player = PlayerFactory.get(playerContainer, {
+    api: { tokenFactory }
+  });
 
-    player.onError((error) => {
-       // do something with error
+  player.onError(error => {
+    // do something with error
 
-      // remove the error element from the player
-      player.getErrorHandler().clearError()
-    });
+    // remove the error element from the player
+    player.getErrorHandler().clearError();
+  });
 
-    player.loadVideo('https://path.to.our/video/endpoint')
-
-};
+  player.loadVideo("https://path.to.our/video/endpoint");
+}
 ----
 
 
@@ -157,58 +162,58 @@ The various modules within the player accept optional parameters to drive the be
 [source,typescript]
 ----
 interface InterfaceOptions {
-    controls: Controls[];
-    addons: {
-        seekPreview?: boolean | SeekPreviewOptions;
-        hoverPreview?: boolean | HoverPreviewOptions;
-        singlePlayback?: boolean | SinglePlaybackOptions;
-    };
-    ratio: '16:9' | '4:3';
+  controls: Controls[];
+  addons: {
+    seekPreview?: boolean | SeekPreviewOptions;
+    hoverPreview?: boolean | HoverPreviewOptions;
+    singlePlayback?: boolean | SinglePlaybackOptions;
+  };
+  ratio: "16:9" | "4:3";
 }
 
 type Controls =
-  | 'play-large'
-  | 'restart'
-  | 'rewind'
-  | 'play'
-  | 'fast-forward'
-  | 'progress'
-  | 'current-time'
-  | 'duration'
-  | 'mute'
-  | 'volume'
-  | 'captions'
-  | 'settings'
-  | 'fullscreen';
+  | "play-large"
+  | "restart"
+  | "rewind"
+  | "play"
+  | "fast-forward"
+  | "progress"
+  | "current-time"
+  | "duration"
+  | "mute"
+  | "volume"
+  | "captions"
+  | "settings"
+  | "fullscreen";
 
 interface SeekPreviewOptions {
-    /**
-     * Number of frames to retrieve for distribution over the length
-     * of the video.
-     *
-     * Minimum: 10
-     * Maximum: 20
-     */
-    frameCount: number;
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 10
+   * Maximum: 20
+   */
+  frameCount: number;
 }
 
 interface HoverPreviewOptions {
-    /**
-     * Number of frames to retrieve for distribution over the length
-     * of the video.
-     *
-     * Minimum: 4
-     * Maximum: 15
-     */
-    frameCount: number;
-    /**
-     * Number of frames to retrieve for distribution over the length
-     * of the video.
-     *
-     * Minimum: 200
-     * Maximum: 1000
-     */
-    delayMilliseconds: number;
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 4
+   * Maximum: 15
+   */
+  frameCount: number;
+  /**
+   * Number of frames to retrieve for distribution over the length
+   * of the video.
+   *
+   * Minimum: 200
+   * Maximum: 1000
+   */
+  delayMilliseconds: number;
 }
 
 type SinglePlaybackOptions = boolean;
@@ -244,13 +249,13 @@ It needs to be greater than the value for `start` field to restrict the video le
 [source,typescript]
 ----
 interface ApiOptions {
-    /**
-     * This callback should return a Promise which resolves a string to be used as the users authentication token.
-     * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
-     *
-     * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
-     */
-    tokenFactory: () => Promise<string>;
+  /**
+   * This callback should return a Promise which resolves a string to be used as the users authentication token.
+   * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
+   *
+   * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
+   */
+  tokenFactory: () => Promise<string>;
 }
 ----
 
@@ -269,15 +274,21 @@ Any information provided will strictly be processed in accordance with our https
 
 [source,typescript]
 ----
-interface AnalyticsOptions {
-    metadata: {
-            userId: user.id
-        };
-    handleOnSegmentPlayback: (video: Video, startSeconds: number, endSeconds: number) => void;
-
-    const player = Boclips.PlayerFactory.get(document.querySelector('#player-container'), options);
+const options: AnalyticsOptions = {
+  metadata: {
+    userId: user.id,
+  },
+  handleOnSegmentPlayback: (
+    video: Video,
+    startSeconds: number,
+    endSeconds: number,
+  ) => {},
+};
+const player = Boclips.PlayerFactory.get(
+  document.querySelector('#player-container'),
+  options,
+);
 player.loadVideo(video);
-}
 ----
 
 All analytics data should be anonymised.
