@@ -14,7 +14,8 @@ module.exports = {
     filename: '[name].js',
     path: distPath,
     publicPath: '/',
-    library: 'Boclips',
+    library: 'BoclipsPlayer',
+    module: false,
     libraryTarget: 'umd',
   },
   resolve: {
