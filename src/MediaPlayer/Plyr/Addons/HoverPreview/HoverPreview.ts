@@ -17,8 +17,7 @@ export interface HoverPreviewOptions {
    */
   frameCount: number;
   /**
-   * Number of frames to retrieve for distribution over the length
-   * of the video.
+   * Number of ms each thumbnail is displayed for
    *
    * Minimum: 200
    * Maximum: 1000

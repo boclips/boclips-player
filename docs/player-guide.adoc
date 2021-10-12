@@ -181,75 +181,129 @@ const player = Boclips.PlayerFactory.get(
 player.loadVideo(video);
 ----
 
-=== Player Options
+== Configuring Boclips Player
 
-The various modules within the player accept optional parameters to drive the behaviour of the player.
+Many aspects of the player are customisable. Below are some of the ways you can tailor the Boclips player to your liking.
 
-==== Interface Options
+=== Player Controls
+
+When configuring the player, you have the ability to specify which player controls the user can see.
+
+[source,typescript]
+----
+const player = PlayerFactory.get(playerContainer, {
+  interface: {
+    controls: [
+      'play-large',
+      'play',
+      'progress',
+    ],
+  },
+});
+
+// valid controls are
+type Controls =
+    | 'play-large' // The large play button in the center
+    | 'restart' // Restart playback
+    | 'rewind' // Rewind by the seek time (default 10 seconds)
+    | 'play' // Play/pause playback
+    | 'fast-forward' // Fast forward by the seek time (default 10 seconds)
+    | 'progress' // The progress bar and scrubber for playback and buffering
+    | 'current-time' // The current time of playback
+    | 'duration' // The full duration of the media
+    | 'mute' // Toggle mute
+    | 'volume' // Volume control
+    | 'captions' // Toggle captions
+    | 'settings' // Settings menu
+    | 'fullscreen'; // Toggle fullscreen
+----
+
+If you don't specify any controls the player defaults to the below controls
+[source, typescript]
+----
+[
+    'play-large',
+    'play',
+    'progress',
+    'current-time',
+    'mute',
+    'volume',
+    'captions',
+    'fullscreen',
+]
+----
+=== Addons
+
+The player comes with the ability to add extra functionality with addons. These help fine tune the player experience.
 
 [source,typescript]
 ----
 interface InterfaceOptions {
-  controls: Controls[];
   addons: {
     seekPreview?: boolean | SeekPreviewOptions;
     hoverPreview?: boolean | HoverPreviewOptions;
-    singlePlayback?: boolean | SinglePlaybackOptions;
+    singlePlayback?: boolean;
   };
-  ratio: "16:9" | "4:3";
+
+  // other options
 }
+----
 
-type Controls =
-  | "play-large"
-  | "restart"
-  | "rewind"
-  | "play"
-  | "fast-forward"
-  | "progress"
-  | "current-time"
-  | "duration"
-  | "mute"
-  | "volume"
-  | "captions"
-  | "settings"
-  | "fullscreen";
+==== Seek Preview addon
 
+Seek preview shows a thumbnail when the user hovers over the seek bar. This is enabled by default (which uses a frameCount of 15), you can fine tune the number of frames loaded using the interface below.
+[source,typescript]
+----
 interface SeekPreviewOptions {
   /**
    * Number of frames to retrieve for distribution over the length
-   * of the video.
-   *
-   * Minimum: 10
-   * Maximum: 20
+   * of the video. The minimum value is 10 and the maximum value is 20
    */
   frameCount: number;
 }
+----
 
+==== Hover Preview addon
+
+Hover preview shows a timelapse of thumbnails when the user hovers over the video before they start playing. This is disabled by default.
+
+[source,typescript]
+----
 interface HoverPreviewOptions {
   /**
    * Number of frames to retrieve for distribution over the length
-   * of the video.
-   *
-   * Minimum: 4
-   * Maximum: 15
+   * of the video. The minimum value is 4 and the maximum value is 15
    */
   frameCount: number;
   /**
-   * Number of frames to retrieve for distribution over the length
-   * of the video.
-   *
-   * Minimum: 200
-   * Maximum: 1000
+   * Number of ms each thumbnail is displayed for. The minimum value is 200 and the maximum value is 1000
    */
   delayMilliseconds: number;
 }
-
-type SinglePlaybackOptions = boolean;
 ----
 
-==== Playback Options
+==== Single Playback addon
+
+This is used if you have multiple boclips players on the page and only want to limit playback one at a time. When this is
+on, and the user attempts to play a videos whilst another one is already playing.
+The first one will stop, and the second video will start playing.
+
+=== Loading a section of a video
+
+The PlaybackSegment interface is a wrapper for two params specifying when a video should start and end, and can be provided as the second argument
+when calling loadVideo. This will prevent the user being able to see any other part of the video.
+
+`start` defines when the video begins in seconds. The value must be positive.
+Giving it a negative value results with the player displaying the spinner and no video.
+
+`end` defines when the video stops. Giving is a negative value doesn't affect the behaviour of the player.
+It needs to be greater than the value for `start` field to restrict the video length.
+
 [source,typescript]
 ----
+player.load(videoUri, {start: 10, end: 100})
+
+
 interface PlaybackSegment {
   /**
    * The number of seconds into the video that the segment starts
@@ -263,16 +317,7 @@ interface PlaybackSegment {
 }
 ----
 
-The PlaybackSegment interface is a wrapper for two params specifying when a video should start and end, and can be provided as the second argument
-when calling loadVideo. This determines the video's start and end time but does not prevent users from manually selecting other segments of the video.
-
-`start` defines when the video begins in seconds. The value must be positive.
-Giving it a negative value results with the player displaying the spinner and no video.
-
-`end` defines when the video stops. Giving is a negative value doesn't affect the behaviour of the player.
-It needs to be greater than the value for `start` field to restrict the video length.
-
-=== Player interface
+== Player interface
 [source,typescript]
 ----
 interface PlayerFactory {
@@ -289,13 +334,6 @@ interface Player {
   destroy: () => void;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
   onError: (callback: (error: BoclipsError) => void) => void;
-}
-
-interface PlayerOptions {
-  analytics: Partial<AnalyticsOptions>;
-  api: Partial<ApiOptions>;
-  debug: boolean;
-  interface: Partial<InterfaceOptions>;
 }
 ----
 

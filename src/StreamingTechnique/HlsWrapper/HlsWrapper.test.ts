@@ -60,7 +60,7 @@ describe('initialisation', () => {
   it('attaches a new hls.js if supported', () => {
     hlsTechnique.initialise(streamPlayback, -1);
 
-    //@ts-ignore
+    // @ts-ignore
     const hlsMockInstance = Hls.mock.instances[0];
     expect(hlsMockInstance.attachMedia).toHaveBeenCalled();
   });
@@ -68,7 +68,7 @@ describe('initialisation', () => {
   it('loads the playback url when attached', () => {
     hlsTechnique.initialise(streamPlayback, -1);
 
-    //@ts-ignore
+    // @ts-ignore
     const hlsMockInstance = Hls.mock.instances[0];
 
     hlsMockInstance.__callEventCallback(Hls.Events.MEDIA_ATTACHED);
