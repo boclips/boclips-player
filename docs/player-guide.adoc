@@ -10,24 +10,22 @@ Boclips Engineering;
 [[boclips-player]]
 == Overview
 
-Boclips Player is a framework agnostic HTML5 video player which serves to play
-Boclips supplied videos on all our supported devices. It will feature
-core functionality that is expected of modern video players, such as
+Boclips Player is a framework agnostic HTML5 video player that enables playing
+Boclips supplied videos on all our supported devices. It features
+core functionality that can be expected of modern video players, such as
 analytics, closed captions, and adaptive bit rate streaming.
 
-It can be integrated into JavaScript applications with ease. We are fully committed
-to provide partners with a complete player solution that allows us
-to gain insights to how our consumers watch our videos.
+We are fully committed to providing partners with a complete player solution that also
+provides insights into how their users watch our videos.
 
-[[usage]]
-== Usage
+[[getting-started]]
+== Getting Started
 
-In order to render the Boclips Player on your page you should load the
-Javascript and CSS assets in the `head` section.
+There are a number of ways to use the boclips-player, either via a script tag or importing as a module.
 
-Boclips Player is hosted in the unpkg.com CDN
+Before getting started, please ensure you are able to authenticate with and use the Boclips API. You must pass a boclips video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide/index.html#resources-video-access[Video Access] for more information.
 
-In order to load a video you must have a Video URI pointing to our API.
+You also must provide a valid boclips-token to the player, as we require all requests to be authenticated. See <<authentication,Authentication>> for more information.
 
 [NOTE]
 ====
@@ -38,16 +36,48 @@ you load our player.
 In order to do this, please get in touch with us with a list of domain names (including
 protocols and any port numbers -- if required) that will host this player.
 ====
+[[module-import]]
+=== Importing as a module
+You can use the boclips-player as a module in your JavaScript application. You can install it using npm, yarn, or any other javascript package manager
+[source,shell script]
+----
+npm i boclips-player
+----
 
-=== Loaded via a script tag
+Below is a minimal example of using the Boclips player. The Player requires providing an HTML container, which will encapsulate the HTML5 video player.
 
-When this library is loaded via a script tag on a web page it exposes the `PlayerFactory` under the global variable `Boclips`. See <<module-import>> for more information on the interface.
+[source,typescript]
+----
+import { PlayerFactory } from "boclips-player";
 
-==== Programmatically
+const playerContainer = document.createElement('div');
+playerContainer.id = 'player-container';
+document.body.appendChild(playerContainer);
 
-You can instantiate a Player by providing a HTML container, this will encapsulate the video player. The `Player` API allows you to load videos programmatically.
 
-You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.boclips.com/docs/api-guide.html#resources-video-access[Video Access] for more information.
+// This is for fetching a boclips token
+const tokenFactory = (): Promise<string> => {
+  return fetch("your-service.com/boclips-token")
+    .then(response => response.json())
+    .then(data => data.token);
+};
+
+function renderPlayer() {
+  const player = PlayerFactory.get(playerContainer, {
+    api: { tokenFactory }
+  });
+
+  // See https://docs.boclips.com/docs/api-guide.html#resources-video-access for more info on this URI.
+  player.loadVideo("https://path.to.boclips.video.from.the.api");
+}
+
+renderPlayer();
+----
+
+=== Loading via a script tag
+
+You can also load the boclips-player via a script tag. Either using the unpkg CDN or hosted by yourself. You should include both `boclips-player.js` and `boclips-player.css` to get the full experience.
+When this library is loaded via a script tag it exposes the `PlayerFactory` under the global variable `Boclips`.
 
 [source,html]
 ----
@@ -67,6 +97,8 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
   <body>
     <div id="container"></div>
     <script type="text/javascript">
+
+      // This is for fetching a boclips token
       const tokenFactory = () => {
         return fetch("your-service.com/token")
           .then(response => response.json())
@@ -83,66 +115,31 @@ You must pass a video URI endpoint to `Player.loadVideo`. See link:https://docs.
 </html>
 ----
 
-[[module-import]]
-=== Importing as a module
-
-You can use the boclips-player as a module in your JavaScript application.
-
-[source,typescript]
-----
-interface PlayerFactory {
-  get: (
-    container: HTMLElement | string,
-    options: Partial<PlayerOptions> = {}
-  ) => Player;
-}
-
-interface Player {
-  play: () => Promise<any>;
-  pause: () => void;
-  loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
-  destroy: () => void;
-  onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
-  onError: (callback: (error: BoclipsError) => void) => void;
-}
-
-interface PlayerOptions {
-  analytics: Partial<AnalyticsOptions>;
-  api: Partial<ApiOptions>;
-  debug: boolean;
-  interface: Partial<InterfaceOptions>;
-}
-----
-
 [[authentication]]
 === Authentication
 
 The Boclips API requires authentication in order to accurately track viewer attribution and user engagement.
 
-The player takes a token factory which is responsible for generating a valid user token. We recommend the token factory sends a request to your backend service, that then handles getting a token from boclips.
+The player requires a token factory which is needed for generating a valid boclips token. We recommend the token factory sends a request to your backend service, which then handles getting a token from boclips. More details about generating a boclips token can be found https://docs.boclips.com/docs/api-guide/index.html#authentication-overview[here]
+
+The types required for authenticating the player with the Boclips API are shown below.
+See <<module-import>> for an example of using a token factory.
 [source,typescript]
 ----
-import { PlayerFactory } from "boclips-player";
+interface PlayerOptions {
+  api: Partial<ApiOptions>;
 
-const tokenFactory = (): Promise<string> => {
-  return fetch("your-service.com/token")
-    .then(response => response.json())
-    .then(data => data.token);
-};
+  // other options...
+}
 
-function renderPlayer() {
-  const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory }
-  });
-
-  player.onError(error => {
-    // do something with error
-
-    // remove the error element from the player
-    player.getErrorHandler().clearError();
-  });
-
-  player.loadVideo("https://path.to.our/video/endpoint");
+interface ApiOptions {
+  /**
+   * This callback should return a Promise which resolves a string to be used as the users authentication token.
+   * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
+   *
+   * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
+   */
+  tokenFactory: () => Promise<string>;
 }
 ----
 
@@ -152,6 +149,37 @@ function renderPlayer() {
 `options.api.tokenFactory`  is important as tokens do expire. It is your
 responsibility to ensure that the token that is returned by `options.api.tokenFactory` is a valid token -- failure to do so may result in a poor experience for the user.
 ====
+[[analytics]]
+== Analytics
+
+In order for us to provide you with insights into the way in which your users watch our curated videos, you can provide the player with user IDs.
+
+This allows us to provide you with usage statistics for each of your users. This information will also allow us to personalise and tailor your Boclips experience and content to your user's usage patterns.
+
+We also expose an onSegmentPlayback callback that you can use for your own internal analytics
+
+Any information provided will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
+
+==== Analytics Options
+
+[source,typescript]
+----
+const options: AnalyticsOptions = {
+  metadata: {
+    userId: user.id,
+  },
+  handleOnSegmentPlayback: (
+    video: Video,
+    startSeconds: number,
+    endSeconds: number,
+  ) => {},
+};
+const player = Boclips.PlayerFactory.get(
+  document.querySelector('#player-container'),
+  options,
+);
+player.loadVideo(video);
+----
 
 === Player Options
 
@@ -244,58 +272,36 @@ Giving it a negative value results with the player displaying the spinner and no
 `end` defines when the video stops. Giving is a negative value doesn't affect the behaviour of the player.
 It needs to be greater than the value for `start` field to restrict the video length.
 
-==== Boclips API Options
-
+=== Player interface
 [source,typescript]
 ----
-interface ApiOptions {
-  /**
-   * This callback should return a Promise which resolves a string to be used as the users authentication token.
-   * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
-   *
-   * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
-   */
-  tokenFactory: () => Promise<string>;
+interface PlayerFactory {
+  get: (
+    container: HTMLElement | string,
+    options: Partial<PlayerOptions> = {}
+  ) => Player;
+}
+
+interface Player {
+  play: () => Promise<any>;
+  pause: () => void;
+  loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
+  destroy: () => void;
+  onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
+  onError: (callback: (error: BoclipsError) => void) => void;
+}
+
+interface PlayerOptions {
+  analytics: Partial<AnalyticsOptions>;
+  api: Partial<ApiOptions>;
+  debug: boolean;
+  interface: Partial<InterfaceOptions>;
 }
 ----
-
-[[analytics]]
-== Analytics
-
-In order for us to provide you with insights into the way in which your users watch our curated videos, you can provide the player with user IDs.
-
-This allows us to provide you with usage statistics for each of your users. This information will also allow us to personalise and tailor your Boclips experience and content to your user's usage patterns.
-
-We also expose an onSegmentPlayback callback that you can use for your own internal analytics
-
-Any information provided will strictly be processed in accordance with our https://www.boclips.com/privacy-policy[Privacy Policy].
-
-==== Analytics Options
-
-[source,typescript]
-----
-const options: AnalyticsOptions = {
-  metadata: {
-    userId: user.id,
-  },
-  handleOnSegmentPlayback: (
-    video: Video,
-    startSeconds: number,
-    endSeconds: number,
-  ) => {},
-};
-const player = Boclips.PlayerFactory.get(
-  document.querySelector('#player-container'),
-  options,
-);
-player.loadVideo(video);
-----
-
-All analytics data should be anonymised.
 
 [[license]]
 == License
 
 BSD 3-Clause "New" or "Revised" License
 
-Copyright (c) 2019, Knowledgemotion Ltd All rights reserved.
+Copyright (c) 2021, Knowledgemotion Ltd All rights reserved.
