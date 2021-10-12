@@ -1,18 +1,41 @@
 <html>
-<head>
+  <head>
     <title>Plain Demo</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://unpkg.com/boclips-player@6.3.2-dev.1/dist/boclips-player.js" type="text/javascript"></script>
-    <link rel="stylesheet" href="https://unpkg.com/boclips-player@6.3.2-dev.1/dist/boclips-player.css" type="text/css"/>
-</head>
-<body>
-<div id="container"></div>
-<script type="text/javascript">
-    const container = document.querySelector('#container');
-    const player = Boclips.PlayerFactory.get(container);
-    player.loadVideo(
-        'https://api.staging-boclips.com/v1/videos/5c7d04a9c4347d45194e098a',
-    );
-</script>
-</body>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script
+      src="https://unpkg.com/boclips-player@6.3.2-dev.1/dist/boclips-player.js"
+      type="text/javascript"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boclips-player@6.3.2-dev.1/dist/boclips-player.css"
+      type="text/css"
+    />
+  </head>
+  <body>
+    <div id="container"></div>
+    <script type="text/javascript">
+      const boclipsSecurity = BoclipsSecurity.createInstance({
+        onLogin: () => {
+          console.log('Successfully authenticated');
+          renderPlayer();
+        },
+        realm: 'boclips',
+        clientId: 'teachers',
+        requireLoginPage: true,
+        authEndpoint: 'https://login.staging-boclips.com/auth',
+      });
+
+      const container = document.querySelector('#container');
+
+      function renderPlayer() {
+        const player = Boclips.PlayerFactory.get(container, {
+          api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
+        });
+        player.loadVideo(
+          'https://api.staging-boclips.com/v1/videos/5c7d04a9c4347d45194e098a',
+        );
+      }
+    </script>
+  </body>
 </html>

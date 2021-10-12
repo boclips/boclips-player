@@ -3,7 +3,6 @@ import { PlayerFactory } from '../../src/index';
 
 const playerContainer = document.createElement('div');
 playerContainer.id = 'player-container';
-
 document.body.appendChild(playerContainer);
 
 const boclipsSecurity = BoclipsSecurity.createInstance({
@@ -27,6 +26,23 @@ const boclipsSecurity = BoclipsSecurity.createInstance({
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
     api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
+    interface: {
+      controls: [
+        'play-large',
+        'play',
+        'progress',
+        'current-time',
+        'mute',
+        'volume',
+        'captions',
+        'fullscreen',
+        'settings',
+      ],
+      addons: {
+        seekPreview: true,
+        hoverPreview: false,
+      },
+    },
   });
 
   player
