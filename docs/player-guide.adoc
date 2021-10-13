@@ -321,6 +321,9 @@ interface PlaybackSegment {
 [source,typescript]
 ----
 interface PlayerFactory {
+  /**
+   * Will return a player instance, mounted into the supplied container with the given player options
+   */
   get: (
     container: HTMLElement | string,
     options: Partial<PlayerOptions> = {}
@@ -328,11 +331,29 @@ interface PlayerFactory {
 }
 
 interface Player {
+   /**
+   * Will play the currently loaded video
+   */
   play: () => Promise<any>;
+
+  /**
+   * Will pause the currently playing video
+   */
   pause: () => void;
+
+  /**
+   * Will load a given boclips video into the player
+   */
   loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
+
+  /**
+   * Destroys the current player instance
+   */
   destroy: () => void;
-  onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
+
+  /**
+   * Will execute the given callback if the player encounters any errors
+   */
   onError: (callback: (error: BoclipsError) => void) => void;
 }
 ----
