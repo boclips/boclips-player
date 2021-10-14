@@ -2,27 +2,30 @@
   <head>
     <title>unpkg Demo</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <script
-      src="https://unpkg.com/boclips-player@6.10.2/dist/boclips-player.js"
-      type="text/javascript"
-    ></script>
     <style type="text/css">
       #container {
         width: 600px;
       }
     </style>
     <script
+      src="https://unpkg.com/boclips-player@6.10.2/dist/boclips-player.js"
+      type="text/javascript"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boclips-player/dist/boclips-player.css"
+      type="text/css"
+    />
+    <script
       src="https://unpkg.com/boclips-js-security@8.0.0/dist/min/boclips-js-security.js"
       type="text/javascript"
-    />
+    ></script>
   </head>
   <body>
     <div id="container"></div>
-
     <script>
       const boclipsSecurity = BoclipsJSSecurity.default.createInstance({
         onLogin: () => {
-          console.log('Successfully authenticated');
           renderPlayer();
         },
         realm: 'boclips',
@@ -31,16 +34,34 @@
         authEndpoint: 'https://login.staging-boclips.com/auth',
       });
 
-      const container = document.querySelector('#container');
-
-      function renderPlayer() {
-        const player = Boclips.BoclipsPlayerFactory.get(container, {
-          api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
+      const renderPlayer = () => {
+        const container = document.querySelector('#container');
+        const player = Boclips.PlayerFactory.get(container, {
+          api: {
+            tokenFactory: boclipsSecurity.getTokenFactory(5),
+          },
+          interface: {
+            controls: [
+              'play-large',
+              'play',
+              'progress',
+              'current-time',
+              'mute',
+              'volume',
+              'captions',
+              'fullscreen',
+              'settings',
+            ],
+            addons: {
+              seekPreview: true,
+              hoverPreview: false,
+            },
+          },
         });
         player.loadVideo(
-          'https://api.staging-boclips.com/v1/videos/5c7d04a9c4347d45194e098a',
+          'https://api.staging-boclips.com/v1/videos/5c542aba5438cdbcb56de630',
         );
-      }
+      };
     </script>
   </body>
 </html>
