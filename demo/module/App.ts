@@ -44,13 +44,11 @@ function renderPlayer() {
       },
     },
   });
-  const cb = (div): void => {console.log("blah")}
   player
     .loadVideo(
       'https://api.staging-boclips.com/v1/videos/5c542abf5438cdbcb56defff',
     )
     .then(() => {
-    player.onError(cb)
       return player.play();
     })
     .then(() => {
