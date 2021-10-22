@@ -11,5 +11,10 @@ module.exports = merge(common, {
       template: path.resolve(__dirname, 'index.html'),
       inject: false,
     }),
+    new HtmlWebpackPlugin({
+      inject: false,
+      filename: 'silent-check-sso.html',
+      template: path.resolve(__dirname, 'silent-check-sso.html'),
+    }),
   ],
 });
