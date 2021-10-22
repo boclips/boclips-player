@@ -284,9 +284,8 @@ interface HoverPreviewOptions {
 
 ==== Single Playback addon
 
-This is used if you have multiple boclips players on the page and only want to limit playback one at a time. When this is
-on, and the user attempts to play a videos whilst another one is already playing.
-The first one will stop, and the second video will start playing.
+This is used if you have multiple boclips players on the page and only want to limit playback to one at a time. When this is
+on, only a single boclips video will be played at a time, if the user starts playing a second video the first video will be paused. Useful for displaying a list of playable videos.
 
 === Loading a section of a video
 
