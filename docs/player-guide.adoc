@@ -63,7 +63,7 @@ const tokenFactory = (): Promise<string> => {
 };
 
 function renderPlayer() {
-  const player = PlayerFactory.get(playerContainer, {
+  const player: Player = PlayerFactory.get(playerContainer, {
     api: { tokenFactory }
   });
 
@@ -73,6 +73,8 @@ function renderPlayer() {
 
 renderPlayer();
 ----
+
+A full definition of player type can be found <<player-interface, here>>
 
 === Loading via a script tag
 
@@ -315,7 +317,7 @@ interface PlaybackSegment {
   end?: number;
 }
 ----
-
+[[player-interface]]
 == Player interface
 [source,typescript]
 ----
