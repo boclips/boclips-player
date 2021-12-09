@@ -261,30 +261,6 @@ export default class PlyrWrapper implements MediaPlayer {
       this.createStreamPlyr(this.segment && this.segment.start);
     } else {
       this.createYoutubePlyr(this.segment && this.segment.start);
-      this.plyr.on('playing', () => {
-        /**
-         * This is a workaround to show official youtube controls.
-         * The trick works by visually removing a CSS overlay which
-         * prevents events from being propagated.
-         *
-         * We found that this needs to happen at runtime, and cannot
-         * be achieved by setting CSS ahead of time. When doing so,
-         * the playback stops.
-         *
-         * With the current test setup it is not possible to access
-         * the underlying container. Therefore this behaviour cannot be tested.
-         *
-         * These may be good reasons to consider replacing plyr with vime-js,
-         * and apply a test first approach.
-         */
-        const poster = this.player
-          .getContainer()
-          .querySelector('.plyr__poster') as HTMLDivElement;
-
-        if (poster) {
-          poster.style.display = 'none';
-        }
-      });
     }
 
     if (this.segment) {
@@ -434,14 +410,9 @@ export default class PlyrWrapper implements MediaPlayer {
     this.plyr = new Plyr(media, {
       debug: this.player.getOptions().debug,
       captions: { active: false, update: true },
-      /**
-       * This is necessary workaround to allow official youtube controls.
-       */
-      controls: isYoutubePlayback(this.playback)
-        ? ['play-large']
-        : this.getOptions().controls,
-      // @ts-ignore
-      youtube: isYoutubePlayback(this.playback) ? { controls: 1 } : undefined,
+      controls: this.getOptions().controls,
+      // Don't use any plyr controls for youtube playback https://github.com/sampotts/plyr/issues/1738#issuecomment-943760053
+      youtube: { customControls: false },
       duration: this.playback ? this.playback.duration : null,
       tooltips: { controls: true, seek: true },
       listeners: {

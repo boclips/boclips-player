@@ -1,5 +1,6 @@
 {
   "name": "boclips-player",
+  "version": "0.1.0",
   "description": "A framework agnostic player for serving Boclips videos",
   "license": "BSD-3-Clause",
   "author": "Boclips <engineering@boclips.com>",
@@ -14,7 +15,6 @@
   "bugs": {
     "url": "https://github.com/boclips/boclips-player/issues"
   },
-  "version": "0.1.0",
   "main": "lib/index.js",
   "module": "esm/index.js",
   "browser": "lib/index.js",
