@@ -68,7 +68,7 @@
     "eventemitter3": "^4.0.0",
     "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.5.2",
-    "jest": "^27.2.5",
+    "jest": "^27.4.4",
     "less": "^4.1.2",
     "less-loader": "^7.3.0",
     "mini-css-extract-plugin": "^1.6.2",
