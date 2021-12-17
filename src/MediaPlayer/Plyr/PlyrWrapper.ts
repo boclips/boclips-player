@@ -113,6 +113,10 @@ export default class PlyrWrapper implements MediaPlayer {
     this.player.getContainer().appendChild(media);
 
     this.resetPlyrInstance(media);
+
+    if (this.plyr.elements?.poster?.style) {
+      this.plyr.elements.poster.style.display = 'none';
+    }
   };
 
   private installPlyrEventListeners() {
@@ -142,6 +146,17 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.plyr.on('ready', () => {
       this.plyr.toggleControls(false);
+    });
+
+    /**
+     * This is a hack to get playback events for youtube videos as we're using official youtube player under the hood.
+     * https://github.com/sampotts/plyr/issues/2378
+     */
+    this.plyr.on('statechange', () => {
+      if (!this.plyr.ready) {
+        this.plyr.ready = true;
+        this.plyr.listeners.media();
+      }
     });
 
     this.plyr.on('playing', (event) => {

@@ -9,6 +9,10 @@ interface MissingPlyrProperties {
   elements: {
     [key: string]: HTMLElement;
   };
+  listeners: {
+    media: () => void;
+  };
+  ready: boolean;
 }
 
 export type EnrichedPlyr = Plyr & MissingPlyrProperties;
