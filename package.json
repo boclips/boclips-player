@@ -35,7 +35,6 @@
     "demo:unpkg": "./node_modules/.bin/webpack serve --config demo/unpkg/webpack.config.js",
     "lint": "tslint -c tslint.json -p . && stylelint 'src/**/*.less'",
     "lint:fix": "prettier-package-json --write && tslint --fix -c tslint.json -p . && stylelint 'src/**/*.less' --fix",
-    "prepublishOnly": "npm run lint && npm run test && npm run build",
     "test": "jest"
   },
   "typings": "lib/index.d.ts",
