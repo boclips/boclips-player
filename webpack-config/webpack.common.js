@@ -19,6 +19,7 @@ module.exports = {
     libraryTarget: 'umd',
   },
   resolve: {
+    fallback: { querystring: require.resolve('querystring-es3') },
     alias: {
       src: srcPath,
     },
