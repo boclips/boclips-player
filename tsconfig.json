@@ -11,7 +11,7 @@
     "resolveJsonModule": true,
     "declaration": true,
     "target": "es5",
-    "outDir": "lib/"
+    "outDir": "lib"
   },
   "exclude": ["src/test-support", "src/**/*.test.*", "src/**/__mocks__"],
   "include": ["src/"]

@@ -4,9 +4,6 @@
   "description": "A framework agnostic player for serving Boclips videos",
   "license": "BSD-3-Clause",
   "author": "Boclips <engineering@boclips.com>",
-  "contributors": [
-    "Antony O'Neill <antony@boclips.com>"
-  ],
   "homepage": "https://github.com/boclips/boclips-player#readme",
   "repository": {
     "type": "git",
@@ -15,18 +12,16 @@
   "bugs": {
     "url": "https://github.com/boclips/boclips-player/issues"
   },
-  "main": "lib/index.js",
-  "module": "esm/index.js",
-  "browser": "lib/index.js",
+  "main": "./dist/index.js",
+  "types": "./lib/index.d.ts",
   "files": [
-    "dist",
-    "esm",
-    "lib"
+    "dist/**/*",
+    "lib/**/*"
   ],
   "scripts": {
     "analyse": "webpack --config webpack-config/webpack.analyse.js",
     "audit": "audit-ci -m",
-    "build": "./scripts/build.sh",
+    "build": "NODE_ENV=production webpack --config webpack-config/webpack.prod.js && tsc --build --force ./tsconfig.json",
     "compile": "tsc -p tsconfig.all.json --noEmit",
     "demo:module": "./node_modules/.bin/webpack serve --config demo/module/webpack.config.js",
     "demo:module-authorized": "./node_modules/.bin/webpack serve --config demo/module/webpack.config.js",

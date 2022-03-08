@@ -2,7 +2,7 @@ import { BoclipsError } from './../ErrorHandler/BoclipsPlayerError';
 import deepmerge from 'deepmerge';
 import { isPlainObject } from 'is-plain-object';
 import { addListener as addResizeListener } from 'resize-detector';
-import { v1 as uuidV1 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { Logger } from '../Logger';
@@ -13,7 +13,7 @@ import { MediaPlayer, PlaybackSegment } from '../MediaPlayer/MediaPlayer';
 import { MediaPlayerFactory } from '../MediaPlayer/MediaPlayerFactory';
 import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
-import './BoclipsPlayer.less';
+import './BoclipsPlayer.scss';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 import { Constants } from './Constants';
 
@@ -44,7 +44,7 @@ export class BoclipsPlayer implements PrivatePlayer {
   private readonly errorHandler: ErrorHandler;
   private readonly boclipsClient: BoclipsApiClient;
   private video: Video;
-  private playerId: string = uuidV1();
+  private playerId: string = uuidv4();
 
   constructor(
     private readonly container: HTMLElement,

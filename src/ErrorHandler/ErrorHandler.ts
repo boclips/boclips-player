@@ -1,6 +1,6 @@
 import { ErrorConverter } from './ErrorConverter';
 import { PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
-import './ErrorHandler.less';
+import './ErrorHandler.scss';
 import ErrorIcon from './ErrorIcon';
 import { NullLogger } from '../NullLogger';
 import { Logger } from '../Logger';

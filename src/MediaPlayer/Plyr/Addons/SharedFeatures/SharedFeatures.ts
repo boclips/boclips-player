@@ -1,4 +1,4 @@
-import './SharedFeatures.less';
+import './SharedFeatures.scss';
 
 export class EndOverlay {
   public static overlayClassName: string = 'end-video-overlay';

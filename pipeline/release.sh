@@ -22,4 +22,4 @@ $npm version "$version" \
     --no-git-tag-version \
     --force
 
-cp -R ${app}/dist/ ${app}/lib/ ${app}/esm/ ${app}/package.json ${app}/README.md dist/
+cp -R ${app}/dist/ ${app}/lib/ ${app}/package.json ${app}/README.md dist/

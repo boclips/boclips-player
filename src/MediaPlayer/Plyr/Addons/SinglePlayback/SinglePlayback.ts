@@ -1,4 +1,4 @@
-import { v1 as uuidV1 } from 'uuid';
+import { v4 as uuidV4 } from 'uuid';
 import { EventBus } from '../../../../Events/EventBus';
 import { EnrichedPlyr } from '../../../../types/plyr';
 import { PlaybackSegment } from '../../../MediaPlayer';
@@ -15,7 +15,7 @@ export class SinglePlayback implements AddonInterface {
   public static canBeEnabled = (_, __, options: InterfaceOptions) =>
     options.addons.singlePlayback;
 
-  private readonly addonId = uuidV1();
+  private readonly addonId = uuidV4();
 
   private addEventListeners = () => {
     this.plyr.on('playing', this.handlePlyrPlaying);

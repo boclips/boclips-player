@@ -5,7 +5,7 @@ import { EnrichedPlyr } from '../../../../types/plyr';
 import { PlaybackSegment } from '../../../MediaPlayer';
 
 import { AddonInterface } from '../Addons';
-import './HoverPreview.less';
+import './HoverPreview.scss';
 
 export interface HoverPreviewOptions {
   /**

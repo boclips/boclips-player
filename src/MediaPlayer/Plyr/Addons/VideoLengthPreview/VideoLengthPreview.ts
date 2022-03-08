@@ -1,7 +1,7 @@
 import { Playback } from '../../../../types/Playback';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { EnrichedPlyr } from '../../../../types/plyr';
-import './VideoLengthPreview.less';
+import './VideoLengthPreview.scss';
 import { PlaybackSegment } from '../../../MediaPlayer';
 
 import { AddonInterface } from '../Addons';

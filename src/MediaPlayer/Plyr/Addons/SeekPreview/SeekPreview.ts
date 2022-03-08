@@ -4,7 +4,7 @@ import { EnrichedPlyr } from '../../../../types/plyr';
 import { getBoundedValue, withPx } from '../../../../utils';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { AddonInterface } from '../Addons';
-import './SeekPreview.less';
+import './SeekPreview.scss';
 import { PlaybackSegment } from '../../../MediaPlayer';
 
 export interface SeekPreviewOptions {
