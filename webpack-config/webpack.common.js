@@ -6,9 +6,7 @@ const srcPath = path.resolve(__dirname, '../src');
 const distPath = path.resolve(__dirname, '../dist');
 
 module.exports = {
-  entry: {
-    'boclips-player': path.resolve(srcPath, 'index.ts'),
-  },
+  entry: path.resolve(srcPath, 'index.ts'),
   output: {
     filename: 'index.js',
     path: distPath,
