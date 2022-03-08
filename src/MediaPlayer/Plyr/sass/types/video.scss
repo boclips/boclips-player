@@ -123,6 +123,7 @@ $embed-padding: (math.div(100, 16) * 9);
   &:focus {
     opacity: 1;
     background: #193DA1;
+    border-radius: 100%;
   }
 }
 
