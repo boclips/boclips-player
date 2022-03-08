@@ -39,6 +39,7 @@
   },
   "typings": "lib/index.d.ts",
   "dependencies": {
+    "@boclips-ui/styles": "^4.0.2",
     "@types/url-template": "^2.0.28",
     "axios": "^0.26.0",
     "deepmerge": "^4.2.2",
@@ -49,6 +50,8 @@
     "plyr": "3.6.3",
     "querystring-es3": "^0.2.1",
     "resize-detector": "0.3.0",
+    "sass": "^1.49.9",
+    "sass-loader": "^12.6.0",
     "url-template": "^2.0.8",
     "uuid": "^8.3.2",
     "webpack-bundle-analyzer": "^4.5.0"

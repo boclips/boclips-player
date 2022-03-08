@@ -23,7 +23,7 @@ webpack
 # cd to src so it doesn't appear in the find output
 cd $SRC
 
-ASSET_FILES=$(find . -name \*.less)
+ASSET_FILES=$(find . -name \*.scss)
 
 for FILE in $ASSET_FILES; do
     DIR_PATH=$(dirname $FILE)

@@ -46,10 +46,10 @@ function renderPlayer() {
   });
   player
     .loadVideo(
-      'https://api.staging-boclips.com/v1/videos/5c542abf5438cdbcb56defff',
+      'https://api.staging-boclips.com/v1/videos/5e2ff495878dfc00fcdb0d11',
     )
     .then(() => {
-      return player.play();
+      // return player.play();
     })
     .then(() => {
       setTimeout(() => {

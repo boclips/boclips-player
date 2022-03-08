@@ -1,0 +1,21 @@
+// --------------------------------------------------------------
+// Time
+// --------------------------------------------------------------
+
+.plyr__time {
+  font-family: Rubik, Helvetica, Arial, sans-serif;
+  font-size: $plyr-font-size-time;
+}
+
+// Media duration hidden on small screens
+.plyr__time + .plyr__time {
+  // Add a slash in before
+  &::before {
+    content: '\2044';
+    margin-right: $plyr-control-spacing;
+  }
+
+  @media (max-width: ($plyr-bp-md - 1px)) {
+    display: none;
+  }
+}

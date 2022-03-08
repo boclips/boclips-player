@@ -48,6 +48,14 @@ module.exports = {
         ],
       },
       {
+        test: /\.(scss)$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          'sass-loader',
+        ],
+      },
+      {
         test: /.svg$/i,
         exclude: /node_modules/,
         oneOf: [
