@@ -9,8 +9,7 @@
   position: relative;
 
   input[data-plyr="volume"] {
-    width: 20vh;
-    max-width: 100px;
+    width: 100px;
     margin: 0;
     position: absolute;
     left: 50%;
@@ -20,28 +19,25 @@
     opacity: 0;
     z-index: -1;
     transition: all .2s;
-    padding: 12px 6px;
+    padding: 1rem .5rem;
     border-radius: 0;
     pointer-events: none;
 
-
-    &:after{
+    &:after {
       content: '';
       position: absolute;
       top:0;
       background: $plyr-video-controls-background;
       left: 12px;
       height: 100%;
-      width: calc(100% - 10px);
+      width: 94px;
       z-index: -1;
       border-radius: 0 .25rem .25rem  0;
-
     }
 
     &:focus {
       opacity: 1;
       pointer-events: inherit!important;
-
     }
   }
 
