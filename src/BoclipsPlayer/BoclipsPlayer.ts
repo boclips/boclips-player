@@ -51,7 +51,7 @@ export class BoclipsPlayer implements PrivatePlayer {
     options: DeepPartial<PlayerOptions> = {},
     private readonly logger: Logger = new NullLogger(),
   ) {
-    if (false === container instanceof Node) {
+    if (!(container instanceof Node)) {
       throw Error(
         `IllegalArgument: Container element ${container} must be a node`,
       );

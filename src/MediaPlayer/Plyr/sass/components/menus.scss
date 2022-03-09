@@ -140,6 +140,24 @@
     }
 
     .plyr__control[role='menuitemradio'] {
+      &[value="0.75"] {
+        display: none;
+      }
+
+      &[value="1.25"] {
+        display: none;
+      }
+
+      &[value="1.75"] {
+        display: none;
+      }
+
+      &[value="4"] {
+        display: none;
+      }
+    }
+
+    .plyr__control[role='menuitemradio'] {
       padding-left: $plyr-control-padding;
 
       &::before,
