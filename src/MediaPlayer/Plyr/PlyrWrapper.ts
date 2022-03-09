@@ -1,500 +1,508 @@
 import Plyr from 'plyr';
-import {PrivatePlayer} from '../../BoclipsPlayer/BoclipsPlayer';
-import {StreamingTechnique} from '../../StreamingTechnique/StreamingTechnique';
-import {StreamingTechniqueFactory} from '../../StreamingTechnique/StreamingTechniqueFactory';
-import {isStreamPlayback, isYoutubePlayback, Playback,} from '../../types/Playback';
-import {EnrichedPlyr} from '../../types/plyr';
-import {Video} from '../../types/Video';
-import {MediaPlayer, PlaybackSegment} from '../MediaPlayer';
-import {Addon, AddonInterface, Addons} from './Addons/Addons';
-import {EndOverlay} from './Addons/SharedFeatures/SharedFeatures';
-import {Logger} from '../../Logger';
-import {NullLogger} from '../../NullLogger';
-import './sass/plyr.scss'
+import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
+import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
+import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
+import {
+  isStreamPlayback,
+  isYoutubePlayback,
+  Playback,
+} from '../../types/Playback';
+import { EnrichedPlyr } from '../../types/plyr';
+import { Video } from '../../types/Video';
+import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
+import { Addon, AddonInterface, Addons } from './Addons/Addons';
+import { EndOverlay } from './Addons/SharedFeatures/SharedFeatures';
+import { Logger } from '../../Logger';
+import { NullLogger } from '../../NullLogger';
+import './sass/plyr.scss';
 
 export default class PlyrWrapper implements MediaPlayer {
-    private plyr: EnrichedPlyr;
-    private streamingTechnique: StreamingTechnique = null;
-    private hasBeenDestroyed: boolean = false;
-    private enabledAddons: AddonInterface[] = [];
-    private playback: Playback = null;
-    private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
-    private segment: PlaybackSegment = null;
+  private plyr: EnrichedPlyr;
+  private streamingTechnique: StreamingTechnique = null;
+  private hasBeenDestroyed: boolean = false;
+  private enabledAddons: AddonInterface[] = [];
+  private playback: Playback = null;
+  private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
+  private segment: PlaybackSegment = null;
 
-    constructor(
-        private readonly player: PrivatePlayer,
-        private readonly logger: Logger = new NullLogger(),
+  constructor(
+    private readonly player: PrivatePlayer,
+    private readonly logger: Logger = new NullLogger(),
+  ) {
+    this.createStreamPlyr();
+
+    window.addEventListener('beforeunload', this.handleBeforeUnload);
+
+    if (
+      this.getOptions().controls.indexOf('mute') !== -1 &&
+      this.getOptions().controls.indexOf('volume') === -1
     ) {
-        this.createStreamPlyr();
+      this.player.getContainer().classList.add('plyr--only-mute');
+    }
+  }
 
-        window.addEventListener('beforeunload', this.handleBeforeUnload);
+  private createStreamPlyr = (segmentStart?: number) => {
+    this.player.getContainer().innerHTML = '';
 
-        if (
-            this.getOptions().controls.indexOf('mute') !== -1 &&
-            this.getOptions().controls.indexOf('volume') === -1
-        ) {
-            this.player.getContainer().classList.add('plyr--only-mute');
-        }
+    const media = document.createElement('video');
+
+    media.setAttribute('data-qa', 'boclips-player');
+    media.setAttribute('preload', 'metadata');
+
+    if (isStreamPlayback(this.playback)) {
+      media.setAttribute(
+        'src',
+        this.playback.links.hlsStream.getOriginalLink(),
+      );
+      media.setAttribute(
+        'poster',
+        this.playback.links.thumbnail.getTemplatedLink({
+          thumbnailWidth: this.player.getContainer().clientWidth,
+          thumbnailHeight: this.player.getContainer().clientHeight,
+        }),
+      );
     }
 
-    private createStreamPlyr = (segmentStart?: number) => {
-        this.player.getContainer().innerHTML = '';
+    this.player.getContainer().appendChild(media);
 
-        const media = document.createElement('video');
+    this.resetPlyrInstance(media);
 
-        media.setAttribute('data-qa', 'boclips-player');
-        media.setAttribute('preload', 'metadata');
+    if (isStreamPlayback(this.playback)) {
+      this.initialiseStreamingTechnique(segmentStart);
+    }
+  };
 
-        if (isStreamPlayback(this.playback)) {
-            media.setAttribute(
-                'src',
-                this.playback.links.hlsStream.getOriginalLink(),
-            );
-            media.setAttribute(
-                'poster',
-                this.playback.links.thumbnail.getTemplatedLink({
-                    thumbnailWidth: this.player.getContainer().clientWidth,
-                    thumbnailHeight: this.player.getContainer().clientHeight,
-                }),
-            );
+  private initialiseStreamingTechnique = (segmentStart?: number) => {
+    this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
+
+    if (!this.streamingTechnique || !isStreamPlayback(this.playback)) {
+      return;
+    }
+
+    this.streamingTechnique.initialise(this.playback, segmentStart);
+
+    this.plyr.on('play', (event) => {
+      const plyr = event.detail.plyr;
+
+      this.streamingTechnique.startLoad(plyr.currentTime);
+    });
+  };
+
+  private createYoutubePlyr = (segmentStart?: number) => {
+    if (!isYoutubePlayback(this.playback)) {
+      throw new Error('Unable to create YouTube Plyr for non-YouTube playback');
+    }
+
+    this.player.getContainer().innerHTML = '';
+
+    const media = document.createElement('div');
+    media.setAttribute('data-qa', 'boclips-player');
+    media.setAttribute('data-plyr-provider', 'youtube');
+    media.setAttribute('data-plyr-embed-id', this.playback.id);
+    if (segmentStart) {
+      media.setAttribute(
+        'data-plyr-config',
+        JSON.stringify({
+          youtube: {
+            start: segmentStart,
+          },
+        }),
+      );
+    }
+
+    this.player.getContainer().appendChild(media);
+
+    this.resetPlyrInstance(media);
+
+    if (this.plyr.elements?.poster?.style) {
+      this.plyr.elements.poster.style.display = 'none';
+    }
+  };
+
+  private installPlyrEventListeners() {
+    this.plyr.on('enterfullscreen', (event) => {
+      this.handleEnterFullscreen();
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'fullscreenEnabled',
+          {},
+        );
+    });
+
+    this.plyr.on('exitfullscreen', (event) => {
+      this.handleExitFullscreen();
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'fullscreenDisabled',
+          {},
+        );
+    });
+
+    this.plyr.on('ready', () => {
+      this.plyr.toggleControls(false);
+    });
+
+    /**
+     * This is a hack to get playback events for youtube videos as we're using official youtube player under the hood.
+     * https://github.com/sampotts/plyr/issues/2378
+     */
+    this.plyr.on('statechange', () => {
+      if (!this.plyr.ready) {
+        this.plyr.ready = true;
+        this.plyr.listeners.media();
+      }
+    });
+
+    this.plyr.on('playing', (event) => {
+      this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
+    });
+
+    this.plyr.on('progress', () => {
+      EndOverlay.destroyIfExists(this.getPlyrDivContainer());
+    });
+
+    this.plyr.on('pause', (event) => {
+      this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
+    });
+
+    this.plyr.on('play', () => {
+      EndOverlay.destroyIfExists(this.getPlyrDivContainer());
+    });
+
+    this.plyr.on('ratechange', (event) => {
+      const plyr = event.detail.plyr;
+
+      this.player
+        .getAnalytics()
+        .handleInteraction(plyr.currentTime, 'speedChanged', {
+          speed: plyr.speed,
+        });
+    });
+
+    this.plyr.on('error', (event) => {
+      const eventDetailsPlyr = event.detail.plyr as EnrichedPlyr;
+      const mediaError = eventDetailsPlyr.media.error;
+
+      if (mediaError && mediaError.code && mediaError.message) {
+        this.player.getErrorHandler().handleError({
+          fatal: true,
+          type: 'PLAYBACK_ERROR',
+          payload: {
+            code: mediaError.code,
+            message: mediaError.message,
+          },
+        });
+      }
+    });
+
+    // /**
+    //  * Current Plyr and HLS versions have a bug when the video has multiple captions. This seems to stem from a
+    //  * timing issue loading the TextTrack content. It seems to not initialise the first TextTrack properly, and
+    //  * leaves the mode 'disabled'.
+    //  * As the Plyr is unable to show the first caption, we force the mode whenever the video starts playing, or the
+    //  * captions are enabled, if captions are active.
+    //  *
+    //  * @see https://github.com/sampotts/plyr/issues/994 et al.
+    //  */
+    //
+    const playerContainer = this.player.getContainer();
+    //
+    const forceShowCaption = () => {
+      setTimeout(() => {
+        if (
+          this.plyr &&
+          this.plyr.captions &&
+          this.plyr.captions.active &&
+          this.plyr.captions.currentTrackNode
+        ) {
+          const trackNode = this.plyr.captions.currentTrackNode;
+          if (!trackNode || !trackNode.activeCues) return;
+          trackNode.mode = 'showing';
         }
-
-        this.player.getContainer().appendChild(media);
-
-        this.resetPlyrInstance(media);
-
-        if (isStreamPlayback(this.playback)) {
-            this.initialiseStreamingTechnique(segmentStart);
+        if (
+          this.plyr &&
+          this.plyr.captions &&
+          this.plyr.captions.currentTrackNode &&
+          this.plyr.captions.currentTrackNode.label.includes(
+            'auto-generated',
+          ) &&
+          !this.getDisplayAutogeneratedCaptions()
+        ) {
+          playerContainer.classList.add('disable-cc');
+          this.plyr.captions.currentTrackNode.mode = 'disabled';
         }
+      }, 500);
     };
 
-    private initialiseStreamingTechnique = (segmentStart?: number) => {
-        this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
+    this.plyr.on('languagechange', forceShowCaption);
+    this.plyr.on('languagechange', (e) => {
+      if (this.streamingTechnique) {
+        this.streamingTechnique.changeCaptions(e.detail.plyr.currentTrack);
+      }
+    });
 
-        if (!this.streamingTechnique || !isStreamPlayback(this.playback)) {
-            return;
-        }
+    if (this.onEndCallback) {
+      this.plyr.on('ended', () => {
+        const endOverlay = EndOverlay.createIfNotExists(
+          this.getPlyrDivContainer(),
+        );
 
-        this.streamingTechnique.initialise(this.playback, segmentStart);
+        this.onEndCallback(endOverlay);
+      });
+    }
+  }
 
-        this.plyr.on('play', (event) => {
-            const plyr = event.detail.plyr;
+  public configureWithVideo = (
+    { playback, title, description, id }: Video,
+    segment?: PlaybackSegment,
+  ) => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
 
-            this.streamingTechnique.startLoad(plyr.currentTime);
-        });
-    };
+    if (this.streamingTechnique) {
+      this.streamingTechnique.destroy();
+    }
+    this.playback = playback;
+    this.segment = segment || undefined;
 
-    private createYoutubePlyr = (segmentStart?: number) => {
-        if (!isYoutubePlayback(this.playback)) {
-            throw new Error('Unable to create YouTube Plyr for non-YouTube playback');
-        }
+    if (isStreamPlayback(this.playback)) {
+      this.createStreamPlyr(this.segment && this.segment.start);
+    } else {
+      this.createYoutubePlyr(this.segment && this.segment.start);
+    }
 
-        this.player.getContainer().innerHTML = '';
+    if (this.segment) {
+      this.updateAddonSegments(segment);
+      const segmentStart = this.segment.start || 0;
 
-        const media = document.createElement('div');
-        media.setAttribute('data-qa', 'boclips-player');
-        media.setAttribute('data-plyr-provider', 'youtube');
-        media.setAttribute('data-plyr-embed-id', this.playback.id);
-        if (segmentStart) {
-            media.setAttribute(
-                'data-plyr-config',
-                JSON.stringify({
-                    youtube: {
-                        start: segmentStart,
-                    },
-                }),
-            );
-        }
-
-        this.player.getContainer().appendChild(media);
-
-        this.resetPlyrInstance(media);
-
-        if (this.plyr.elements?.poster?.style) {
-            this.plyr.elements.poster.style.display = 'none';
-        }
-    };
-
-    private installPlyrEventListeners() {
-        this.plyr.on('enterfullscreen', (event) => {
-            this.handleEnterFullscreen();
-
-            this.player
-                .getAnalytics()
-                .handleInteraction(
-                    event.detail.plyr.currentTime,
-                    'fullscreenEnabled',
-                    {},
-                );
-        });
-
-        this.plyr.on('exitfullscreen', (event) => {
-            this.handleExitFullscreen();
-
-            this.player
-                .getAnalytics()
-                .handleInteraction(
-                    event.detail.plyr.currentTime,
-                    'fullscreenDisabled',
-                    {},
-                );
-        });
-
-        this.plyr.on('ready', () => {
-            this.plyr.toggleControls(false);
-        });
-
-        /**
-         * This is a hack to get playback events for youtube videos as we're using official youtube player under the hood.
-         * https://github.com/sampotts/plyr/issues/2378
-         */
-        this.plyr.on('statechange', () => {
-            if (!this.plyr.ready) {
-                this.plyr.ready = true;
-                this.plyr.listeners.media();
-            }
-        });
-
-        this.plyr.on('playing', (event) => {
-            this.player.getAnalytics().handlePlay(event.detail.plyr.currentTime);
-        });
-
-        this.plyr.on('progress', () => {
-            EndOverlay.destroyIfExists(this.getPlyrDivContainer());
-        });
-
-        this.plyr.on('pause', (event) => {
-            this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
-        });
-
-        this.plyr.on('play', () => {
-            EndOverlay.destroyIfExists(this.getPlyrDivContainer());
-        });
-
-        this.plyr.on('ratechange', (event) => {
-            const plyr = event.detail.plyr;
-
-            this.player
-                .getAnalytics()
-                .handleInteraction(plyr.currentTime, 'speedChanged', {
-                    speed: plyr.speed,
-                });
-        });
-
-        this.plyr.on('error', (event) => {
-            const eventDetailsPlyr = event.detail.plyr as EnrichedPlyr;
-            const mediaError = eventDetailsPlyr.media.error;
-
-            if (mediaError && mediaError.code && mediaError.message) {
-                this.player.getErrorHandler().handleError({
-                    fatal: true,
-                    type: 'PLAYBACK_ERROR',
-                    payload: {
-                        code: mediaError.code,
-                        message: mediaError.message,
-                    },
-                });
-            }
-        });
-
-        // /**
-        //  * Current Plyr and HLS versions have a bug when the video has multiple captions. This seems to stem from a
-        //  * timing issue loading the TextTrack content. It seems to not initialise the first TextTrack properly, and
-        //  * leaves the mode 'disabled'.
-        //  * As the Plyr is unable to show the first caption, we force the mode whenever the video starts playing, or the
-        //  * captions are enabled, if captions are active.
-        //  *
-        //  * @see https://github.com/sampotts/plyr/issues/994 et al.
-        //  */
-        //
-        const playerContainer = this.player.getContainer();
-        //
-        const forceShowCaption = () => {
-            setTimeout(() => {
-                if (
-                    this.plyr &&
-                    this.plyr.captions &&
-                    this.plyr.captions.active &&
-                    this.plyr.captions.currentTrackNode
-                ) {
-                    const trackNode = this.plyr.captions.currentTrackNode;
-                    if (!trackNode || !trackNode.activeCues) return;
-                    trackNode.mode = 'showing';
-                }
-                if (
-                    this.plyr &&
-                    this.plyr.captions &&
-                    this.plyr.captions.currentTrackNode &&
-                    this.plyr.captions.currentTrackNode.label.includes(
-                        'auto-generated',
-                    ) &&
-                    !this.getDisplayAutogeneratedCaptions()
-                ) {
-                    playerContainer.classList.add('disable-cc');
-                    this.plyr.captions.currentTrackNode.mode = 'disabled';
-                }
-            }, 500);
+      if (segmentStart) {
+        const skipToStart = (event) => {
+          event.detail.plyr.currentTime = segmentStart;
+          event.detail.plyr.off('playing', skipToStart);
         };
 
-        this.plyr.on('languagechange', forceShowCaption);
-        this.plyr.on('languagechange', (e) => {
-            if (this.streamingTechnique) {
-                this.streamingTechnique.changeCaptions(e.detail.plyr.currentTrack);
-            }
-        });
+        this.plyr.on('playing', skipToStart);
+        // Some browsers won't let you set the currentTime before the metadata
+        // has loaded, but it gives a slightly better experience on Chrome
+        this.plyr.currentTime = segmentStart;
+      }
 
-        if (this.onEndCallback) {
-            this.plyr.on('ended', () => {
-                const endOverlay = EndOverlay.createIfNotExists(
-                    this.getPlyrDivContainer(),
-                );
-
-                this.onEndCallback(endOverlay);
-            });
-        }
+      if (this.segment.end && this.segment.end > segmentStart) {
+        this.plyr.on('seeking', this.autoStop);
+        this.plyr.on('timeupdate', this.autoStop);
+      }
     }
 
-    public configureWithVideo = (
-        {playback, title, description, id}: Video,
-        segment?: PlaybackSegment,
-    ) => {
-        if (this.hasBeenDestroyed) {
-            return;
-        }
+    if (title && description) {
+      const container = this.plyr.elements.container;
+      if (container instanceof Element) {
+        const titleElement = document.createElement('div');
+        const descriptionElement = document.createElement('div');
+        const titleId = id + '-title';
+        const descriptionId = id + '-description';
 
-        if (this.streamingTechnique) {
-            this.streamingTechnique.destroy();
-        }
-        this.playback = playback;
-        this.segment = segment || undefined;
+        titleElement.setAttribute('id', titleId);
+        titleElement.classList.add('plyr__sr-only');
+        titleElement.innerHTML = `${title}. Video. `;
 
-        if (isStreamPlayback(this.playback)) {
-            this.createStreamPlyr(this.segment && this.segment.start);
-        } else {
-            this.createYoutubePlyr(this.segment && this.segment.start);
-        }
+        descriptionElement.setAttribute('id', descriptionId);
+        descriptionElement.classList.add('plyr__sr-only');
+        descriptionElement.innerHTML = description;
 
-        if (this.segment) {
-            this.updateAddonSegments(segment);
-            const segmentStart = this.segment.start || 0;
+        container.appendChild(titleElement);
+        container.appendChild(descriptionElement);
 
-            if (segmentStart) {
-                const skipToStart = (event) => {
-                    event.detail.plyr.currentTime = segmentStart;
-                    event.detail.plyr.off('playing', skipToStart);
-                };
+        container.setAttribute('aria-labelledby', titleId);
+        container.setAttribute('aria-describedby', descriptionId);
+      }
+    }
+  };
 
-                this.plyr.on('playing', skipToStart);
-                // Some browsers won't let you set the currentTime before the metadata
-                // has loaded, but it gives a slightly better experience on Chrome
-                this.plyr.currentTime = segmentStart;
-            }
+  private autoStop = (event) => {
+    const plyr = event.detail.plyr;
 
-            if (this.segment.end && this.segment.end > segmentStart) {
-                this.plyr.on('seeking', this.autoStop);
-                this.plyr.on('timeupdate', this.autoStop);
-            }
-        }
+    if (plyr.currentTime > this.segment.end) {
+      plyr.pause();
+      this.stopStreamingTechnique();
+      plyr.currentTime = this.segment.end;
+    }
+    if (plyr.currentTime < this.segment.start) {
+      plyr.pause();
+      this.stopStreamingTechnique();
+      plyr.currentTime = this.segment.start;
+    }
+  };
 
-        if (title && description) {
-            const container = this.plyr.elements.container;
-            if (container instanceof Element) {
-                const titleElement = document.createElement('div');
-                const descriptionElement = document.createElement('div');
-                const titleId = id + '-title';
-                const descriptionId = id + '-description';
+  private stopStreamingTechnique = () => {
+    if (this.streamingTechnique) {
+      this.streamingTechnique.stopLoad();
+    }
+  };
 
-                titleElement.setAttribute('id', titleId);
-                titleElement.classList.add('plyr__sr-only');
-                titleElement.innerHTML = `${title}. Video. `;
+  private handleEnterFullscreen = () => {
+    this.player.getContainer().classList.add('plyr--fullscreen');
+  };
 
-                descriptionElement.setAttribute('id', descriptionId);
-                descriptionElement.classList.add('plyr__sr-only');
-                descriptionElement.innerHTML = description;
+  private handleExitFullscreen = () => {
+    this.player.getContainer().classList.remove('plyr--fullscreen');
+  };
 
-                container.appendChild(titleElement);
-                container.appendChild(descriptionElement);
+  public play = (): Promise<void> => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
 
-                container.setAttribute('aria-labelledby', titleId);
-                container.setAttribute('aria-describedby', descriptionId);
-            }
-        }
-    };
+    const maybePromise = this.plyr.play();
+    const logger = this.logger;
 
-    private autoStop = (event) => {
-        const plyr = event.detail.plyr;
+    if (maybePromise) {
+      return maybePromise.catch((error) => {
+        logger.error('Unable to Play.', error, JSON.stringify(error));
+      });
+    }
 
-        if (plyr.currentTime > this.segment.end) {
-            plyr.pause();
-            this.stopStreamingTechnique();
-            plyr.currentTime = this.segment.end;
-        }
-        if (plyr.currentTime < this.segment.start) {
-            plyr.pause();
-            this.stopStreamingTechnique();
-            plyr.currentTime = this.segment.start;
-        }
-    };
+    return new Promise((resolve) => resolve());
+  };
 
-    private stopStreamingTechnique = () => {
-        if (this.streamingTechnique) {
-            this.streamingTechnique.stopLoad();
-        }
-    };
+  public pause = (): void => {
+    this.plyr.pause();
+  };
 
-    private handleEnterFullscreen = () => {
-        this.player.getContainer().classList.add('plyr--fullscreen');
-    };
+  public onEnd = (callback: (endOverlay: HTMLDivElement) => void): void => {
+    this.onEndCallback = callback;
+  };
 
-    private handleExitFullscreen = () => {
-        this.player.getContainer().classList.remove('plyr--fullscreen');
-    };
+  public destroy = () => {
+    if (this.hasBeenDestroyed) {
+      return;
+    }
 
-    public play = (): Promise<void> => {
-        if (this.hasBeenDestroyed) {
-            return;
-        }
+    this.destroyAddons();
 
-        const maybePromise = this.plyr.play();
-        const logger = this.logger;
+    this.handleBeforeUnload();
 
-        if (maybePromise) {
-            return maybePromise.catch((error) => {
-                logger.error('Unable to Play.', error, JSON.stringify(error));
-            });
-        }
+    this.hasBeenDestroyed = true;
 
-        return new Promise((resolve) => resolve());
-    };
+    window.removeEventListener('beforeunload', this.handleBeforeUnload);
 
-    public pause = (): void => {
-        this.plyr.pause();
-    };
+    try {
+      if (this.streamingTechnique) {
+        this.streamingTechnique.destroy();
+      }
+    } catch (error) {
+      this.logger.warn(
+        'Error occurred while destroying the streaming technique',
+        error,
+      );
+    }
 
-    public onEnd = (callback: (endOverlay: HTMLDivElement) => void): void => {
-        this.onEndCallback = callback;
-    };
+    try {
+      this.plyr.destroy();
+    } catch (error) {
+      this.logger.warn('Error occurred while destroying plyr', error);
+    }
+  };
 
-    public destroy = () => {
-        if (this.hasBeenDestroyed) {
-            return;
-        }
+  private handleBeforeUnload = () => {
+    if (!this.hasBeenDestroyed && this.plyr) {
+      const currentTime = this.plyr.currentTime;
+      this.player.getAnalytics().handlePause(currentTime);
+    }
+  };
 
-        this.destroyAddons();
+  private resetPlyrInstance = (media: HTMLDivElement | HTMLVideoElement) => {
+    if (this.plyr) {
+      this.plyr.destroy();
+    }
 
-        this.handleBeforeUnload();
-
-        this.hasBeenDestroyed = true;
-
-        window.removeEventListener('beforeunload', this.handleBeforeUnload);
-
-        try {
-            if (this.streamingTechnique) {
-                this.streamingTechnique.destroy();
-            }
-        } catch (error) {
-            this.logger.warn(
-                'Error occurred while destroying the streaming technique',
-                error,
+    this.plyr = new Plyr(media, {
+      debug: this.player.getOptions().debug,
+      captions: { active: false, update: true },
+      speed: {
+        selected: 1,
+        options: [0.5, 1, 1.5, 2],
+      },
+      controls: this.getOptions().controls,
+      // Don't use any plyr controls for youtube playback https://github.com/sampotts/plyr/issues/1738#issuecomment-943760053
+      youtube: { customControls: false },
+      duration: this.playback ? this.playback.duration : null,
+      tooltips: { controls: true, seek: true },
+      listeners: {
+        fastForward: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(this.plyr.currentTime, 'jumpedForward', {});
+          return true;
+        },
+        rewind: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(this.plyr.currentTime, 'jumpedBackward', {});
+          return true;
+        },
+        mute: () => {
+          this.player
+            .getAnalytics()
+            .handleInteraction(
+              this.plyr.currentTime,
+              this.plyr.muted ? 'unmuted' : 'muted',
+              {},
             );
-        }
+          return true;
+        },
+      },
+      ratio: this.getOptions().ratio,
+    }) as EnrichedPlyr;
 
-        try {
-            this.plyr.destroy();
-        } catch (error) {
-            this.logger.warn('Error occurred while destroying plyr', error);
-        }
-    };
+    this.installPlyrEventListeners();
+    this.installAddons();
+  };
 
-    private handleBeforeUnload = () => {
-        if (!this.hasBeenDestroyed && this.plyr) {
-            const currentTime = this.plyr.currentTime;
-            this.player.getAnalytics().handlePause(currentTime);
-        }
-    };
+  private installAddons = () => {
+    Addons.forEach((addonToInstall: Addon) => {
+      if (
+        addonToInstall.canBeEnabled(this.plyr, this.playback, this.getOptions())
+      ) {
+        // tslint:disable-next-line: no-unused-expression
+        this.enabledAddons.push(
+          new addonToInstall(this.plyr, this.playback, this.getOptions()),
+        );
+      }
+    });
+  };
 
-    private resetPlyrInstance = (media: HTMLDivElement | HTMLVideoElement) => {
-        if (this.plyr) {
-            this.plyr.destroy();
-        }
+  private destroyAddons = () => {
+    this.enabledAddons.forEach((addon) => addon.destroy());
+    this.enabledAddons = [];
+  };
 
-        this.plyr = new Plyr(media, {
-            debug: this.player.getOptions().debug,
-            captions: {active: false, update: true},
-            controls: this.getOptions().controls,
-            // Don't use any plyr controls for youtube playback https://github.com/sampotts/plyr/issues/1738#issuecomment-943760053
-            youtube: {customControls: false},
-            duration: this.playback ? this.playback.duration : null,
-            tooltips: {controls: true, seek: true},
-            listeners: {
-                fastForward: () => {
-                    this.player
-                        .getAnalytics()
-                        .handleInteraction(this.plyr.currentTime, 'jumpedForward', {});
-                    return true;
-                },
-                rewind: () => {
-                    this.player
-                        .getAnalytics()
-                        .handleInteraction(this.plyr.currentTime, 'jumpedBackward', {});
-                    return true;
-                },
-                mute: () => {
-                    this.player
-                        .getAnalytics()
-                        .handleInteraction(
-                            this.plyr.currentTime,
-                            this.plyr.muted ? 'unmuted' : 'muted',
-                            {},
-                        );
-                    return true;
-                },
-            },
-            ratio: this.getOptions().ratio,
-        }) as EnrichedPlyr;
+  private updateAddonSegments = (segment) => {
+    this.enabledAddons.forEach((addon) => {
+      addon.updateSegment(segment);
+    });
+  };
 
-        this.installPlyrEventListeners();
-        this.installAddons();
-    };
+  private getOptions = () => this.player.getOptions().interface;
 
-    private installAddons = () => {
-        Addons.forEach((addonToInstall: Addon) => {
-            if (
-                addonToInstall.canBeEnabled(this.plyr, this.playback, this.getOptions())
-            ) {
-                // tslint:disable-next-line: no-unused-expression
-                this.enabledAddons.push(
-                    new addonToInstall(this.plyr, this.playback, this.getOptions()),
-                );
-            }
-        });
-    };
+  public getSegment = () => this.segment;
 
-    private destroyAddons = () => {
-        this.enabledAddons.forEach((addon) => addon.destroy());
-        this.enabledAddons = [];
-    };
+  private getDisplayAutogeneratedCaptions = () =>
+    this.player.getOptions().displayAutogeneratedCaptions;
 
-    private updateAddonSegments = (segment) => {
-        this.enabledAddons.forEach((addon) => {
-            addon.updateSegment(segment);
-        });
-    };
+  public getVideoContainer = () => this.plyr.media;
 
-    private getOptions = () => this.player.getOptions().interface;
+  public getCurrentTime = () => this.plyr.currentTime;
 
-    public getSegment = () => this.segment;
+  public getEnabledAddons = () => this.enabledAddons;
 
-    private getDisplayAutogeneratedCaptions = () =>
-        this.player.getOptions().displayAutogeneratedCaptions;
-
-    public getVideoContainer = () => this.plyr.media;
-
-    public getCurrentTime = () => this.plyr.currentTime;
-
-    public getEnabledAddons = () => this.enabledAddons;
-
-    private getPlyrDivContainer(): HTMLElement {
-        return this.player.getContainer().querySelector('.plyr');
-    }
+  private getPlyrDivContainer(): HTMLElement {
+    return this.player.getContainer().querySelector('.plyr');
+  }
 }
