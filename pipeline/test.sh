@@ -7,6 +7,6 @@ app=source
 cd ${app}
 
 npm ci
-npm run compile
+npm run build
 npm run test
 )

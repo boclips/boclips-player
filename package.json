@@ -13,16 +13,15 @@
     "url": "https://github.com/boclips/boclips-player/issues"
   },
   "main": "./dist/index.js",
-  "types": "./lib/index.d.ts",
+  "types": "./dist/index.d.ts",
   "files": [
-    "dist/**/*",
-    "lib/**/*"
+    "dist/**/*"
   ],
+  "typings": "./dist/index.d.ts",
   "scripts": {
     "analyse": "webpack --config webpack-config/webpack.analyse.js",
     "audit": "audit-ci -m",
     "build": "NODE_ENV=production webpack --config webpack-config/webpack.prod.js && tsc --build --force ./tsconfig.json",
-    "compile": "tsc -p tsconfig.all.json --noEmit",
     "demo:module": "./node_modules/.bin/webpack serve --config demo/module/webpack.config.js",
     "demo:module-authorized": "./node_modules/.bin/webpack serve --config demo/module/webpack.config.js",
     "demo:static": "./node_modules/.bin/webpack serve --config demo/static/webpack.config.js",
@@ -32,7 +31,6 @@
     "lint:fix": "prettier-package-json --write && tslint --fix -c tslint.json -p .",
     "test": "jest"
   },
-  "typings": "lib/index.d.ts",
   "dependencies": {
     "@boclips-ui/styles": "^4.0.2",
     "@types/url-template": "^2.0.28",
