@@ -87,14 +87,9 @@ When this library is loaded via a script tag it exposes the `PlayerFactory` unde
   <head>
     <title>Plain Demo</title>
     <script
-      src="https://unpkg.com/boclips-player/dist/boclips-player.js"
+      src="https://unpkg.com/boclips-player@7.0.0/dist/index.js"
       type="text/javascript"
     ></script>
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/boclips-player/dist/boclips-player.css"
-      type="text/css"
-    />
   </head>
   <body>
     <div id="container"></div>
