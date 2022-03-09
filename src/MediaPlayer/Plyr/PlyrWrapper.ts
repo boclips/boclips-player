@@ -144,9 +144,9 @@ export default class PlyrWrapper implements MediaPlayer {
         );
     });
 
-    this.plyr.on('ready', () => {
-      this.plyr.toggleControls(false);
-    });
+    // this.plyr.on('ready', () => {
+    //   this.plyr.toggleControls(false);
+    // });
 
     /**
      * This is a hack to get playback events for youtube videos as we're using official youtube player under the hood.

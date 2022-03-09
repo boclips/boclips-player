@@ -40,6 +40,8 @@
   &:focus {
     outline: 0;
   }
+
+  &.plyr--stopped .plyr__controls { display: none }
 }
 
 // border-box everything
