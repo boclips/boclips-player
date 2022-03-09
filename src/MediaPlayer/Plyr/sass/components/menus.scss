@@ -154,7 +154,6 @@
         flex-shrink: 0;
         height: 16px;
         margin-right: $plyr-control-spacing;
-        transition: all 0.3s ease;
         width: 16px;
       }
 
@@ -166,11 +165,10 @@
         opacity: 0;
         top: 50%;
         transform: translateY(-50%) scale(0);
-        transition: transform 0.3s ease, opacity 0.3s ease;
         width: 6px;
       }
 
-      &[aria-checked='true'] {
+      &[aria-checked='true'], &[aria-checked='true']:hover {
         &::before {
           background: $plyr-control-toggle-checked-background;
         }
@@ -183,7 +181,7 @@
 
       &.plyr__tab-focus::before,
       &:hover::before {
-        background: rgba($plyr-color-gray-900, 0.1);
+        background: #fff;
       }
     }
 
