@@ -9,7 +9,7 @@
   position: relative;
 
   .plyr__tooltip {
-    display: none;
+    visibility: hidden;
   }
 
   input[data-plyr="volume"] {
