@@ -8,12 +8,16 @@
   width: auto;
   position: relative;
 
+  .plyr__tooltip {
+    display: none;
+  }
+
   input[data-plyr="volume"] {
     width: 100px;
     margin: 0;
     position: absolute;
     left: 50%;
-    top: -10px;
+    top: -26px;
     transform-origin: left;
     transform: rotate(-90deg);
     opacity: 0;
@@ -26,25 +30,40 @@
     &:after {
       content: '';
       position: absolute;
-      top:0;
-      background: $plyr-video-controls-background;
-      left: 12px;
+      top: 0;
+      background: #fff;
+      left: 0;
       height: 100%;
-      width: 94px;
+      width: 100px;
       z-index: -1;
-      border-radius: 0 .25rem .25rem  0;
+      border-radius: .25rem;
+      box-shadow: $plyr-tooltip-shadow;
     }
+
+
+    &:before {
+      border: $plyr-menu-arrow-size solid transparent;
+      border-top-color: $plyr-menu-background;
+      content: '';
+      height: 0;
+      position: absolute;
+      width: 0;
+      top: 13px;
+      left: -8px;
+      transform: rotate(90deg);
+    }
+
 
     &:focus {
       opacity: 1;
-      pointer-events: inherit!important;
+      pointer-events: inherit !important;
     }
   }
 
   &:hover {
     input[data-plyr="volume"] {
       opacity: 1;
-      pointer-events: inherit!important;
+      pointer-events: inherit !important;
 
     }
   }
