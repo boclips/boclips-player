@@ -6,14 +6,10 @@
 $plyr-progress-offset: $plyr-range-thumb-height;
 
 .plyr__progress {
-  margin-right: $plyr-progress-offset;
   position: relative;
 
   input[type='range'],
   &__buffer {
-    margin-left: calc(#{$plyr-progress-offset} * -0.5);
-    margin-right: calc(#{$plyr-progress-offset} * -0.5);
-    width: calc(100% + #{$plyr-progress-offset});
     border-radius: 4px !important;
   }
 
