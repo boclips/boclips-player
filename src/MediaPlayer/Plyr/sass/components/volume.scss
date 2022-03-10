@@ -12,18 +12,6 @@
     visibility: hidden;
   }
 
-  button[data-plyr="mute"] {
-    &:after {
-      content: "";
-      position: absolute;
-      background: transparent;
-      left:0;
-      bottom: 30px;
-      height: 100px;
-      width: 35px;
-      z-index: -1;
-    }
-  }
 
   input[data-plyr="volume"] {
     width: 100px;
@@ -77,7 +65,18 @@
     input[data-plyr="volume"] {
       opacity: 1;
       pointer-events: inherit !important;
-
+    }
+    button[data-plyr="mute"] {
+      &:after {
+        content: "";
+        position: absolute;
+        background: transparent;
+        left:0;
+        bottom: 30px;
+        height: 100px;
+        width: 35px;
+        z-index: -1;
+      }
     }
   }
 }
