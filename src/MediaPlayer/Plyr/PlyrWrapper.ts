@@ -255,7 +255,7 @@ export default class PlyrWrapper implements MediaPlayer {
   }
 
   public configureWithVideo = (
-    { playback, title, description, id }: Video,
+    { playback, title, description }: Video,
     segment?: PlaybackSegment,
   ) => {
     if (this.hasBeenDestroyed) {
@@ -301,22 +301,15 @@ export default class PlyrWrapper implements MediaPlayer {
       if (container instanceof Element) {
         const titleElement = document.createElement('div');
         const descriptionElement = document.createElement('div');
-        const titleId = id + '-title';
-        const descriptionId = id + '-description';
 
-        titleElement.setAttribute('id', titleId);
         titleElement.classList.add('plyr__sr-only');
         titleElement.innerHTML = `${title}. Video. `;
 
-        descriptionElement.setAttribute('id', descriptionId);
         descriptionElement.classList.add('plyr__sr-only');
         descriptionElement.innerHTML = description;
 
         container.appendChild(titleElement);
         container.appendChild(descriptionElement);
-
-        container.setAttribute('aria-labelledby', titleId);
-        container.setAttribute('aria-describedby', descriptionId);
       }
     }
   };
