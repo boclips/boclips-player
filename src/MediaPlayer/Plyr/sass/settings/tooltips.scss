@@ -3,7 +3,7 @@
 // ==========================================================================
 
 $plyr-tooltip-background: var(--plyr-tooltip-background, rgba(#fff, 1)) !default;
-$plyr-tooltip-color: var(--plyr-tooltip-color, $plyr-color-gray-700) !default;
+$plyr-tooltip-color: var(--plyr-tooltip-color, #2D3748) !default;
 $plyr-tooltip-padding: calc(#{$plyr-control-spacing} / 2);
 $plyr-tooltip-padding: var(--plyr-tooltip-padding, $plyr-tooltip-padding) !default;
 $plyr-tooltip-arrow-size: var(--plyr-tooltip-arrow-size, 4px) !default;

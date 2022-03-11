@@ -20,6 +20,9 @@
   text-shadow: none;
   transition: box-shadow 0.3s ease;
   z-index: 0; // Force any border radius
+  cursor: pointer;
+
+  &.plyr--stopped .plyr__controls { display: none }
 
   // Media elements
   video,
@@ -40,8 +43,6 @@
   &:focus {
     outline: 0;
   }
-
-  &.plyr--stopped .plyr__controls { display: none }
 }
 
 // border-box everything

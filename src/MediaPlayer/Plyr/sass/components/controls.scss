@@ -14,20 +14,20 @@
   justify-content: flex-end;
   text-align: center;
   font-family: inherit;
-  height: 70px;
+  height: 48px;
+  cursor: initial;
 
   .plyr__progress__container {
     min-width: 0; // Fix for Edge issue where content would overflow
     position: absolute !important;
-    top: 8px !important;
+    top: -10px !important;
     z-index: -1;
+    height: 20px;
   }
 
   // Spacing
   .plyr__controls__item {
     margin-left: calc(#{$plyr-control-spacing} / 4);
-    position: relative;
-    top: 10px;
 
     &:first-child {
       margin-left: 0;
@@ -36,7 +36,6 @@
     &.plyr__progress__container {
       width: 100%;
       left: 0;
-      padding: 0 .5rem;
       margin: 0;
     }
 
@@ -49,7 +48,6 @@
     &.plyr__time:first-child,
     &.plyr__time + .plyr__time {
       padding-left: 0;
-
     }
   }
 

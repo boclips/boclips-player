@@ -68,8 +68,9 @@ $embed-padding: (math.div(100, 16) * 9);
   padding: calc(#{$plyr-control-spacing} / 2);
   position: absolute;
   right: 0;
-  transition: none;
+  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
   z-index: 3;
+
 
   @media (min-width: $plyr-bp-sm) {
     padding: $plyr-control-spacing;
@@ -96,7 +97,7 @@ $embed-padding: (math.div(100, 16) * 9);
 
 // Large play button (video only)
 .plyr__control--overlaid {
-  background: $plyr-color-main;
+  background: white;
   border-radius: 100%;
   color: $plyr-video-control-color;
   display: none;
@@ -108,8 +109,7 @@ $embed-padding: (math.div(100, 16) * 9);
   transform: translate(-50%, -50%);
   transition: 0.3s;
   z-index: 2;
-  border: 4px solid white;
-  width: 60px;
+  width: 60px!important;
   height: 60px;
 
   // Offset icon to make the play button look right
@@ -117,13 +117,18 @@ $embed-padding: (math.div(100, 16) * 9);
     left: 2px;
     position: relative;
     filter: drop-shadow(3px 2px 3px rgb(0 0 0 / 0.4));
+    color: #0E69FF;
   }
 
   &:hover,
   &:focus {
     opacity: 1;
-    background: #193DA1;
+    background: white!important;
     border-radius: 100%;
+    outline-color: #193DA1!important;
+    svg{
+      color: #193DA1;
+    }
   }
 }
 
@@ -133,11 +138,14 @@ $embed-padding: (math.div(100, 16) * 9);
 }
 
 .plyr--full-ui.plyr--video .plyr__control--overlaid {
-  display: block;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 // Video range inputs
 .plyr--full-ui.plyr--video input[type='range'] {
+  cursor: pointer;
   &::-webkit-slider-runnable-track {
     background-color: $plyr-video-range-track-background;
   }
