@@ -28,7 +28,7 @@
     "demo:unpkg": "./node_modules/.bin/webpack serve --config demo/unpkg/webpack.config.js",
     "lint": "tslint -c tslint.json -p .",
     "lint:fix": "prettier-package-json --write && tslint --fix -c tslint.json -p .",
-    "test": "jest"
+    "test": "n auto; jest"
   },
   "dependencies": {
     "@boclips-ui/styles": "^4.0.2",
