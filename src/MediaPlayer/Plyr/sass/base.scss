@@ -39,8 +39,9 @@
     width: auto;
   }
 
+  // Ignore focus
   &:focus {
-    @include plyr-tab-focus
+    outline: 0;
   }
 }
 
