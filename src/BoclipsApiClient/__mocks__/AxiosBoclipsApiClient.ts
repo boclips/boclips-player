@@ -1,9 +1,10 @@
 import { BoclipsApiClient } from '../BoclipsApiClient';
+import {VideoFactory} from "../../test-support/TestFactories";
 
 // noinspection JSUnusedGlobalSymbols
 export const AxiosBoclipsApiClient = jest.fn().mockImplementation(() => {
   return {
-    retrieveVideo: jest.fn(),
+    retrieveVideo: jest.fn(() => Promise.resolve(VideoFactory.sample())),
     emitPlaybackEvent: jest.fn(),
     emitPlayerInteractionEvent: jest.fn(),
   } as BoclipsApiClient;

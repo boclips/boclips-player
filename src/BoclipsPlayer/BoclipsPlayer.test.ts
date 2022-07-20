@@ -52,8 +52,6 @@ describe('BoclipsPlayer', () => {
     expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
   });
 
-  // This test triggers the UnhandledPromiseRejectionWarning because the result
-  // of retrieveVideo is undefined
   it('Will auto load the video based on data attribute on container', () => {
     const uri = '/v1/videos/177';
 
