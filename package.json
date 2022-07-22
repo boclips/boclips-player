@@ -33,7 +33,7 @@
   "dependencies": {
     "@boclips-ui/styles": "^4.0.2",
     "@types/url-template": "^2.0.28",
-    "axios": ">=0.21.1",
+    "axios": ">=0.21.1 <1.0.0",
     "deepmerge": "^4.2.2",
     "hls.js": "^1.0.11",
     "is-plain-object": "^5.0.0",
