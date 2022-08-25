@@ -250,6 +250,7 @@ describe('Playback restriction', () => {
       );
 
       mockPlyr = getLatestMockPlyrInstance();
+      mockPlyr.pause = jest.fn();
 
       expect(mockPlyr.currentTime).toBeUndefined();
 
@@ -570,7 +571,7 @@ describe('Playback restriction', () => {
     });
 
     it('catches exceptions from Plyr destruction', () => {
-      mockPlyr.destroy.mockImplementation(() => {
+      mockPlyr.destroy = jest.fn(() => {
         throw Error('This should not bubble');
       });
 

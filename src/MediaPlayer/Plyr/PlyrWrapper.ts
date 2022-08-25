@@ -395,6 +395,7 @@ export default class PlyrWrapper implements MediaPlayer {
     try {
       this.plyr.destroy();
     } catch (error) {
+      console.log('thrown');
       this.logger.warn('Error occurred while destroying plyr', error);
     }
   };

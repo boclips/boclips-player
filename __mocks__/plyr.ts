@@ -37,11 +37,13 @@ const media = {
   addEventListener: jest.fn(),
 };
 
-Plyr.prototype.on = on;
-Plyr.prototype.off = off;
+Plyr.prototype.on = jest.fn(on);
+Plyr.prototype.off = jest.fn(off);
 Plyr.prototype.__callEventCallback = __callEventCallback;
 Plyr.prototype.media = media;
+Plyr.prototype.pause = jest.fn()
 Plyr.prototype.play = jest.fn().mockReturnValue(new Promise(noop));
+Plyr.prototype.destroy = jest.fn()
 Plyr.prototype.elements = {
   container: {
     clientWidth: 700,
