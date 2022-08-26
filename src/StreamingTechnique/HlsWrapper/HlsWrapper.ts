@@ -23,6 +23,18 @@ export class HlsWrapper implements StreamingTechnique {
       return;
     }
 
+    const media = this.player.getMediaPlayer().getVideoContainer();
+
+    // <track src="captions_en.vtt" kind="captions" srclang="en" label="english_captions">
+    const source = document.createElement('track');
+    source.setAttribute('src', this.hls.subtitleTracks[0].url);
+    source.setAttribute('kind', this.hls.subtitleTracks[0].type);
+    source.setAttribute('srclang', this.hls.subtitleTracks[0].lang);
+    source.setAttribute('label', this.hls.subtitleTracks[0].name);
+    media.appendChild(source);
+
+    console.log(this.hls);
+    console.log(this.player.getMediaPlayer());
     this.hls.subtitleTrack = trackNumber;
   };
 

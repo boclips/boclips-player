@@ -13,7 +13,7 @@ const boclipsSecurity = BoclipsSecurity.createInstance({
   realm: 'boclips',
   clientId: 'teachers',
   requireLoginPage: true,
-  authEndpoint: 'https://login.staging-boclips.com/auth',
+  authEndpoint: 'https://login.staging-boclips.com',
 });
 
 // An example token factory

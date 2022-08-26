@@ -50,6 +50,11 @@ export default class PlyrWrapper implements MediaPlayer {
     media.setAttribute('preload', 'metadata');
 
     if (isStreamPlayback(this.playback)) {
+      const source = document.createElement('source');
+      source.setAttribute('src', this.playback.links.hlsStream.getOriginalLink());
+      source.setAttribute('type', 'video/mp4');
+      media.appendChild(source);
+
       media.setAttribute(
         'src',
         this.playback.links.hlsStream.getOriginalLink(),
