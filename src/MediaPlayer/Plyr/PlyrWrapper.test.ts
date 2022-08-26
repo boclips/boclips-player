@@ -238,25 +238,29 @@ describe('Playback restriction', () => {
       mediaPlayer.configureWithVideo(youtubeVideo, segment);
 
       mockPlyr = getLatestMockPlyrInstance();
+      const plyrPauseFn = jest.fn();
+      mockPlyr.pause = plyrPauseFn;
       expect(mockPlyr.currentTime).toEqual(30);
 
       mockPlyr.currentTime = 61;
       mockPlyr.__callEventCallback('timeupdate');
 
-      expect(mockPlyr.pause).toHaveBeenCalledTimes(1);
+      expect(plyrPauseFn).toHaveBeenCalledTimes(1);
 
       mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
 
       mockPlyr = getLatestMockPlyrInstance();
+      const secondPlyrPauseFn = jest.fn();
+      mockPlyr.pause = secondPlyrPauseFn
 
       expect(mockPlyr.currentTime).toBeUndefined();
 
       mockPlyr.currentTime = 60;
       mockPlyr.__callEventCallback('timeupdate');
 
-      expect(mockPlyr.pause).not.toHaveBeenCalled();
+      expect(secondPlyrPauseFn).not.toHaveBeenCalled();
     });
   });
 
@@ -348,25 +352,30 @@ describe('Playback restriction', () => {
       mediaPlayer.configureWithVideo(streamingVideo, segment);
 
       mockPlyr = getLatestMockPlyrInstance();
+      const plyrPauseFn = jest.fn();
+      mockPlyr.pause = plyrPauseFn;
+
       expect(mockPlyr.currentTime).toEqual(30);
 
       mockPlyr.currentTime = 61;
       mockPlyr.__callEventCallback('timeupdate');
 
-      expect(mockPlyr.pause).toHaveBeenCalledTimes(1);
+      expect(plyrPauseFn).toHaveBeenCalledTimes(1);
 
       mediaPlayer.configureWithVideo(
         VideoFactory.sample(PlaybackFactory.youtubeSample()),
       );
 
       mockPlyr = getLatestMockPlyrInstance();
+      const secondPlyrPauseFn = jest.fn();
+      mockPlyr.pause = secondPlyrPauseFn;
 
       expect(mockPlyr.currentTime).toBeUndefined();
 
       mockPlyr.currentTime = 60;
       mockPlyr.__callEventCallback('timeupdate');
 
-      expect(mockPlyr.pause).not.toHaveBeenCalled();
+      expect(secondPlyrPauseFn).not.toHaveBeenCalled();
     });
   });
 
@@ -570,7 +579,7 @@ describe('Playback restriction', () => {
     });
 
     it('catches exceptions from Plyr destruction', () => {
-      mockPlyr.destroy.mockImplementation(() => {
+      mockPlyr.destroy = jest.fn(() => {
         throw Error('This should not bubble');
       });
 
