@@ -13,7 +13,7 @@ export interface AddonInterface {
 }
 
 export interface Addon {
-  canBeEnabled: (
+  isEnabled: (
     plyr: EnrichedPlyr,
     playback: Playback,
     options: InterfaceOptions,

@@ -8,7 +8,7 @@ import { AddonInterface } from '../Addons';
 import { formatDuration } from '../../../../utils/durationFormatter';
 
 export class VideoLengthPreview implements AddonInterface {
-  public static canBeEnabled = (
+  public static isEnabled = (
     _,
     playback: Playback | null,
     options: InterfaceOptions,

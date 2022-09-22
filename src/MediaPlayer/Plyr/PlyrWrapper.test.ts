@@ -395,7 +395,7 @@ describe('Playback restriction', () => {
 
       MockAddon.mockClear();
 
-      MockAddon.canBeEnabled.mockReturnValueOnce(false);
+      MockAddon.isEnabled.mockReturnValueOnce(false);
 
       mediaPlayer.configureWithVideo(video);
 

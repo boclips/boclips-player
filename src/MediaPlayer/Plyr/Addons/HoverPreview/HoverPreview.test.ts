@@ -51,7 +51,7 @@ describe('Feature Enabling', () => {
 
   testData.forEach(({ when, playback, hoverPreviewOption, expected }) => {
     it(`will return ${expected} when ${when}`, () => {
-      const actual = HoverPreview.canBeEnabled(
+      const actual = HoverPreview.isEnabled(
         new Plyr(document.createElement('div')),
         playback,
         {
@@ -280,6 +280,4 @@ describe('HoverPreview', () => {
       expect(plyr.elements.container.children).not.toContain(container);
     });
   });
-
-  describe(`segmenting`, () => {});
 });

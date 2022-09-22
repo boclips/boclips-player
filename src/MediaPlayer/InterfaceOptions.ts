@@ -15,7 +15,8 @@ type Controls =
   | 'volume'
   | 'captions'
   | 'settings'
-  | 'fullscreen';
+  | 'fullscreen'
+  | 'title-overlay';
 
 export interface InterfaceOptions {
   controls: Controls[];
@@ -24,6 +25,7 @@ export interface InterfaceOptions {
     hoverPreview?: boolean | HoverPreviewOptions;
     singlePlayback?: boolean | SinglePlaybackOptions;
     videoLengthPreview?: boolean;
+    titleOverlay?: boolean;
   };
   ratio?: '16:9' | '4:3';
 }

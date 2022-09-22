@@ -38,7 +38,7 @@ beforeEach(() => {
 describe('Feature Enabling', () => {
   it('is false if the option is disabled', () => {
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample(),
         {
@@ -51,7 +51,7 @@ describe('Feature Enabling', () => {
 
   it('is false if the container is too small', () => {
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 400 } } } as any,
         PlaybackFactory.streamSample({
           links: {
@@ -75,7 +75,7 @@ describe('Feature Enabling', () => {
     delete playback.links.videoPreview;
 
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 500 } } } as any,
         playback,
         {
@@ -88,7 +88,7 @@ describe('Feature Enabling', () => {
 
   it('is false if there is no playback', () => {
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 500 } } } as any,
         null,
         {
@@ -101,7 +101,7 @@ describe('Feature Enabling', () => {
 
   it('is false if the controls do not contain a progress bar', () => {
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample(),
         {
@@ -114,7 +114,7 @@ describe('Feature Enabling', () => {
 
   it('is true if the playback has a videoPreview link, and controls have a progressbar, and the option is enabled', () => {
     expect(
-      SeekPreview.canBeEnabled(
+      SeekPreview.isEnabled(
         { elements: { container: { clientWidth: 500 } } } as any,
         PlaybackFactory.streamSample({
           links: {

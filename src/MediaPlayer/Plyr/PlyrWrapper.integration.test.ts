@@ -10,48 +10,52 @@ let container: HTMLElement = null;
 let player: PrivatePlayer;
 
 describe('Emitting interaction events', () => {
-  const testData = [
-    {
-      when: 'fast forward is pressed',
-      controls: ['fast-forward'],
-      dataAttribute: 'fast-forward',
-      expectedType: 'jumpedForward',
-      expectedPayload: {},
-    },
-    {
-      when: 'rewind is pressed',
-      controls: ['rewind'],
-      dataAttribute: 'rewind',
-      expectedType: 'jumpedBackward',
-      expectedPayload: {},
-    },
-  ];
+  it(`emits an interaction event when fast forward is pressed`, () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
 
-  testData.forEach((data) => {
-    it(`emits an interaction event when ${data.when}`, () => {
-      container = document.createElement('div');
-      document.body.appendChild(container);
-
-      player = new BoclipsPlayer(container, {
-        interface: { controls: data.controls as any },
-      });
-
-      expect(container.children.length).toEqual(1);
-
-      const button: HTMLElement = container.querySelector(
-        `[data-plyr="${data.dataAttribute}"]`,
-      );
-
-      expect(button).toBeTruthy();
-
-      button.click();
-
-      expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        0,
-        data.expectedType,
-        data.expectedPayload,
-      );
+    player = new BoclipsPlayer(container, {
+      interface: { controls: ['fast-forward'] },
     });
+
+    expect(container.children.length).toEqual(1);
+
+    const button: HTMLElement = container.querySelector(
+      `[data-plyr="fast-forward"]`,
+    );
+
+    expect(button).toBeTruthy();
+
+    button.click();
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      0,
+      'jumpedForward',
+      {},
+    );
+  });
+
+  it(`emits an interaction event when rewind is pressed`, () => {
+    container = document.createElement('div');
+    document.body.appendChild(container);
+
+    player = new BoclipsPlayer(container, {
+      interface: { controls: ['rewind'] },
+    });
+
+    expect(container.children.length).toEqual(1);
+
+    const button: HTMLElement = container.querySelector(`[data-plyr='rewind']`);
+
+    expect(button).toBeTruthy();
+
+    button.click();
+
+    expect(player.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+      0,
+      'jumpedBackward',
+      {},
+    );
   });
 
   it(`emits an interaction event when muted`, () => {

@@ -43,7 +43,7 @@ export class HoverPreview implements AddonInterface {
     this.addListeners();
   }
 
-  public static canBeEnabled = (
+  public static isEnabled = (
     _,
     playback: Playback | null,
     options: InterfaceOptions,

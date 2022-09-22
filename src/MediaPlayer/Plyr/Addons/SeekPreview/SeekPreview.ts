@@ -44,7 +44,7 @@ export class SeekPreview implements AddonInterface {
     this.createContainer();
   }
 
-  public static canBeEnabled = (
+  public static isEnabled = (
     plyr: EnrichedPlyr,
     playback: Playback | null,
     options: InterfaceOptions,

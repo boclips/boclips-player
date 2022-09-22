@@ -64,31 +64,12 @@ describe('BoclipsPlayer', () => {
     expect(player.getClient().retrieveVideo).toHaveBeenCalledWith(uri);
   });
 
-  const illegalContainers: {
-    message: string;
-    illegalContainer: any;
-  }[] = [
-    {
-      message: 'null',
-      illegalContainer: null,
-    },
-    {
-      message: 'a string',
-      illegalContainer: 'hello',
-    },
-    {
-      message: 'a number',
-      illegalContainer: 123,
-    },
-  ];
-
-  illegalContainers.forEach(({ message, illegalContainer }) => {
-    it('Will throw an exception if the container ' + message, () => {
-      expect(() => {
-        // tslint:disable-next-line:no-unused-expression
-        new BoclipsPlayer(illegalContainer);
-      }).toThrow(Error);
-    });
+  it('Will throw an exception if the container is invalid', () => {
+    // @ts-ignore
+    expect(() => new BoclipsPlayer(123)).toThrow(Error);
+    // @ts-ignore
+    expect(() => new BoclipsPlayer('hello')).toThrow(Error);
+    expect(() => new BoclipsPlayer(null)).toThrow(Error);
   });
 
   it('Will retrieve details from the Playback endpoint', () => {
@@ -217,6 +198,18 @@ describe('BoclipsPlayer', () => {
       expect(player.getOptions().interface.controls).toEqual([
         'captions',
         'duration',
+      ]);
+    });
+
+    it('passes down interface.controls', () => {
+      const options: DeepPartial<PlayerOptions> = {
+        interface: { controls: ['title-overlay'] },
+      };
+
+      player = new BoclipsPlayer(container, options);
+
+      expect(player.getOptions().interface.controls).toEqual([
+        'title-overlay',
       ]);
     });
   });
