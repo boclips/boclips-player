@@ -42,6 +42,15 @@ describe('BoclipsPlayer', () => {
     expect(player.getMediaPlayer().play).toBeTruthy();
   });
 
+  it('will return the video title', async () => {
+    boclipsClient.retrieveVideo.mockResolvedValue(
+      VideoFactory.sample(null, 'video title'),
+    );
+    await player.loadVideo('/v1/videos/amazing-video');
+
+    expect(player.getVideoTitle()).toEqual('video title');
+  });
+
   it('Will initialise the media player with the player', () => {
     expect(MediaPlayerFactory.get()).toBeCalledTimes(1);
     expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
@@ -201,16 +210,14 @@ describe('BoclipsPlayer', () => {
       ]);
     });
 
-    it('passes down interface.controls', () => {
+    it('passes down addons.titleOverlay', () => {
       const options: DeepPartial<PlayerOptions> = {
-        interface: { controls: ['title-overlay'] },
+        interface: { addons: { titleOverlay: true } },
       };
 
       player = new BoclipsPlayer(container, options);
 
-      expect(player.getOptions().interface.controls).toEqual([
-        'title-overlay',
-      ]);
+      expect(player.getOptions().interface.addons.titleOverlay).toBeTruthy();
     });
   });
 

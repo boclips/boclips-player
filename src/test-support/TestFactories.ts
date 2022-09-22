@@ -49,9 +49,10 @@ export class PlaybackFactory {
 export class VideoFactory {
   public static sample = (
     playback: Playback = PlaybackFactory.streamSample(),
+    title: string = 'title',
   ): Video => ({
     id: 'video-id',
-    title: 'title',
+    title,
     description: 'description',
     playback,
     links: {

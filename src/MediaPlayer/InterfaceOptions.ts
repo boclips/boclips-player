@@ -15,8 +15,7 @@ type Controls =
   | 'volume'
   | 'captions'
   | 'settings'
-  | 'fullscreen'
-  | 'title-overlay';
+  | 'fullscreen';
 
 export interface InterfaceOptions {
   controls: Controls[];
@@ -46,6 +45,7 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     hoverPreview: false,
     singlePlayback: true,
     videoLengthPreview: false,
+    titleOverlay: false,
   },
   ratio: undefined,
 };
