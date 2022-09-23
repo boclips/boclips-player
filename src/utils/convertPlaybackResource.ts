@@ -3,13 +3,15 @@ import { Link } from '../types/Link';
 import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
 
 const convertPlaybackResource = (
-  rawPlayback,
+  videoResource,
 ): StreamPlayback | YoutubePlayback => {
+  const rawPlayback = videoResource.playback;
   if (!['STREAM', 'YOUTUBE'].includes(rawPlayback.type)) {
     throw new Error(`Playback type ${rawPlayback.type} not supported`);
   }
 
   const playback: Playback = {
+    title: videoResource.title,
     type: rawPlayback.type,
     id: rawPlayback.id,
     duration: toSeconds(parse(rawPlayback.duration)),

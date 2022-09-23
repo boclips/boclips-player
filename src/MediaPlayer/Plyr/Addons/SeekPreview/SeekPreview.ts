@@ -156,7 +156,7 @@ export class SeekPreview implements AddonInterface {
   };
 
   private hidePlyrSeek = () => {
-    // this.getPlyrContainer().parentElement.classList.add('hide-plyr-seek');
+    this.getPlyrContainer().parentElement.classList.add('hide-plyr-seek');
   };
 
   private createContainer = () => {

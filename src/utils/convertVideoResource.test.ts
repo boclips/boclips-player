@@ -9,6 +9,6 @@ it('maps the data to a Video', () => {
 
   const video = convertVideoResource(videoResource);
 
-  expect(convertPlaybackResource).toHaveBeenCalledWith(videoResource.playback);
+  expect(convertPlaybackResource).toHaveBeenCalledWith(videoResource);
   expect(video.id).toEqual(videoResource.id);
 });

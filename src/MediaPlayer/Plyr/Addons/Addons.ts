@@ -6,6 +6,7 @@ import { HoverPreview } from './HoverPreview/HoverPreview';
 import { SeekPreview } from './SeekPreview/SeekPreview';
 import { SinglePlayback } from './SinglePlayback/SinglePlayback';
 import { VideoLengthPreview } from './VideoLengthPreview/VideoLengthPreview';
+import { TitleOverlay } from './TitleOverlay/TitleOverlay';
 
 export interface AddonInterface {
   destroy: () => void;
@@ -30,4 +31,5 @@ export const Addons: Addon[] = [
   HoverPreview,
   SinglePlayback,
   VideoLengthPreview,
+  TitleOverlay,
 ];
