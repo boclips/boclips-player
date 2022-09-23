@@ -2,7 +2,6 @@ const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-
 const srcPath = path.resolve(__dirname, '../src');
 const distPath = path.resolve(__dirname, '../dist');
 
@@ -67,7 +66,7 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: './src/MediaPlayer/Plyr/resources/youtube-play.svg',
+          from: './src/MediaPlayer/Plyr/resources/boclips-logo.svg',
           to: 'resources',
         },
       ],

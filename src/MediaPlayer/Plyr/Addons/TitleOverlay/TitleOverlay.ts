@@ -14,13 +14,22 @@ export class TitleOverlay implements AddonInterface {
     _options: InterfaceOptions,
   ) {
     this.videoTitle = playback.title;
-    const titleElement = document.createElement('h1');
-    titleElement.classList.add('video-title');
-    titleElement.textContent = this.videoTitle;
-    plyr.elements.container.appendChild(titleElement);
-    plyr.on('controlsshown', () => this.show(titleElement));
-    plyr.on('controlshidden', () => this.hide(titleElement));
+    const titleContainer = document.createElement('div');
+    titleContainer.classList.add('video-title');
+
+    const title = document.createElement('h1');
+    title.innerText = this.videoTitle;
+    titleContainer.appendChild(title);
+
+    const logo = document.createElement('div');
+    logo.classList.add('logo');
+    titleContainer.appendChild(logo);
+
+    plyr.elements.container.appendChild(titleContainer);
+    plyr.on('controlsshown', () => this.show(titleContainer));
+    plyr.on('controlshidden', () => this.hide(titleContainer));
   }
+
   public static isEnabled(
     _plyr: EnrichedPlyr,
     playback: Playback,
