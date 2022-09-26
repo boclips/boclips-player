@@ -192,4 +192,6 @@ export class BoclipsPlayer implements PrivatePlayer {
   public pause = (): void => this.mediaPlayer.pause();
 
   public getOptions = () => this.options;
+
+  public getVideoTitle = () => this.getVideo().title;
 }

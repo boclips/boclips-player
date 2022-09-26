@@ -253,7 +253,7 @@ describe('Playback restriction', () => {
 
       mockPlyr = getLatestMockPlyrInstance();
       const secondPlyrPauseFn = jest.fn();
-      mockPlyr.pause = secondPlyrPauseFn
+      mockPlyr.pause = secondPlyrPauseFn;
 
       expect(mockPlyr.currentTime).toBeUndefined();
 
@@ -395,7 +395,7 @@ describe('Playback restriction', () => {
 
       MockAddon.mockClear();
 
-      MockAddon.canBeEnabled.mockReturnValueOnce(false);
+      MockAddon.isEnabled.mockReturnValueOnce(false);
 
       mediaPlayer.configureWithVideo(video);
 

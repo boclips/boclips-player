@@ -38,7 +38,7 @@ describe('Video Length Preview', () => {
 
     testData.forEach(({ when, playback, videoLengthPreview, expected }) => {
       it(`will return ${expected} when ${when}`, () => {
-        const actual = VideoLengthPreview.canBeEnabled(
+        const actual = VideoLengthPreview.isEnabled(
           new Plyr(document.createElement('div')),
           playback,
           {

@@ -15,6 +15,7 @@ export interface Playback {
   type: 'YOUTUBE' | 'STREAM';
   duration: number;
   links: PlaybackLinks;
+  title?: string;
 }
 
 export type StreamPlayback = Playback;
@@ -27,4 +28,4 @@ export const isStreamPlayback = (
 
 export const isYoutubePlayback = (
   playback: Playback,
-): playback is StreamPlayback => playback && playback.type === 'YOUTUBE';
+): playback is YoutubePlayback => playback && playback.type === 'YOUTUBE';

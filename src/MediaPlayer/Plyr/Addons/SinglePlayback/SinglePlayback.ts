@@ -12,7 +12,7 @@ export class SinglePlayback implements AddonInterface {
     this.addEventListeners();
   }
 
-  public static canBeEnabled = (_, __, options: InterfaceOptions) =>
+  public static isEnabled = (_, __, options: InterfaceOptions) =>
     options.addons.singlePlayback;
 
   private readonly addonId = uuidV4();

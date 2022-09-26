@@ -42,6 +42,15 @@ describe('BoclipsPlayer', () => {
     expect(player.getMediaPlayer().play).toBeTruthy();
   });
 
+  it('will return the video title', async () => {
+    boclipsClient.retrieveVideo.mockResolvedValue(
+      VideoFactory.sample(null, 'video title'),
+    );
+    await player.loadVideo('/v1/videos/amazing-video');
+
+    expect(player.getVideoTitle()).toEqual('video title');
+  });
+
   it('Will initialise the media player with the player', () => {
     expect(MediaPlayerFactory.get()).toBeCalledTimes(1);
     expect(MediaPlayerFactory.get()).toHaveBeenCalledWith(player);
@@ -64,31 +73,12 @@ describe('BoclipsPlayer', () => {
     expect(player.getClient().retrieveVideo).toHaveBeenCalledWith(uri);
   });
 
-  const illegalContainers: {
-    message: string;
-    illegalContainer: any;
-  }[] = [
-    {
-      message: 'null',
-      illegalContainer: null,
-    },
-    {
-      message: 'a string',
-      illegalContainer: 'hello',
-    },
-    {
-      message: 'a number',
-      illegalContainer: 123,
-    },
-  ];
-
-  illegalContainers.forEach(({ message, illegalContainer }) => {
-    it('Will throw an exception if the container ' + message, () => {
-      expect(() => {
-        // tslint:disable-next-line:no-unused-expression
-        new BoclipsPlayer(illegalContainer);
-      }).toThrow(Error);
-    });
+  it('Will throw an exception if the container is invalid', () => {
+    // @ts-ignore
+    expect(() => new BoclipsPlayer(123)).toThrow(Error);
+    // @ts-ignore
+    expect(() => new BoclipsPlayer('hello')).toThrow(Error);
+    expect(() => new BoclipsPlayer(null)).toThrow(Error);
   });
 
   it('Will retrieve details from the Playback endpoint', () => {
@@ -218,6 +208,16 @@ describe('BoclipsPlayer', () => {
         'captions',
         'duration',
       ]);
+    });
+
+    it('passes down addons.titleOverlay', () => {
+      const options: DeepPartial<PlayerOptions> = {
+        interface: { addons: { titleOverlay: true } },
+      };
+
+      player = new BoclipsPlayer(container, options);
+
+      expect(player.getOptions().interface.addons.titleOverlay).toBeTruthy();
     });
   });
 

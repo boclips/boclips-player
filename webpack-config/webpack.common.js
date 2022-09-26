@@ -1,5 +1,4 @@
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const CopyPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
@@ -63,14 +62,6 @@ module.exports = {
     new MiniCssExtractPlugin({
       chunkFilename: '[id].css',
       filename: '[name].css',
-    }),
-    new CopyPlugin({
-      patterns: [
-        {
-          from: './src/MediaPlayer/Plyr/resources/youtube-play.svg',
-          to: 'resources',
-        },
-      ],
     }),
   ],
 };

@@ -457,7 +457,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private installAddons = () => {
     Addons.forEach((addonToInstall: Addon) => {
       if (
-        addonToInstall.canBeEnabled(this.plyr, this.playback, this.getOptions())
+        addonToInstall.isEnabled(this.plyr, this.playback, this.getOptions())
       ) {
         // tslint:disable-next-line: no-unused-expression
         this.enabledAddons.push(

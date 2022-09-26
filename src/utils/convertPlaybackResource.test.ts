@@ -9,7 +9,7 @@ import convertPlaybackResource from './convertPlaybackResource';
 
 it('Can map the response to a StreamPlayback object', () => {
   const playback = convertPlaybackResource(
-    VideoResourceFactory.streamSample().playback,
+    VideoResourceFactory.streamSample(),
   ) as StreamPlayback;
   expect(isStreamPlayback(playback)).toBeTruthy();
   expect(playback.id).toEqual('stream-playback-id');
@@ -34,7 +34,7 @@ it('Can map the response to a StreamPlayback object', () => {
 
 it('Can map the response to a YoutubePlayback object', () => {
   const playback = convertPlaybackResource(
-    VideoResourceFactory.youtubeSample().playback,
+    VideoResourceFactory.youtubeSample(),
   ) as YoutubePlayback;
   expect(isYoutubePlayback(playback)).toBeTruthy();
   expect(playback.id).toEqual('youtube-playback-id');

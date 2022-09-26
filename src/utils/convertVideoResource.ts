@@ -4,7 +4,7 @@ import convertPlaybackResource from './convertPlaybackResource';
 
 const convertVideoResource = (data: any): Video => ({
   id: data.id,
-  playback: convertPlaybackResource(data.playback),
+  playback: convertPlaybackResource(data),
   links: {
     self: new Link(data._links.self),
   },

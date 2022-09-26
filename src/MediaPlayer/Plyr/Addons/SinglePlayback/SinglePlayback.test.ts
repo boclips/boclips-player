@@ -9,7 +9,7 @@ jest.mock('eventemitter3');
 
 describe('Feature Enabling', () => {
   it('can be enabled when the option is true', () => {
-    const actual = SinglePlayback.canBeEnabled(null, null, {
+    const actual = SinglePlayback.isEnabled(null, null, {
       controls: null,
       addons: {
         singlePlayback: true,
@@ -19,7 +19,7 @@ describe('Feature Enabling', () => {
     expect(actual).toBe(true);
   });
   it('cannot be enabled when the option is true', () => {
-    const actual = SinglePlayback.canBeEnabled(null, null, {
+    const actual = SinglePlayback.isEnabled(null, null, {
       controls: null,
       addons: {
         singlePlayback: false,
