@@ -14,8 +14,16 @@
     content: '\2044';
     margin-right: $plyr-control-spacing;
   }
+}
 
+.plyr__controls__item {
   @media (max-width: ($plyr-bp-md - 1px)) {
-    display: none;
+    &:first-child {
+      margin-right: auto;
+    }
+
+    &.plyr__time {
+      display: none;
+    }
   }
 }
