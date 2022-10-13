@@ -418,9 +418,11 @@ export default class PlyrWrapper implements MediaPlayer {
         selected: 1,
         options: [0.5, 1, 1.5, 2],
       },
+      invertTime: false,
       controls: this.getOptions().controls,
       // Don't use any plyr controls for youtube playback https://github.com/sampotts/plyr/issues/1738#issuecomment-943760053
       youtube: { customControls: false },
+      displayDuration: true,
       duration: this.playback ? this.playback.duration : null,
       tooltips: { controls: true, seek: true },
       listeners: {

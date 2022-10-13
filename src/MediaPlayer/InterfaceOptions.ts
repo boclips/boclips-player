@@ -35,6 +35,7 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     'play',
     'progress',
     'current-time',
+    'duration',
     'mute',
     'volume',
     'captions',

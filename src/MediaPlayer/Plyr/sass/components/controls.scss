@@ -44,6 +44,10 @@
       margin-right: auto;
     }
 
+    &.plyr__time--current:has( + .plyr__time--duration) {
+        margin-right: 0;
+    }
+
     &.plyr__progress__container:first-child,
     &.plyr__time:first-child,
     &.plyr__time + .plyr__time {
