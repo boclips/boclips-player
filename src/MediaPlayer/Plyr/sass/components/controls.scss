@@ -51,6 +51,7 @@
     &.plyr__time:first-child,
     &.plyr__time + .plyr__time {
       padding-left: 0;
+      margin-right: auto;
     }
   }
 
