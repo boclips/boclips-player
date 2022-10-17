@@ -42,9 +42,11 @@
     &.plyr__time {
       padding: 0 calc(#{$plyr-control-spacing} / 2);
       margin-right: auto;
-      &--current:has(+ .plyr__time--duration) {
-        margin-right: 0 !important;
-      }
+    }
+
+    &.plyr__time--duration {
+      width: 100%;
+      text-align: left;
     }
 
     &.plyr__progress__container:first-child,

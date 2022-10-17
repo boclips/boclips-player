@@ -42,7 +42,7 @@ function renderPlayer() {
       addons: {
         seekPreview: true,
         hoverPreview: false,
-        titleOverlay: true
+        titleOverlay: true,
       },
     },
   });
