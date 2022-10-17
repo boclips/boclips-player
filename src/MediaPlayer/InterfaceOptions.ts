@@ -46,7 +46,7 @@ export const defaultInterfaceOptions: InterfaceOptions = {
     hoverPreview: false,
     singlePlayback: true,
     videoLengthPreview: false,
-    titleOverlay: true,
+    titleOverlay: false,
   },
   ratio: undefined,
 };
