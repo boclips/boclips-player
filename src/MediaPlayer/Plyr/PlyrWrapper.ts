@@ -17,7 +17,7 @@ import { NullLogger } from '../../NullLogger';
 import './sass/plyr.scss';
 
 export default class PlyrWrapper implements MediaPlayer {
-  private plyr: EnrichedPlyr;
+  public plyr: EnrichedPlyr;
   private streamingTechnique: StreamingTechnique = null;
   private hasBeenDestroyed: boolean = false;
   private enabledAddons: AddonInterface[] = [];
@@ -495,5 +495,9 @@ export default class PlyrWrapper implements MediaPlayer {
 
   private getPlyrDivContainer(): HTMLElement {
     return this.player.getContainer().querySelector('.plyr');
+  }
+
+  wrapper(): Plyr {
+    return this.plyr;
   }
 }

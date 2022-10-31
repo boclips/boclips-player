@@ -1,6 +1,6 @@
 {
   "name": "boclips-player",
-  "version": "0.1.0",
+  "version": "0.1.1-6",
   "description": "A framework agnostic player for serving Boclips videos",
   "license": "BSD-3-Clause",
   "author": "Boclips <engineering@boclips.com>",
@@ -31,6 +31,7 @@
     "test": "n auto; jest"
   },
   "dependencies": {
+    "@annoto/widget-api": "^3.13.0",
     "@boclips-ui/styles": "^4.0.2",
     "@types/url-template": "^2.0.28",
     "axios": ">=0.21.1 <1.0.0",
@@ -38,6 +39,8 @@
     "hls.js": "^1.0.11",
     "is-plain-object": "^5.0.0",
     "iso8601-duration": "^1.3.0",
+    "jwt-decode": "^3.1.2",
+    "jwt-encode": "^1.0.1",
     "normalize.css": "^8.0.1",
     "plyr": "3.7.2",
     "querystring-es3": "^0.2.1",

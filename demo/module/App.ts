@@ -49,6 +49,10 @@ function renderPlayer() {
   player
     .loadVideo(
       'https://api.staging-boclips.com/v1/videos/5e0f711804d95551584b3fa7',
+      null,
+      'eyJhbGciOiJIUzI1NiJ9.Y2RjMzUyZDAtMzZjZS00ZDIyLWE1OTctOTBiZWYyNjM1ODI2.DYvaH3PFfHI_UxX8v295ObMAypgptva5MMvEoI6MV2E',
+      'insert-secret',
+      'user',
     )
     .then(() => {
       // return player.play();

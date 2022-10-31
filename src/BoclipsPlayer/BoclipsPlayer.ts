@@ -16,11 +16,20 @@ import { Video } from '../types/Video';
 import './BoclipsPlayer.scss';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 import { Constants } from './Constants';
+import { Annoto, IAnnotoApi, IConfig, IMediaDetails } from '@annoto/widget-api';
+import jwt_decode from 'jwt-decode';
+import sign from 'jwt-encode';
 
 export interface Player {
   play: () => Promise<any>;
   pause: () => void;
-  loadVideo: (videoUri: string, segment?: PlaybackSegment) => Promise<void>;
+  loadVideo: (
+    videoUri: string,
+    segment?: PlaybackSegment,
+    annotoClientId?: string,
+    annotoSecret?: string,
+    user?: 'user' | 'super-mod',
+  ) => Promise<void>;
   destroy: () => void;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
   onError: (callback: (error: BoclipsError) => void) => void;
@@ -110,6 +119,9 @@ export class BoclipsPlayer implements PrivatePlayer {
   public loadVideo = async (
     videoUri: string,
     segment?: PlaybackSegment,
+    annotoClientId?: string,
+    annotoSecret?: string,
+    user?: 'user' | 'super-mod',
   ): Promise<any> => {
     if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
       return;
@@ -124,6 +136,120 @@ export class BoclipsPlayer implements PrivatePlayer {
 
         this.video = video;
         this.mediaPlayer.configureWithVideo(video, segment);
+
+        interface Global extends Window {
+          Annoto: Annoto;
+        }
+
+        const global: Global = window as any;
+
+        const annotoConfig: IConfig = {
+          group: {
+            id: '2613a9a5-7245-4af2-81a7-96279bcb7fd2',
+            title: this.video.title, // Course title
+            description: this.video.description,
+          },
+          hooks: {
+            mediaDetails: (): IMediaDetails | Promise<IMediaDetails> => {
+              return {
+                // unique media identifier
+                // for example for kaltura media can be: `/partnerId/${partnerId}/entryId/${id}`
+                id: this.video.id,
+                title: this.video.title, // Course title
+                description: this.video.description,
+              };
+            },
+          },
+          clientId: annotoClientId,
+          widgets: [
+            {
+              // Side panel layout is not supported yet for plyr
+              // We will add support soon, and will let you know when it's ready
+              features: {
+                notes: { enabled: false },
+                timeline: { enabled: false },
+                stats: { enabled: false },
+                comments: { enabled: false },
+              },
+              ux: {
+                layout: 'sidePanel',
+                tabs: false,
+              },
+              player: {
+                // @ts-ignore
+                type: 'plyr',
+                element: '[data-qa="boclips-player"]',
+                params: {
+                  // Please make sure it's the Plyr class instance object
+                  plyr: this.mediaPlayer.wrapper(),
+                },
+              },
+              timeline: { overlay: true },
+            },
+          ],
+        };
+
+        let annotoApi: IAnnotoApi;
+        let annotoSSOToken: string;
+
+        this.options.api.tokenFactory().then((s) => {
+          const decodedBoclipsToken: any = jwt_decode(s);
+          console.log(decodedBoclipsToken);
+
+          const annotoTokenDecoded = {
+            // The expiration for production can be much shorter.
+            // It just needs to be long enough to process the authetication request
+            exp: Math.round(Date.now() / 1000 + 60 * 20),
+            iss: annotoClientId,
+            jti: decodedBoclipsToken.jti,
+            name: decodedBoclipsToken.name,
+            // valid scopes: “user”, “moderator”, “super-mod”
+            scope: user,
+            email: 'alex@boclips.com',
+            // aud: 'http://annoto.net', not mandatory
+          };
+
+          // The secret must be kept only on your backend.
+          // So for production, please move the jwt sign to the backend.
+          // For quick testing it's ok of course :)
+          annotoSSOToken = sign(annotoTokenDecoded, annotoSecret);
+          console.log('jwt-encode output: ', annotoSSOToken);
+
+          const token = annotoSSOToken;
+
+          const authAnnoto = () => {
+            if (annotoApi && annotoSSOToken) {
+              return annotoApi.auth(token).then(() => {
+                console.log('Annoto authenticated');
+              });
+            }
+            console.log('Annoto api or sso token not ready yet');
+          };
+
+          // can be called when page with video is loaded
+          const loadOrBootAnnoto = (config: IConfig) => {
+            if (annotoApi) {
+              return annotoApi.load(config).then(() => {
+                console.log('Annoto configuration reloaded');
+              });
+            }
+            // @ts-ignore
+            global.Annoto.on('ready', (api: IAnnotoApi) => {
+              console.log('Annoto API is ready!');
+              annotoApi = api;
+              authAnnoto();
+              console.log(annotoApi.getMetadata());
+            });
+            console.log('bootstrapping Annoto');
+            return global.Annoto.boot(config);
+          };
+
+          // Somewhere on the page with video where annoto needs to be loaded
+          loadOrBootAnnoto(annotoConfig);
+
+          // No need to reload the widget after authentication
+          // reloadConfig(cannotAPI);
+        });
       })
       .catch((error) => {
         if (this.errorHandler.isDefinedError(error)) {

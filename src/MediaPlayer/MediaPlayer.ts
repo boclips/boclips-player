@@ -1,5 +1,6 @@
 import { Player } from '..';
 import { Video } from '../types/Video';
+import Plyr from 'plyr';
 
 export type MediaPlayerConstructor = new (player: Player) => MediaPlayer;
 
@@ -23,4 +24,5 @@ export interface MediaPlayer {
   getVideoContainer: () => HTMLMediaElement;
   getCurrentTime: () => number;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
+  wrapper: () => Plyr;
 }
