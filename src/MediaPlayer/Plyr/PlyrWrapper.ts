@@ -67,6 +67,20 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.resetPlyrInstance(media);
 
+    const playerChildrenNodes =
+      this.player.getContainer().firstChild.childNodes;
+
+    const playButton = this.player
+      .getContainer()
+      .querySelector('.plyr__control.plyr__control--overlaid');
+
+    const playButtonIndex = Array.from(playerChildrenNodes).indexOf(playButton);
+
+    playerChildrenNodes[playButtonIndex]?.parentNode?.insertBefore(
+      playerChildrenNodes[playButtonIndex],
+      playerChildrenNodes[0],
+    );
+
     if (isStreamPlayback(this.playback)) {
       this.initialiseStreamingTechnique(segmentStart);
     }
