@@ -39,9 +39,15 @@
     width: auto;
   }
 
-  // Ignore focus
   &:focus {
-    outline: 0;
+    outline: none;
+    outline-offset: 0;
+    border-radius: .25rem;
+  }
+  &:focus-visible {
+    outline: 4px solid #193DA1;
+    outline-offset: 2px;
+    border-radius: .25rem;
   }
 }
 
