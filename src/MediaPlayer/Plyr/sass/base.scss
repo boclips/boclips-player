@@ -22,7 +22,15 @@
   z-index: 0; // Force any border radius
   cursor: pointer;
 
-  &.plyr--stopped .plyr__controls { display: none }
+  &.plyr--stopped .plyr__controls {
+    display: none;
+  }
+
+  &:focus-within {
+    &.plyr--stopped .plyr__controls {
+      display: flex;
+    }
+  }
 
   // Media elements
   video,
@@ -42,12 +50,12 @@
   &:focus {
     outline: none;
     outline-offset: 0;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
   }
   &:focus-visible {
-    outline: 4px solid #193DA1;
+    outline: 4px solid #193da1;
     outline-offset: 2px;
-    border-radius: .25rem;
+    border-radius: 0.25rem;
   }
 }
 
