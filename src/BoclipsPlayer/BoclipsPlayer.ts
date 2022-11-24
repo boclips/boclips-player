@@ -24,6 +24,7 @@ export interface Player {
   destroy: () => void;
   onEnd: (callback: (endOverlay: HTMLDivElement) => void) => void;
   onError: (callback: (error: BoclipsError) => void) => void;
+  onReady: (callback: () => void) => void;
 }
 
 export interface PrivatePlayer extends Player {
@@ -45,6 +46,7 @@ export class BoclipsPlayer implements PrivatePlayer {
   private readonly boclipsClient: BoclipsApiClient;
   private video: Video;
   private playerId: string = uuidv4();
+  private onReadyHandler: () => void;
 
   constructor(
     private readonly container: HTMLElement,
@@ -124,6 +126,10 @@ export class BoclipsPlayer implements PrivatePlayer {
 
         this.video = video;
         this.mediaPlayer.configureWithVideo(video, segment);
+
+        if (this.onReadyHandler && typeof this.onReadyHandler === 'function') {
+          this.onReadyHandler();
+        }
       })
       .catch((error) => {
         if (this.errorHandler.isDefinedError(error)) {
@@ -173,6 +179,10 @@ export class BoclipsPlayer implements PrivatePlayer {
 
   public onError = (callback: (error: BoclipsError) => void) => {
     this.errorHandler.onError(callback);
+  };
+
+  public onReady = (callback: () => void) => {
+    this.onReadyHandler = callback;
   };
 
   public getContainer = () => this.container;

@@ -25,7 +25,9 @@ const boclipsSecurity = BoclipsSecurity.createInstance({
 
 function renderPlayer() {
   const player = PlayerFactory.get(playerContainer, {
-    api: { tokenFactory: boclipsSecurity.getTokenFactory(5) },
+    api: {
+      tokenFactory: boclipsSecurity.getTokenFactory(5),
+    },
     interface: {
       controls: [
         'play-large',
@@ -46,6 +48,11 @@ function renderPlayer() {
       },
     },
   });
+
+  player.onReady(() => {
+    console.log('Player ready!');
+  })
+
   player
     .loadVideo(
       'https://api.staging-boclips.com/v1/videos/5e0f711804d95551584b3fa7',
