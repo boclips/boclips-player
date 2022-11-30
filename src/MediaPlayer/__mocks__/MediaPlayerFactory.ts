@@ -1,5 +1,7 @@
 import { noop } from '../../utils';
 import { MediaPlayer } from '../MediaPlayer';
+import { mocked } from 'ts-jest/utils';
+import Plyr from 'plyr';
 
 export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
   (): MediaPlayer => ({
@@ -11,6 +13,7 @@ export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
     getCurrentTime: jest.fn(),
     getVideoContainer: jest.fn(),
     onEnd: jest.fn(),
+    onReady: jest.fn().mockReturnValue(mocked(Plyr)),
   }),
 );
 

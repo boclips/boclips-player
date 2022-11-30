@@ -15,6 +15,7 @@ import { EndOverlay } from './Addons/SharedFeatures/SharedFeatures';
 import { Logger } from '../../Logger';
 import { NullLogger } from '../../NullLogger';
 import './sass/plyr.scss';
+import { OnReadyResult } from '../../types/OnReadyResult';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -23,6 +24,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private enabledAddons: AddonInterface[] = [];
   private playback: Playback = null;
   private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
+  private onReadyCallback?: (result: OnReadyResult) => void = null;
   private segment: PlaybackSegment = null;
 
   constructor(
@@ -268,10 +270,8 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   }
 
-  public configureWithVideo = (
-    { playback, title, description }: Video,
-    segment?: PlaybackSegment,
-  ) => {
+  public configureWithVideo = (video: Video, segment?: PlaybackSegment) => {
+    const { title, description, playback } = video;
     if (this.hasBeenDestroyed) {
       return;
     }
@@ -326,6 +326,11 @@ export default class PlyrWrapper implements MediaPlayer {
         container.appendChild(descriptionElement);
       }
     }
+    if (this.onReadyCallback && typeof this.onReadyCallback === 'function')
+      this.onReadyCallback({
+        plyr: this.plyr,
+        video,
+      });
   };
 
   private autoStop = (event) => {
@@ -380,6 +385,10 @@ export default class PlyrWrapper implements MediaPlayer {
 
   public onEnd = (callback: (endOverlay: HTMLDivElement) => void): void => {
     this.onEndCallback = callback;
+  };
+
+  public onReady = (callback: (result: OnReadyResult) => void) => {
+    this.onReadyCallback = callback;
   };
 
   public destroy = () => {

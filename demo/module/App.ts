@@ -49,8 +49,8 @@ function renderPlayer() {
     },
   });
 
-  player.onReady(() => {
-    console.log('Player ready!');
+  player.onReady((args: any) => {
+    console.log('Player ready with ', args);
   })
 
   player

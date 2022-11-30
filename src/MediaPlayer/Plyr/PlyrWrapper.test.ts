@@ -692,6 +692,34 @@ describe('Playback restriction', () => {
       });
     });
   });
+
+  describe(`onReady`, () => {
+    it('calls the on ready callback when the video is configured', async () => {
+      const onReadyCallback = jest.fn();
+      mediaPlayer.onReady(onReadyCallback);
+
+      let video = VideoFactory.sample();
+      mediaPlayer.configureWithVideo(video);
+
+      expect(onReadyCallback).toHaveBeenCalledWith({
+        plyr: getLatestMockPlyrInstance(),
+        video: video,
+      });
+    });
+
+    it('can handle a when there is no on ready callback', async () => {
+      let video = VideoFactory.sample();
+      expect(() => mediaPlayer.configureWithVideo(video)).not.toThrow();
+    });
+
+    it('can handle a when there is the wrong type of callback is passed in', async () => {
+      mediaPlayer.onReady('hello' as any);
+
+      let video = VideoFactory.sample();
+      expect(() => mediaPlayer.configureWithVideo(video)).not.toThrow();
+    });
+  });
+
   describe('with a playback segment', () => {
     it('does not restrict streamingTechnique load when there is no start time', () => {
       const segment = {

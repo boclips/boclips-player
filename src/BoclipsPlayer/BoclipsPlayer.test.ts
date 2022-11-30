@@ -181,6 +181,15 @@ describe('BoclipsPlayer', () => {
     });
   });
 
+  it('passes down onReady callback to media player', async () => {
+    const onReadyCallback = jest.fn();
+    player.onReady(onReadyCallback);
+
+    expect(player.getMediaPlayer().onReady).toHaveBeenCalledWith(
+      onReadyCallback,
+    );
+  });
+
   describe('Options', () => {
     it('passes down analytics options', () => {
       const options: DeepPartial<PlayerOptions> = {
