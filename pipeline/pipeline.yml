@@ -96,7 +96,7 @@ resources:
     initial_version: "0.1.0"
     driver: git
     uri: git@github.com:boclips/versions.git
-    branch: master
+    branch: main
     file: boclips-player
     private_key: |
       ((versions.repo-key))
