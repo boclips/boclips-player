@@ -86,7 +86,7 @@ resources:
 - name: source
   type: git
   source:
-    branch: master
+    branch: main
     private_key: ((boclips-player.repo-key))
     uri: git@github.com:boclips/boclips-player.git
 

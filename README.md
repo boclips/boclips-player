@@ -14,6 +14,11 @@ Please refer to the [hosted docs](https://docs.boclips.com/docs/player-guide.htm
 
 The [demos](./demo) may also give an example of how to use the player. 
 
+## Updates
+
+[04-Jan-2023]: Default branch has been moved from master to main.
+You will need update your local copies/forks to start using main as the default branch.
+
 ## Contributing
 
 Please see [CONTRIBUTING.md](./CONTRIBUTING.md)
