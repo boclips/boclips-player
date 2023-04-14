@@ -142,6 +142,12 @@ interface ApiOptions {
    * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
    */
   tokenFactory: () => Promise<string>;
+  /**
+   * This callback should return a Promise which resolves a string to be used as the users ID.
+   *
+   * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
+   */
+  userIdFactory: () => Promise<string>;
 }
 ----
 
@@ -168,7 +174,7 @@ Any information provided will strictly be processed in accordance with our https
 ----
 const options: AnalyticsOptions = {
   metadata: {
-    userId: user.id,
+    userId: string | () => Promise<string>,
   },
   handleOnSegmentPlayback: (
     video: Video,
