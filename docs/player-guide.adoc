@@ -68,7 +68,7 @@ function renderPlayer() {
     api: { tokenFactory }
   });
 
-  // See https://docs.boclips.com/docs/api-guide.html#resources-video-access for more info on this URI.
+  // See https://docs.boclips.com/docs/api-guide/index.html#resources-video-access for more info on this URI.
   player.loadVideo("https://path.to.boclips.video.from.the.api");
 }
 
@@ -138,7 +138,7 @@ interface PlayerOptions {
 interface ApiOptions {
   /**
    * This callback should return a Promise which resolves a string to be used as the users authentication token.
-   * For more information on generating a token see https://docs.boclips.com/docs/api-guide.html#authentication-overview
+   * For more information on generating a token see https://docs.boclips.com/docs/api-guide/index.html#authentication-overview
    *
    * If this callback rejects the promise for whatever reason, an error will be displayed to the user.
    */
