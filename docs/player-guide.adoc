@@ -49,6 +49,7 @@ Below is a minimal example of using the Boclips player. The Player requires prov
 [source,typescript]
 ----
 import { PlayerFactory } from "boclips-player";
+import 'boclips-player/dist/main.css';
 
 const playerContainer = document.createElement('div');
 playerContainer.id = 'player-container';
