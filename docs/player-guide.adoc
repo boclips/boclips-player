@@ -366,6 +366,11 @@ interface Player {
 }
 ----
 
+[[github]]
+== GitHub Repositories
+- link:https://github.com/boclips/boclips-player[boclips-player]: source code and demo
+- link:https://github.com/boclips/boclips-player-react[boclips-player-react]: thin react wrapper for boclips-player
+
 [[license]]
 == License
 
