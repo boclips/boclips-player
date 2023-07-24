@@ -183,6 +183,30 @@ export default class PlyrWrapper implements MediaPlayer {
       this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
+    this.plyr.on('seeking', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(event.detail.plyr.currentTime, 'seeking', {});
+    });
+
+    this.plyr.on('seeked', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(event.detail.plyr.currentTime, 'seeked', {});
+    });
+
+    this.plyr.on('progress', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(event.detail.plyr.buffered, 'progress', {});
+    });
+
+    this.plyr.on('timeupdate', (event) => {
+      this.player
+        .getAnalytics()
+        .handleTimeUpdate(event.detail.plyr.currentTime);
+    });
+
     this.plyr.on('play', () => {
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });

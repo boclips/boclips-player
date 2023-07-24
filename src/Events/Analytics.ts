@@ -4,6 +4,7 @@ import { InteractionEventPayload } from './AnalyticsEvents';
 export interface AnalyticsInstance {
   handlePlay: (currentTime: number) => void;
   handlePause: (currentTime: number) => void;
+  handleTimeUpdate: (currentTime: number) => void;
   handleInteraction: <T extends keyof InteractionEventPayload>(
     currentTime: number,
     type: T,
@@ -30,6 +31,9 @@ export class Analytics implements AnalyticsInstance {
 
     this.segmentPlaybackStartTime = -1;
   };
+
+  public handleTimeUpdate = (currentTime: number) =>
+    this.handleTimeUpdate(currentTime);
 
   public getSegmentPlaybackStartTime = () => this.segmentPlaybackStartTime;
 
