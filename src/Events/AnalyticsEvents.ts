@@ -33,6 +33,9 @@ export interface InteractionEventPayload {
   captionsDisabled: EmptyObject;
   fullscreenEnabled: EmptyObject;
   fullscreenDisabled: EmptyObject;
+  seeking: EmptyObject;
+  seeked: EmptyObject;
+  progress: EmptyObject;
   speedChanged: {
     speed: number;
   };

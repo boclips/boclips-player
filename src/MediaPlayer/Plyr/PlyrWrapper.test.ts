@@ -223,10 +223,7 @@ describe('Playback restriction', () => {
 
       mockPlyr = getLatestMockPlyrInstance();
 
-      expect(mockPlyr.on).not.toHaveBeenCalledWith(
-        'timeupdate',
-        expect.anything(),
-      );
+      expect(mockPlayer.getAnalytics().handlePause).not.toHaveBeenCalled();
     });
 
     it('should not apply segment limits when video is changed', () => {
@@ -337,10 +334,8 @@ describe('Playback restriction', () => {
 
       mockPlyr = getLatestMockPlyrInstance();
 
-      expect(mockPlyr.on).not.toHaveBeenCalledWith(
-        'timeupdate',
-        expect.anything(),
-      );
+      expect(mockPlayer.getAnalytics().handlePause).not.toHaveBeenCalled();
+
     });
 
     it('should not apply segment limits when video is changed', () => {
@@ -452,6 +447,19 @@ describe('Playback restriction', () => {
       expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(15);
     });
 
+    it('will add an on timeupdate event listener that delegates to the Analytics', () => {
+      mockPlyr.currentTime = 15;
+      mockPlyr.__callEventCallback('timeupdate', {
+        detail: {
+          plyr: mockPlyr,
+        },
+      });
+
+      expect(mockPlayer.getAnalytics().handleTimeUpdate).toHaveBeenCalledWith(
+        15,
+      );
+    });
+
     it('will call on pause when the navigation is about to change', () => {
       const callbacks = (window as any).__eventListeners.beforeunload;
 
@@ -517,6 +525,45 @@ describe('Playback restriction', () => {
       mockPlyr.__callEventCallback('languagechange');
 
       expect(mockStreamingTechnique.changeCaptions).toHaveBeenCalledWith(0);
+    });
+
+    it('sends interaction event for seeking', () => {
+      setupMockPlayer();
+      mockPlyr.currentTime = 125;
+      mediaPlayer.configureWithVideo(video);
+
+      mockPlyr.__callEventCallback('seeking');
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        125,
+        'seeking',
+        {},
+      );
+    });
+
+    it('sends interaction event for seeked', () => {
+      setupMockPlayer();
+      mockPlyr.currentTime = 125;
+      mediaPlayer.configureWithVideo(video);
+
+      mockPlyr.__callEventCallback('seeked');
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        125,
+        'seeked',
+        {},
+      );
+    });
+
+    it('sends interaction event for progress', () => {
+      setupMockPlayer();
+      mockPlyr.buffered = 0.5;
+      mediaPlayer.configureWithVideo(video);
+
+      mockPlyr.__callEventCallback('progress');
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        0.5,
+        'progress',
+        {},
+      );
     });
   });
 
