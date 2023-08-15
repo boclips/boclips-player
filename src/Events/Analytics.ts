@@ -32,8 +32,7 @@ export class Analytics implements AnalyticsInstance {
     this.segmentPlaybackStartTime = -1;
   };
 
-  public handleTimeUpdate = (currentTime: number) =>
-    this.handleTimeUpdate(currentTime);
+  public handleTimeUpdate = (_: number) => {};
 
   public getSegmentPlaybackStartTime = () => this.segmentPlaybackStartTime;
 
