@@ -1,8 +1,7 @@
 import { VideoResourceFactory } from '../test-support/TestFactories';
 import {
-  isPodcastPlayback,
   isStreamPlayback,
-  isYoutubePlayback, PodcastPlayback,
+  isYoutubePlayback,
   StreamPlayback,
   YoutubePlayback,
 } from '../types/Playback';
@@ -51,22 +50,6 @@ it('Can map the response to a YoutubePlayback object', () => {
     'youtube/thumbnail.jpg',
   );
   expect(playback.links.thumbnail.isTemplated()).toEqual(false);
-});
-
-it('Can map the response to a podcast object', () => {
-  const playback = convertPlaybackResource(
-    VideoResourceFactory.podcastSample(),
-  ) as PodcastPlayback;
-  expect(isPodcastPlayback(playback)).toBeTruthy();
-  expect(playback.id).toEqual('podcast-playback-id');
-  expect(playback.type).toEqual('PODCAST');
-  expect(playback.duration).toEqual(62);
-  expect(playback.links.createPlaybackEvent.getOriginalLink()).toEqual(
-    'create/playback/event',
-  );
-  expect(
-    playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
-  ).toEqual('create/interaction/event');
 });
 
 it('will throw an exception if the type is not YOUTUBE or STREAM', () => {

@@ -12,7 +12,7 @@ export type PlaybackType = StreamPlayback | YoutubePlayback;
 
 export interface Playback {
   id: string;
-  type: 'YOUTUBE' | 'STREAM' | 'PODCAST';
+  type: 'YOUTUBE' | 'STREAM';
   duration: number;
   links: PlaybackLinks;
   title?: string;
@@ -22,15 +22,9 @@ export type StreamPlayback = Playback;
 
 export type YoutubePlayback = Playback;
 
-export type PodcastPlayback = Playback;
-
 export const isStreamPlayback = (
   playback: Playback,
 ): playback is StreamPlayback => playback && playback.type === 'STREAM';
-
-export const isPodcastPlayback = (
-  playback: Playback,
-): playback is PodcastPlayback => playback && playback.type === 'PODCAST';
 
 export const isYoutubePlayback = (
   playback: Playback,

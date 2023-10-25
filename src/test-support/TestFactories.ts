@@ -32,27 +32,6 @@ export class PlaybackFactory {
     ...arg,
   });
 
-  public static podcastSample = (
-    arg: Partial<StreamPlayback> = {},
-  ): StreamPlayback => ({
-    title: 'Podcast title',
-    id: 'podcast-playback-id',
-    duration: 60,
-    type: 'PODCAST',
-    links: {
-      createPlaybackEvent: new Link({
-        href: 'https://events/create/playback/event',
-      }),
-      createPlayerInteractedWithEvent: new Link({
-        href: 'https://events/create/interaction/event',
-      }),
-      hlsStream: new Link({
-        href: 'videoStream/hls.mp4',
-      }),
-    },
-    ...arg,
-  });
-
   public static youtubeSample = (): YoutubePlayback => ({
     id: 'youtube-stream-id',
     title: 'Youtube video title',
@@ -107,31 +86,6 @@ export class VideoResourceFactory {
         videoPreview: {
           href: 'videoPreview/{thumbnailWidth}/{thumbnailCount}.jpg',
           templated: true,
-        },
-        hlsStream: {
-          href: 'videoStream/hls.mp4',
-        },
-      },
-    },
-    _links: {
-      self: {
-        href: '/v1/videos/177',
-      },
-    },
-  });
-
-  public static podcastSample = () => ({
-    id: 'podcast-video-id',
-    playback: {
-      id: 'podcast-playback-id',
-      type: 'PODCAST',
-      duration: 'PT1M2S',
-      _links: {
-        createPlaybackEvent: {
-          href: 'create/playback/event',
-        },
-        createPlayerInteractedWithEvent: {
-          href: 'create/interaction/event',
         },
         hlsStream: {
           href: 'videoStream/hls.mp4',

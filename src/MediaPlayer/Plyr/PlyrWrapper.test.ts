@@ -140,59 +140,6 @@ describe('Stream Playback', () => {
   });
 });
 
-
-describe('Podcast Playback', () => {
-  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
-
-  beforeEach(() => {
-    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
-  });
-
-
-  it('does not set the poster on the video element for podcasts', () => {
-    mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.podcastSample()),
-    );
-
-    const videoElement = getLatestMockPlyrConstructor()[0] as HTMLElement;
-
-    expect(videoElement.getAttribute('poster')).toBeNull();
-  });
-
-  it('initialises the streamingTechnique', () => {
-    const playback = PlaybackFactory.podcastSample();
-    mediaPlayer.configureWithVideo(
-        VideoFactory.sample(playback),
-    );
-    expect(mockStreamingTechnique.initialise).toHaveBeenCalledWith(
-      playback,
-      undefined,
-    );
-  });
-
-  it('adds a play listener to Plyr to startLoad on the streamingTechnique', () => {
-    mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.podcastSample()),
-    );
-    mockPlyr = getLatestMockPlyrInstance();
-    mockPlyr.currentTime = 20;
-    mockPlyr.__callEventCallback('play');
-
-    expect(mockStreamingTechnique.startLoad).toHaveBeenCalledWith(20);
-  });
-
-  it('destroys the streamingTechnique before loading another video', () => {
-    mediaPlayer.configureWithVideo(
-        VideoFactory.sample(PlaybackFactory.podcastSample()),
-    );
-    mediaPlayer.configureWithVideo(
-      VideoFactory.sample(PlaybackFactory.youtubeSample()),
-    );
-
-    expect(mockStreamingTechnique.destroy).toHaveBeenCalled();
-  });
-});
-
 describe('YouTube Playback', () => {
   it('does not get a StreamingTechnique', () => {
     mediaPlayer.configureWithVideo(
