@@ -3,6 +3,7 @@ import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
 import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
 import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
 import {
+  isPodcastPlayback,
   isStreamPlayback,
   isYoutubePlayback,
   Playback,
@@ -51,7 +52,7 @@ export default class PlyrWrapper implements MediaPlayer {
     media.setAttribute('data-qa', 'boclips-player');
     media.setAttribute('preload', 'metadata');
 
-    if (isStreamPlayback(this.playback)) {
+    if (isStreamPlayback(this.playback) || isPodcastPlayback(this.playback)) {
       media.setAttribute(
         'src',
         this.playback.links.hlsStream.getOriginalLink(),
@@ -86,7 +87,7 @@ export default class PlyrWrapper implements MediaPlayer {
       playerChildrenNodes[0],
     );
 
-    if (isStreamPlayback(this.playback)) {
+    if (isStreamPlayback(this.playback) || isPodcastPlayback(this.playback)) {
       this.initialiseStreamingTechnique(segmentStart);
     }
   };
@@ -94,7 +95,10 @@ export default class PlyrWrapper implements MediaPlayer {
   private initialiseStreamingTechnique = (segmentStart?: number) => {
     this.streamingTechnique = StreamingTechniqueFactory.get(this.player);
 
-    if (!this.streamingTechnique || !isStreamPlayback(this.playback)) {
+    if (
+      !this.streamingTechnique ||
+      (!isStreamPlayback(this.playback) && !isPodcastPlayback(this.playback))
+    ) {
       return;
     }
 
@@ -321,7 +325,7 @@ export default class PlyrWrapper implements MediaPlayer {
     this.playback = playback;
     this.segment = segment || undefined;
 
-    if (isStreamPlayback(this.playback)) {
+    if (isStreamPlayback(this.playback) || isPodcastPlayback(this.playback)) {
       this.createStreamPlyr(this.segment && this.segment.start);
     } else {
       this.createYoutubePlyr(this.segment && this.segment.start);

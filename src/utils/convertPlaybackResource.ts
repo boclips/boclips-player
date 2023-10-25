@@ -1,12 +1,17 @@
 import { parse, toSeconds } from 'iso8601-duration';
 import { Link } from '../types/Link';
-import { Playback, StreamPlayback, YoutubePlayback } from '../types/Playback';
+import {
+  Playback,
+  PodcastPlayback,
+  StreamPlayback,
+  YoutubePlayback,
+} from '../types/Playback';
 
 const convertPlaybackResource = (
   videoResource,
-): StreamPlayback | YoutubePlayback => {
+): StreamPlayback | YoutubePlayback | PodcastPlayback => {
   const rawPlayback = videoResource.playback;
-  if (!['STREAM', 'YOUTUBE'].includes(rawPlayback.type)) {
+  if (!['STREAM', 'YOUTUBE', 'PODCAST'].includes(rawPlayback.type)) {
     throw new Error(`Playback type ${rawPlayback.type} not supported`);
   }
 
