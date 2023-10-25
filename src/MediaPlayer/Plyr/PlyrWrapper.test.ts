@@ -17,6 +17,7 @@ import { Addons } from './Addons/Addons';
 import PlyrWrapper from './PlyrWrapper';
 import { MockedPlyr } from '../../../__mocks__/plyr';
 import eventually from '../../test-support/eventually';
+import { Video } from '../../types/Video';
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');
@@ -24,7 +25,7 @@ jest.mock('./Addons/Addons');
 jest.mock('../../ErrorHandler/ErrorHandler');
 jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
 
-const video = VideoFactory.sample();
+let video: Video;
 
 let container: HTMLElement & HasClientDimensions = null;
 let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
@@ -42,6 +43,8 @@ function getLatestMockPlyrConstructor() {
 }
 
 beforeEach(() => {
+  video = VideoFactory.sample();
+
   mockedPlyr.mockClear();
 
   container = document.createElement('div') as any;
@@ -95,6 +98,16 @@ describe('Stream Playback', () => {
         thumbnailWidth: 700,
       }),
     );
+  });
+
+  it('does not set the poster on the video element if thumbnail link is not set', () => {
+    video.playback.links.thumbnail = undefined;
+
+    mediaPlayer.configureWithVideo(video);
+
+    const videoElement = getLatestMockPlyrConstructor()[0] as HTMLElement;
+
+    expect(videoElement.getAttribute('poster')).toBeNull();
   });
 
   it('initialises the streamingTechnique', () => {
@@ -335,7 +348,6 @@ describe('Playback restriction', () => {
       mockPlyr = getLatestMockPlyrInstance();
 
       expect(mockPlayer.getAnalytics().handlePause).not.toHaveBeenCalled();
-
     });
 
     it('should not apply segment limits when video is changed', () => {

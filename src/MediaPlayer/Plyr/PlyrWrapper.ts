@@ -56,13 +56,16 @@ export default class PlyrWrapper implements MediaPlayer {
         'src',
         this.playback.links.hlsStream.getOriginalLink(),
       );
-      media.setAttribute(
-        'poster',
-        this.playback.links.thumbnail.getTemplatedLink({
-          thumbnailWidth: this.player.getContainer().clientWidth,
-          thumbnailHeight: this.player.getContainer().clientHeight,
-        }),
-      );
+
+      if (this.playback.links.thumbnail) {
+        media.setAttribute(
+          'poster',
+          this.playback.links.thumbnail.getTemplatedLink({
+            thumbnailWidth: this.player.getContainer().clientWidth,
+            thumbnailHeight: this.player.getContainer().clientHeight,
+          }),
+        );
+      }
     }
 
     this.player.getContainer().appendChild(media);
