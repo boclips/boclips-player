@@ -17,6 +17,8 @@ import './BoclipsPlayer.scss';
 import { defaultOptions, PlayerOptions } from './PlayerOptions';
 import { Constants } from './Constants';
 import { OnReadyResult } from '../types/OnReadyResult';
+import { setup } from '../MediaPlayer/vidstack/VidstackWrapper';
+import { VideoFactory } from '../test-support/TestFactories';
 
 export interface Player {
   play: () => Promise<any>;
@@ -113,51 +115,53 @@ export class BoclipsPlayer implements PrivatePlayer {
     videoUri: string,
     segment?: PlaybackSegment,
   ): Promise<any> => {
-    if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
-      return;
-    }
-
-    this.video = null;
-
-    return this.boclipsClient
-      .retrieveVideo(videoUri)
-      .then((video: Video) => {
-        this.errorHandler.clearError();
-
-        this.video = video;
-        this.mediaPlayer.configureWithVideo(video, segment);
-      })
-      .catch((error) => {
-        if (this.errorHandler.isDefinedError(error)) {
-          this.errorHandler.handleError(error);
-          return;
-        }
-        if (error && error.response && error.response.status) {
-          if (error.response.status === 404) {
-            this.errorHandler.handleError({
-              fatal: true,
-              type: 'API_ERROR',
-              payload: {
-                statusCode: 404,
-              },
-            });
-          } else {
-            this.errorHandler.handleError({
-              fatal: true,
-              type: 'API_ERROR',
-              payload: {
-                statusCode: error.response.status,
-              },
-            });
-          }
-        } else {
-          this.errorHandler.handleError({
-            fatal: true,
-            type: 'UNKNOWN_ERROR',
-            payload: error,
-          });
-        }
-      });
+    setup();
+    //
+    // if (this.video && this.video.links.self.getOriginalLink() === videoUri) {
+    //   return;
+    // }
+    //
+    // this.video = null;
+    //
+    // return this.boclipsClient
+    //   .retrieveVideo(videoUri)
+    //   .then((video: Video) => {
+    //     this.errorHandler.clearError();
+    //
+    //     this.video = video;
+    //     this.mediaPlayer.configureWithVideo(video, segment);
+    //   })
+    //   .catch((error) => {
+    //     if (this.errorHandler.isDefinedError(error)) {
+    //       this.errorHandler.handleError(error);
+    //       return;
+    //     }
+    //     if (error && error.response && error.response.status) {
+    //       if (error.response.status === 404) {
+    //         this.errorHandler.handleError({
+    //           fatal: true,
+    //           type: 'API_ERROR',
+    //           payload: {
+    //             statusCode: 404,
+    //           },
+    //         });
+    //       } else {
+    //         this.errorHandler.handleError({
+    //           fatal: true,
+    //           type: 'API_ERROR',
+    //           payload: {
+    //             statusCode: error.response.status,
+    //           },
+    //         });
+    //       }
+    //     } else {
+    //       this.errorHandler.handleError({
+    //         fatal: true,
+    //         type: 'UNKNOWN_ERROR',
+    //         payload: error,
+    //       });
+    //     }
+    //   });
   };
 
   public getPlayerId = () => this.playerId;
