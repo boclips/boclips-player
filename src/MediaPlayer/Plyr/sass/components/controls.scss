@@ -16,6 +16,9 @@
   font-family: inherit;
   height: 48px;
   cursor: initial;
+  position: relative;
+
+
 
   .plyr__progress__container {
     min-width: 0; // Fix for Edge issue where content would overflow

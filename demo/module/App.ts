@@ -51,11 +51,15 @@ function renderPlayer() {
 
   player.onReady((args: any) => {
     console.log('Player ready with ', args);
-  })
+  });
 
   player
     .loadVideo(
       'https://api.staging-boclips.com/v1/videos/5e0f711804d95551584b3fa7',
+      // {
+      //   start: 30,
+      //   end: 120
+      // }
     )
     .then(() => {
       // return player.play();

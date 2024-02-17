@@ -55,3 +55,19 @@
   transform: translate(-50%, 0) scale(1);
   z-index: 3;
 }
+
+
+.plyr__progress__marker{
+  width: 5px;
+  height: 20px;
+  background: $plyr-color-gray-50;
+  position: absolute;
+  top: 0px;
+  border-radius: 5px;
+  z-index: 9;
+  box-shadow: 0px 0 10px #000000;
+
+  //margin-top: calc((#{$plyr-range-track-height} / 2) * -1);
+  //margin-left: calc((#{$plyr-range-track-height} / 2) * -1);
+  z-index: 2;
+}
