@@ -16,6 +16,7 @@ export interface Playback {
   duration: number;
   links: PlaybackLinks;
   title?: string;
+  createdBy?: string;
 }
 
 export type StreamPlayback = Playback;

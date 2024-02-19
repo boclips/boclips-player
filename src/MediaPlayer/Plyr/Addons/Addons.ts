@@ -18,6 +18,7 @@ export interface Addon {
     plyr: EnrichedPlyr,
     playback: Playback,
     options: InterfaceOptions,
+    contentPartner?: string,
   ) => boolean;
   new (
     plyr: EnrichedPlyr,
