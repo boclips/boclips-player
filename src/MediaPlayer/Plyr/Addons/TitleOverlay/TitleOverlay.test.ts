@@ -1,7 +1,5 @@
 import { TitleOverlay } from './TitleOverlay';
-import {
-  PlaybackFactory,
-} from '../../../../test-support/TestFactories';
+import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import Plyr from 'plyr';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
 

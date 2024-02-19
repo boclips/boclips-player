@@ -15,6 +15,7 @@ const convertPlaybackResource = (
     type: rawPlayback.type,
     id: rawPlayback.id,
     duration: toSeconds(parse(rawPlayback.duration)),
+    createdBy: videoResource.createdBy,
     links: {
       createPlaybackEvent: new Link(rawPlayback._links.createPlaybackEvent),
       createPlayerInteractedWithEvent: new Link(
