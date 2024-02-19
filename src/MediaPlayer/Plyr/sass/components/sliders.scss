@@ -11,7 +11,7 @@
   // `color` property is used in JS to populate lower fill for WebKit
   color: $plyr-range-fill-background;
   display: block;
-  height: calc((#{$plyr-range-thumb-active-shadow-width} * 2) + #{$plyr-range-thumb-height});
+  height: 20px;
   margin: 0;
   min-width: 0;
   padding: 0;
@@ -20,7 +20,6 @@
 
   &::-webkit-slider-runnable-track {
     @include plyr-range-track;
-
     background-image: linear-gradient(to right, currentColor var(--value, 0%), transparent var(--value, 0%));
   }
 
@@ -42,7 +41,7 @@
 
   &::-moz-range-progress {
     background: currentColor;
-    border-radius: calc(#{$plyr-range-track-height} / 2);
+    //border-radius: calc(#{$plyr-range-track-height} / 2);
     height: $plyr-range-track-height;
   }
 
@@ -95,5 +94,55 @@
     &::-ms-track {
       @include plyr-tab-focus;
     }
+  }
+}
+
+.endIndicator {
+  top: 7px;
+  appearance: none;
+  background: $plyr-color-gray-500;
+  opacity: 1;
+  border: 0;
+  display: block;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  transition: box-shadow 0.3s ease;
+  position: absolute;
+  height: $plyr-range-track-height;
+  right: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.startIndicator{
+  top: 7px;
+  appearance: none;
+  background: $plyr-color-gray-500;
+  opacity: 1;
+  border: 0;
+  display: block;
+  margin: 0;
+  min-width: 0;
+  padding: 0;
+  transition: box-shadow 0.3s ease;
+  position: absolute;
+  height: $plyr-range-track-height;
+  left: 0;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.rangeBackground{
+  position: relative;
+  width:100%;
+  &:after {
+    content: '';
+    background: $plyr-color-gray-50;
+    position: absolute;
+    bottom: 7px;
+    height: $plyr-range-track-height;
+    width:100%;
+    left:0;
   }
 }

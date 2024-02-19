@@ -2,7 +2,7 @@
   "compilerOptions": {
     "esModuleInterop": true,
     "sourceMap": true,
-    "lib": ["es2015", "es6", "dom"],
+    "lib": ["ESNext", "DOM", "es2015", "es6"],
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "plugins": [{ "name": "typescript-tslint-plugin" }],

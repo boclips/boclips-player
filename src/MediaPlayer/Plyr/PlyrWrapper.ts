@@ -1,4 +1,4 @@
-import Plyr from 'plyr';
+import Plyr, { MarkersPoints } from 'plyr';
 import { PrivatePlayer } from '../../BoclipsPlayer/BoclipsPlayer';
 import { StreamingTechnique } from '../../StreamingTechnique/StreamingTechnique';
 import { StreamingTechniqueFactory } from '../../StreamingTechnique/StreamingTechniqueFactory';
@@ -43,7 +43,7 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   }
 
-  private createStreamPlyr = (segmentStart?: number) => {
+  private createStreamPlyr = (segmentStart?: number, segmentEnd?: number) => {
     this.player.getContainer().innerHTML = '';
 
     const media = document.createElement('video');
@@ -70,7 +70,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     this.player.getContainer().appendChild(media);
 
-    this.resetPlyrInstance(media);
+    this.resetPlyrInstance(media, segmentStart, segmentEnd);
 
     const playerChildrenNodes =
       this.player.getContainer().firstChild.childNodes;
@@ -322,10 +322,15 @@ export default class PlyrWrapper implements MediaPlayer {
     this.segment = segment || undefined;
 
     if (isStreamPlayback(this.playback)) {
-      this.createStreamPlyr(this.segment && this.segment.start);
+      this.createStreamPlyr(
+        this.segment && this.segment.start,
+        this.segment && this.segment.end,
+      );
     } else {
       this.createYoutubePlyr(this.segment && this.segment.start);
     }
+
+    this.addSliderBackground();
 
     if (this.segment) {
       this.updateAddonSegments(segment);
@@ -347,6 +352,20 @@ export default class PlyrWrapper implements MediaPlayer {
         this.plyr.on('seeking', this.autoStop);
         this.plyr.on('timeupdate', this.autoStop);
       }
+
+      const playerContainerEl = this.player.getContainer();
+      const playerTimerEl = playerContainerEl
+        .querySelector('.plyr__progress')
+        ?.querySelector('input[type="range"]');
+
+      if (playerTimerEl == null) {
+        return;
+      }
+
+      this.addTimelineBackgroundBeforeStartMark(playerTimerEl);
+      this.addTimelineBackgroundAfterEndMark(playerTimerEl);
+      this.handleStartMarkerSliderThumb(playerTimerEl);
+      this.handlePlayerTimerWithStartSegment(playerContainerEl);
     }
 
     if (title && description) {
@@ -370,6 +389,48 @@ export default class PlyrWrapper implements MediaPlayer {
         plyr: this.plyr,
         video,
       });
+  };
+
+  private addSliderBackground = () => {
+    const rangeBackgroundDiv = document.createElement('div');
+    rangeBackgroundDiv.classList.add('rangeBackground');
+    this.player
+      .getContainer()
+      .querySelector('[data-plyr="seek"]')
+      ?.parentElement.appendChild(rangeBackgroundDiv);
+  };
+
+  private handlePlayerTimerWithStartSegment = (playerContainerEl: Element) => {
+    const minutes = Math.floor(this.segment.start / 60);
+    const remainingSeconds = this.segment.start % 60;
+    const formattedTime = `${minutes
+      .toString()
+      .padStart(2, '0')}:${remainingSeconds.toString().padStart(2, '0')}`;
+    playerContainerEl.querySelector('div[role="timer"]').textContent =
+      formattedTime;
+  };
+
+  private handleStartMarkerSliderThumb = (playerTimerEl: Element) => {
+    const seekStart = (this.segment.start / this.plyr.duration) * 100;
+    playerTimerEl.setAttribute('value', seekStart.toString());
+  };
+
+  private addTimelineBackgroundBeforeStartMark = (playerTimerEl: Element) => {
+    const seekStart = (this.segment.start / this.plyr.duration) * 100;
+
+    const timelineAfterEndMarkEl = document.createElement('div');
+    timelineAfterEndMarkEl.classList.add('startIndicator');
+    timelineAfterEndMarkEl.style.width = seekStart + '%';
+    playerTimerEl.parentElement.appendChild(timelineAfterEndMarkEl);
+  };
+
+  private addTimelineBackgroundAfterEndMark = (playerTimerEl: Element) => {
+    const seekEnd = (this.segment.end / this.plyr.duration) * 100;
+
+    const timelineBeforeStartMarkEl = document.createElement('div');
+    timelineBeforeStartMarkEl.classList.add('endIndicator');
+    timelineBeforeStartMarkEl.style.width = 100 - seekEnd + '%';
+    playerTimerEl.parentElement.appendChild(timelineBeforeStartMarkEl);
   };
 
   private autoStop = (event) => {
@@ -468,9 +529,29 @@ export default class PlyrWrapper implements MediaPlayer {
     }
   };
 
-  private resetPlyrInstance = (media: HTMLDivElement | HTMLVideoElement) => {
+  private resetPlyrInstance = (
+    media: HTMLDivElement | HTMLVideoElement,
+    segmentStart?: number,
+    segmentEnd?: number,
+  ) => {
     if (this.plyr) {
       this.plyr.destroy();
+    }
+
+    const markers: MarkersPoints[] = [];
+
+    if (segmentStart) {
+      markers.push({
+        time: segmentStart,
+        label: 'start',
+      });
+    }
+
+    if (segmentEnd) {
+      markers.push({
+        time: segmentEnd,
+        label: 'end',
+      });
     }
 
     this.plyr = new Plyr(media, {
@@ -480,13 +561,17 @@ export default class PlyrWrapper implements MediaPlayer {
         selected: 1,
         options: [0.5, 1, 1.5, 2],
       },
-      invertTime: false,
+      markers: {
+        enabled: markers.length > 0,
+        points: markers,
+      },
       controls: this.getOptions().controls,
       // Don't use any plyr controls for youtube playback https://github.com/sampotts/plyr/issues/1738#issuecomment-943760053
       youtube: { customControls: false },
       displayDuration: true,
       duration: this.playback ? this.playback.duration : null,
       tooltips: { controls: true, seek: true },
+
       listeners: {
         fastForward: () => {
           this.player
