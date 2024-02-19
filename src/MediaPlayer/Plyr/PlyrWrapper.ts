@@ -16,6 +16,7 @@ import { Logger } from '../../Logger';
 import { NullLogger } from '../../NullLogger';
 import './sass/plyr.scss';
 import { OnReadyResult } from '../../types/OnReadyResult';
+import { doc } from 'prettier';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -433,6 +434,23 @@ export default class PlyrWrapper implements MediaPlayer {
     playerTimerEl.parentElement.appendChild(timelineBeforeStartMarkEl);
   };
 
+  private addRemoveMarksButton = () => {
+    const id = 'watch-whole-video';
+
+    if (!this.player.getContainer().querySelector('#' + id)) {
+      const button = document.createElement('button');
+      button.innerText = 'Continue watching';
+      button.id = id;
+      button.classList.add('reloadVideo');
+      button.onclick = () => {
+        this.segment = {};
+        document.querySelector('#' + id).remove();
+        this.plyr.play();
+      };
+      this.player.getContainer().querySelector('.plyr').append(button);
+    }
+  };
+
   private autoStop = (event) => {
     const plyr = event.detail.plyr;
 
@@ -440,11 +458,13 @@ export default class PlyrWrapper implements MediaPlayer {
       plyr.pause();
       this.stopStreamingTechnique();
       plyr.currentTime = this.segment.end;
+      this.addRemoveMarksButton();
     }
     if (plyr.currentTime < this.segment.start) {
       plyr.pause();
       this.stopStreamingTechnique();
       plyr.currentTime = this.segment.start;
+      this.addRemoveMarksButton();
     }
   };
 

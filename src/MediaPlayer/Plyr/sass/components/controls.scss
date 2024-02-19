@@ -80,3 +80,18 @@
 .plyr--fullscreen-enabled [data-plyr='fullscreen'] {
   display: inline-block;
 }
+
+.reloadVideo{
+  position: absolute;
+  bottom: 4rem;
+  right: 1rem;
+  padding: .5rem 1rem;
+  background: white;
+  color:  $plyr-color-main;
+  font-weight: 700;
+  border: none;
+  border-radius: .25rem;
+  z-index: 99;
+  font-size: 1rem!important;
+  cursor: pointer;
+}

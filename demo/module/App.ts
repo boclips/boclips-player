@@ -56,17 +56,17 @@ function renderPlayer() {
   player
     .loadVideo(
       'https://api.staging-boclips.com/v1/videos/5ebedd6878711254e234d81e',
-      // {
-      //   start: 30,
-      //   end: 120,
-      // },
+      {
+        start: 30,
+        end: 120,
+      },
     )
     .then(() => {
       // return player.play();
-    })
-    .then(() => {
-      setTimeout(() => {
-        player.pause();
-      }, 10000);
     });
+  // .then(() => {
+  //   setTimeout(() => {
+  //     player.pause();
+  //   }, 10000);
+  // });
 }

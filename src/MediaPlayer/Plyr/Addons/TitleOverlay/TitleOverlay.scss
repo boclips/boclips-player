@@ -12,11 +12,11 @@
   font-weight: 700;
   letter-spacing: 0.0012em;
   background: linear-gradient(
-    to bottom,
-    rgba(0, 0, 0, 0.9),
-    rgba(0, 0, 0, 0.6),
-    rgba(0, 0, 0, 0.2),
-    rgba(0, 0, 0, 0)
+                  to bottom,
+                  rgba(0, 0, 0, 0.9),
+                  rgba(0, 0, 0, 0.6),
+                  rgba(0, 0, 0, 0.2),
+                  rgba(0, 0, 0, 0)
   );
 
   .wrapper {
@@ -42,6 +42,10 @@
     .logo {
       display: flex;
       margin-left: 1rem;
+
+      div {
+        height: 100%;
+      }
 
       svg {
         scale: 0.5;
