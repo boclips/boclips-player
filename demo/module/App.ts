@@ -55,11 +55,11 @@ function renderPlayer() {
 
   player
     .loadVideo(
-      'https://api.staging-boclips.com/v1/videos/5e0f711804d95551584b3fa7',
+      'https://api.staging-boclips.com/v1/videos/5ebedd6878711254e234d81e',
       // {
       //   start: 30,
-      //   end: 120
-      // }
+      //   end: 120,
+      // },
     )
     .then(() => {
       // return player.play();

@@ -1,7 +1,5 @@
 import { TitleOverlay } from './TitleOverlay';
-import {
-  PlaybackFactory,
-} from '../../../../test-support/TestFactories';
+import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import Plyr from 'plyr';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
 
@@ -94,6 +92,28 @@ describe(`displaying overlay`, () => {
       addons: {},
     });
 
-    expect(plyrContainer.textContent).toEqual('Stream video title');
+    expect(
+      plyrContainer.querySelector('.video-title span').textContent,
+    ).toContain('Stream video title');
+  });
+
+  it(`displays produced by overlay on load`, async () => {
+    const container = document.createElement('div') as any;
+
+    const plyrContainer = document.createElement('div') as any;
+    plyrContainer.__jsdomMockClientWidth = 700;
+    container.appendChild(plyrContainer);
+
+    const plyr = new Plyr(plyrContainer) as MockedPlyr;
+    plyr.elements.container = plyrContainer;
+    new TitleOverlay(plyr, PlaybackFactory.streamSample(), {
+      controls: [],
+      addons: {},
+    });
+
+    expect(
+      plyrContainer.querySelector('.video-title .wrapper .createdBy')
+        .textContent,
+    ).toContain('Produced by');
   });
 });
