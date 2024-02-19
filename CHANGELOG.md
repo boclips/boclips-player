@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [7.12.1] - 2024-02-19
+## [7.13.0] - 2024-02-19
 
 - Update boclips-js-security to 12.0.4
 - Update @babel/traverse to 7.23.9
