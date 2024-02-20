@@ -43,7 +43,7 @@
     "querystring-es3": "^0.2.1",
     "resize-detector": "0.3.0",
     "sass": "^1.49.9",
-    "sass-loader": "^12.6.0",
+    "sass-loader": "^14.1.1",
     "style-loader": "^3.3.1",
     "svg-inline-loader": "^0.8.2",
     "url-template": "^2.0.8",
