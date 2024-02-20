@@ -438,7 +438,7 @@ export default class PlyrWrapper implements MediaPlayer {
 
     if (!this.player.getContainer().querySelector('#' + id)) {
       const button = document.createElement('button');
-      button.innerText = 'Continue watching';
+      button.innerText = 'Watch complete video';
       button.id = id;
       button.classList.add('reloadVideo');
       button.onclick = () => {
