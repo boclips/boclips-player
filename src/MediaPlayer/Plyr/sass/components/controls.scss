@@ -18,8 +18,6 @@
   cursor: initial;
   position: relative;
 
-
-
   .plyr__progress__container {
     min-width: 0; // Fix for Edge issue where content would overflow
     position: absolute !important;
@@ -81,17 +79,23 @@
   display: inline-block;
 }
 
-.reloadVideo{
+.reloadVideo {
   position: absolute;
   bottom: 4rem;
   right: 1rem;
-  padding: .5rem 1rem;
+  padding: 0.5rem 1rem;
   background: white;
-  color:  $plyr-color-main;
+  color: $plyr-color-main;
   font-weight: 700;
   border: none;
-  border-radius: .25rem;
+  border-radius: 0.25rem;
   z-index: 99;
-  font-size: 1rem!important;
+  font-size: 1rem !important;
   cursor: pointer;
+  box-shadow: $plyr-tooltip-shadow!important;
+
+  &:hover {
+    background: $plyr-color-main;
+    color: white;
+  }
 }

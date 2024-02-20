@@ -16,7 +16,6 @@ import { Logger } from '../../Logger';
 import { NullLogger } from '../../NullLogger';
 import './sass/plyr.scss';
 import { OnReadyResult } from '../../types/OnReadyResult';
-import { doc } from 'prettier';
 
 export default class PlyrWrapper implements MediaPlayer {
   private plyr: EnrichedPlyr;
@@ -435,7 +434,7 @@ export default class PlyrWrapper implements MediaPlayer {
   };
 
   private addRemoveMarksButton = () => {
-    const id = 'watch-whole-video';
+    const id = 'unblock-markers';
 
     if (!this.player.getContainer().querySelector('#' + id)) {
       const button = document.createElement('button');
@@ -447,7 +446,10 @@ export default class PlyrWrapper implements MediaPlayer {
         document.querySelector('#' + id).remove();
         this.plyr.play();
       };
-      this.player.getContainer().querySelector('.plyr').append(button);
+      this.player
+        .getContainer()
+        ?.querySelector('.plyr__controls')
+        ?.append(button);
     }
   };
 
