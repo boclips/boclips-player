@@ -58,7 +58,7 @@
     "axios-logger": "^2.5.0",
     "axios-mock-adapter": "^1.22.0",
     "boclips-js-security": "^12",
-    "chai": "^4.3.4",
+    "chai": "^5.1.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.6.0",
