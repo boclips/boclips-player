@@ -11,7 +11,7 @@ const boclipsSecurity = BoclipsSecurity.createInstance({
     renderPlayer();
   },
   realm: 'boclips',
-  clientId: 'teachers',
+  clientId: 'boclips-demos',
   requireLoginPage: true,
   authEndpoint: 'https://login.staging-boclips.com',
 });
