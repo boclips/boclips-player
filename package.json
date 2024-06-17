@@ -44,7 +44,7 @@
     "resize-detector": "0.3.0",
     "sass": "^1.77.5",
     "sass-loader": "^12.6.0",
-    "style-loader": "^3.3.1",
+    "style-loader": "^4.0.0",
     "svg-inline-loader": "^0.8.2",
     "url-template": "^2.0.8",
     "uuid": "^8.3.2",
