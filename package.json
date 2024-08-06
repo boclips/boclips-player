@@ -56,7 +56,7 @@
     "@webpack-cli/serve": "^1.6.0",
     "audit-ci": "^6.6.1",
     "axios-logger": "^2.8.1",
-    "axios-mock-adapter": "^1.22.0",
+    "axios-mock-adapter": "^2.0.0",
     "boclips-js-security": "^12",
     "chai": "^4.3.4",
     "clean-webpack-plugin": "^4.0.0",
