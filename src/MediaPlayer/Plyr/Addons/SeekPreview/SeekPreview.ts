@@ -129,10 +129,9 @@ export class SeekPreview implements AddonInterface {
     if (this.hasBeenDestroyed()) {
       return;
     }
-    const clientRect: ClientRect =
-      this.getPlyrProgressBar().getBoundingClientRect();
+    const domRect: DOMRect = this.getPlyrProgressBar().getBoundingClientRect();
 
-    const seekTime = this.calculateSeekTime(clientRect, event.pageX);
+    const seekTime = this.calculateSeekTime(domRect, event.pageX);
     if (
       this.segment &&
       (seekTime < this.segment.start || seekTime > this.segment.end)
@@ -177,7 +176,7 @@ export class SeekPreview implements AddonInterface {
 
     const placeholderImage = document.createElement('img');
     placeholderImage.classList.add('seek-thumbnail__image--placeholder');
-    placeholderImage.src = this.playback.links.thumbnail.getTemplatedLink({
+    placeholderImage.src = this.playback.links.thumbnail?.getTemplatedLink({
       thumbnailWidth: this.plyr.elements.container.clientWidth,
     });
 
@@ -212,23 +211,22 @@ export class SeekPreview implements AddonInterface {
   private updatePreview = (cursorX: number) => {
     this.updateDimensions();
 
-    const clientRect: ClientRect =
-      this.getPlyrProgressBar().getBoundingClientRect();
+    const domRect: DOMRect = this.getPlyrProgressBar().getBoundingClientRect();
 
     this.updatePosition(cursorX);
 
-    const seekTime = this.calculateSeekTime(clientRect, cursorX);
+    const seekTime = this.calculateSeekTime(domRect, cursorX);
 
     this.updateImageSlice(seekTime);
     this.updateTimeLabel(seekTime);
   };
 
-  private calculateSeekTime(clientRect: ClientRect, cursorX: number) {
+  private calculateSeekTime(domRect: DOMRect, cursorX: number) {
     const duration = this.playback.duration;
 
     const percentage = Math.min(
       100,
-      Math.max(0, (100 / clientRect.width) * (cursorX - clientRect.left)),
+      Math.max(0, (100 / domRect.width) * (cursorX - domRect.left)),
     );
 
     return duration * (percentage / 100);

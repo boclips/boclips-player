@@ -57,9 +57,6 @@ module.exports = {
 
   // A set of global variables that need to be available in all test environments
   globals: {
-    'ts-jest': {
-      tsconfig: 'tsconfig.json',
-    },
   },
 
   // An array of directory names to be searched recursively up from the requiring module's location
@@ -82,6 +79,7 @@ module.exports = {
     '\\.(css|less|scss|sass)$': '<rootDir>/__mocks__/styleMock.ts',
     '\\.(jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2|mp4|webm|wav|mp3|m4a|aac|oga)$':
       '<rootDir>/__mocks__/fileMock.ts',
+      "uuid": require.resolve('uuid'),
   },
 
   // An array of regexp pattern strings, matched against all module paths before considered 'visible' to the module loader

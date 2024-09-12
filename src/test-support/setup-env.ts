@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 (window as any).TextTrack = jest.fn();
 
 Object.defineProperty(HTMLElement.prototype, 'insertAdjacentElement', {
@@ -33,7 +35,7 @@ Object.defineProperty(HTMLImageElement.prototype, 'onload', {
 
 const eventTargets = [window, HTMLElement.prototype];
 
-eventTargets.forEach(target => {
+eventTargets.forEach((target) => {
   const originalAddEventListener = target.addEventListener;
   const originalRemoveEventListener = target.removeEventListener;
 
@@ -64,7 +66,7 @@ eventTargets.forEach(target => {
         this.__eventListeners[event] = [];
       }
       this.__eventListeners[event] = this.__eventListeners[event].filter(
-        element => element !== callback,
+        (element) => element !== callback,
       );
     },
   });
@@ -81,18 +83,4 @@ eventTargets.forEach(target => {
 Object.defineProperty(HTMLMediaElement.prototype, 'load', {
   configurable: true,
   value: jest.fn(),
-});
-
-Object.defineProperty(HTMLElement.prototype, 'setBoundingClientRect', {
-  configurable: true,
-  value: (domRect: DOMRect) => {
-    this.__boundingClientRect = domRect;
-  },
-});
-
-Object.defineProperty(HTMLElement.prototype, 'getBoundingClientRect', {
-  configurable: true,
-  value: () => {
-    return this.__boundingClientRect;
-  },
 });

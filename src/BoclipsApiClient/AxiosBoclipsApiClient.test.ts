@@ -1,5 +1,3 @@
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
 import {
@@ -14,24 +12,23 @@ import {
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
 import { AxiosBoclipsApiClient } from './AxiosBoclipsApiClient';
+import { describe, expect, beforeEach, it, jest } from '@jest/globals';
 
-jest.mock('../BoclipsPlayer/BoclipsPlayer');
-
-let player: MaybeMocked<PrivatePlayer>;
+let player: PrivatePlayer;
 let boclipsClient: AxiosBoclipsApiClient;
 
 beforeEach(() => {
-  player = mocked(new BoclipsPlayer(null));
+  const element = document.createElement('div');
+  player = new BoclipsPlayer(element);
   boclipsClient = new AxiosBoclipsApiClient(player);
 });
-
 describe('retrieve video', () => {
   it('will make a request to the backend for a stream video', () => {
     const videoResource = VideoResourceFactory.streamSample();
 
     MockFetchVerify.get('/v1/videos/177', JSON.stringify(videoResource));
 
-    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) =>
+    return boclipsClient.retrieveVideo('/v1/videos/177').then((video) => {
       expect(video).toMatchObject({
         id: videoResource.id,
         playback: {
@@ -47,8 +44,8 @@ describe('retrieve video', () => {
         links: {
           self: new Link(videoResource._links.self),
         },
-      }),
-    );
+      });
+    });
   });
 
   it('will make a request to the backend for a youtube video', () => {
@@ -81,7 +78,8 @@ describe('Creating a playback event', () => {
 
   beforeEach(() => {
     video = VideoFactory.sample();
-    player.getVideo.mockReturnValue(video);
+    jest.spyOn(player, 'getVideo').mockReturnValue(video);
+
     MockFetchVerify.post(
       video.playback.links.createPlaybackEvent.getOriginalLink(),
       undefined,
@@ -90,7 +88,7 @@ describe('Creating a playback event', () => {
   });
 
   it('Will not emit an event if there is no video', () => {
-    player.getVideo.mockReturnValue(undefined);
+    jest.spyOn(player, 'getVideo').mockReturnValue(undefined);
 
     return boclipsClient.emitPlaybackEvent(15, 30).then(() => {
       const requests = MockFetchVerify.getHistory().post;
@@ -182,7 +180,7 @@ describe('Creating a player interaction event ', () => {
 
   beforeEach(() => {
     video = VideoFactory.sample();
-    player.getVideo.mockReturnValue(video);
+    jest.spyOn(player, 'getVideo').mockReturnValue(video);
     MockFetchVerify.post(
       video.playback.links.createPlayerInteractedWithEvent.getOriginalLink(),
       undefined,
@@ -249,9 +247,11 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
-        tokenFactory: jest.fn().mockResolvedValue('test-bearer-token'),
+        tokenFactory: jest
+          .fn<() => Promise<string>>()
+          .mockResolvedValue('test-bearer-token'),
       },
     } as any as PlayerOptions);
 
@@ -273,10 +273,10 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
         tokenFactory: jest
-          .fn()
+          .fn<() => Promise<never>>()
           .mockRejectedValue(new Error('Some fatal authorization error')),
       },
     } as any as PlayerOptions);
@@ -294,9 +294,9 @@ describe('With authorisation', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
-        tokenFactory: jest.fn().mockResolvedValue(null),
+        tokenFactory: jest.fn<() => Promise<null>>().mockResolvedValue(null),
       },
     } as any as PlayerOptions);
 
@@ -318,7 +318,7 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
         userIdFactory: undefined,
       },
@@ -340,9 +340,11 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.get(uri, JSON.stringify(videoResource));
 
-    player.getOptions.mockReturnValue({
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
-        userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
+        userIdFactory: jest
+          .fn<() => Promise<string>>()
+          .mockResolvedValue('test-user-id'),
       },
     } as any as PlayerOptions);
 
@@ -362,9 +364,14 @@ describe('with user ID factory', () => {
 
     MockFetchVerify.post(uri, undefined, 201);
 
-    player.getOptions.mockReturnValue({
+    const video = VideoFactory.sample();
+    jest.spyOn(player, 'getVideo').mockReturnValue(video);
+
+    jest.spyOn(player, 'getOptions').mockReturnValue({
       api: {
-        userIdFactory: jest.fn().mockResolvedValue('test-user-id'),
+        userIdFactory: jest
+          .fn<() => Promise<string>>()
+          .mockResolvedValue('test-user-id'),
       },
     } as any as PlayerOptions);
 

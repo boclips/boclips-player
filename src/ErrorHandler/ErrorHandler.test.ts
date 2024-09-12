@@ -2,6 +2,7 @@ import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { ErrorHandler } from './ErrorHandler';
 import { BoclipsAPIError } from './BoclipsPlayerError';
 import { APIError, InternalError } from './InternalError';
+import { describe, expect, beforeEach, it, jest } from '@jest/globals';
 
 describe('error message handling', () => {
   let container: HTMLElement;
@@ -132,10 +133,10 @@ describe('error message handling', () => {
     const errorContainer = container.querySelector('.error');
     expect(errorContainer).toBeTruthy();
 
-    const titleElement = errorContainer.querySelector('.title');
-    expect(titleElement.textContent).toEqual(title);
+    const titleElement = errorContainer?.querySelector('.title');
+    expect(titleElement?.textContent).toEqual(title);
 
-    const bodyElement = errorContainer.querySelector('.body');
-    expect(bodyElement.textContent).toEqual(body);
+    const bodyElement = errorContainer?.querySelector('.body');
+    expect(bodyElement?.textContent).toEqual(body);
   };
 });

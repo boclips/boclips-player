@@ -1,6 +1,9 @@
-const RealHls = jest.requireActual('hls.js');
+import { jest } from '@jest/globals';
 
-const Hls: any = jest.genMockFromModule('hls.js');
+
+const RealHls: any = jest.requireActual('hls.js');
+
+const Hls: any = jest.createMockFromModule('hls.js');
 
 function __callEventCallback(event, payload) {
   if (!this.callbacksMap) {

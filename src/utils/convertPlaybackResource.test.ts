@@ -6,6 +6,8 @@ import {
   YoutubePlayback,
 } from '../types/Playback';
 import convertPlaybackResource from './convertPlaybackResource';
+import { expect, it } from '@jest/globals';
+
 
 it('Can map the response to a StreamPlayback object', () => {
   const playback = convertPlaybackResource(
