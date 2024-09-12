@@ -1,3 +1,5 @@
+import { jest } from '@jest/globals';
+
 import { StreamingTechnique } from '../StreamingTechnique';
 
 export const MockStreamingTechnique: StreamingTechnique = {

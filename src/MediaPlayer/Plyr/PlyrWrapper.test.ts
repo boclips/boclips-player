@@ -1,6 +1,5 @@
 import Plyr from 'plyr';
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
+
 import {
   BoclipsPlayer,
   PrivatePlayer,
@@ -18,24 +17,26 @@ import PlyrWrapper from './PlyrWrapper';
 import { MockedPlyr } from '../../../__mocks__/plyr';
 import eventually from '../../test-support/eventually';
 import { Video } from '../../types/Video';
+import { mocked, MockedShallow } from 'jest-mock';
+import { beforeEach, describe, expect, it, jest } from '@jest/globals';
+import { Analytics } from '../../Events/Analytics';
 
-jest.mock('../../BoclipsPlayer/BoclipsPlayer');
-jest.mock('../../Events/Analytics');
-jest.mock('./Addons/Addons');
-jest.mock('../../ErrorHandler/ErrorHandler');
 jest.mock('../../StreamingTechnique/StreamingTechniqueFactory');
+jest.mock('./Addons/Addons');
 
 let video: Video;
 
-let container: HTMLElement & HasClientDimensions = null;
-let mockPlayer: MaybeMocked<PrivatePlayer> | PrivatePlayer;
-let mediaPlayer: MediaPlayer = null;
+let plyrContainer: HTMLElement & HasClientDimensions;
+let mockPlayer: MockedShallow<PrivatePlayer> | PrivatePlayer;
+let mediaPlayer: MediaPlayer;
 let mockPlyr;
 
 const mockedPlyr = mocked(Plyr);
 
 function getLatestMockPlyrInstance() {
-  return mockedPlyr.mock.instances[mockedPlyr.mock.instances.length - 1];
+  return mockedPlyr.mock.instances[
+    mockedPlyr.mock.instances.length - 1
+  ] as unknown as MockedPlyr;
 }
 
 function getLatestMockPlyrConstructor() {
@@ -47,30 +48,49 @@ beforeEach(() => {
 
   mockedPlyr.mockClear();
 
-  container = document.createElement('div') as any;
-  container.__jsdomMockClientWidth = 700;
+  const container = document.createElement('div');
 
-  mockPlayer = mocked(new BoclipsPlayer(container));
-  mediaPlayer = new PlyrWrapper(mockPlayer);
+  plyrContainer = document.createElement('div') as any;
+  plyrContainer.__jsdomMockClientWidth = 700;
+  container.appendChild(plyrContainer);
 
-  mockPlyr = getLatestMockPlyrInstance();
+  const progress = document.createElement('div');
+  plyrContainer.appendChild(progress);
+
+  mockPlayer = new BoclipsPlayer(plyrContainer);
+  mediaPlayer = mockPlayer.getMediaPlayer();
+
+  mockPlyr = getLatestMockPlyrInstance() as MockedPlyr;
+  mockPlyr.elements.container = plyrContainer;
+  mockPlyr.elements.progress = progress;
+
+  const analytics = new Analytics(mockPlayer);
+  jest.spyOn(mockPlayer, 'getAnalytics').mockReturnValue(analytics);
+
+  jest.spyOn(analytics, 'handlePause');
+  jest.spyOn(analytics, 'handlePlay');
+  jest.spyOn(analytics, 'handleTimeUpdate');
+  jest.spyOn(analytics, 'handleInteraction');
+
+  const errorHandler = mockPlayer.getErrorHandler();
+  jest.spyOn(errorHandler, 'handleError');
 });
 
 describe('Instantiation', () => {
   it('is configured according to the provided options', () => {
     const actualOptions = mockedPlyr.mock.calls[0][1];
-    expect(actualOptions.controls).toEqual(
+    expect(actualOptions?.controls).toEqual(
       expect.arrayContaining(['play-large']),
     );
   });
 
   it('Constructs a Plyr given an element a video element within container', () => {
-    expect(container.children.length).toEqual(1);
+    expect(plyrContainer.children.length).toEqual(1);
 
-    const videoElement = container.children.item(0);
-    expect(videoElement.tagName).toEqual('VIDEO');
-    expect(videoElement.getAttribute('data-qa')).toEqual('boclips-player');
-    expect(videoElement.getAttribute('preload')).toEqual('metadata');
+    const videoElement = plyrContainer.children.item(0);
+    expect(videoElement?.tagName).toEqual('VIDEO');
+    expect(videoElement?.getAttribute('data-qa')).toEqual('boclips-player');
+    expect(videoElement?.getAttribute('preload')).toEqual('metadata');
 
     expect(Plyr).toHaveBeenCalledWith(
       videoElement,
@@ -82,10 +102,16 @@ describe('Instantiation', () => {
 });
 
 describe('Stream Playback', () => {
-  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+  let mockStreamingTechnique: MockedShallow<StreamingTechnique>;
 
   beforeEach(() => {
-    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
+    const streamingTechniqueFactory = StreamingTechniqueFactory.get(mockPlayer);
+
+    if (streamingTechniqueFactory) {
+      mockStreamingTechnique = mocked<StreamingTechnique>(
+        streamingTechniqueFactory,
+      );
+    }
   });
 
   it('sets the poster on the video element', () => {
@@ -94,7 +120,7 @@ describe('Stream Playback', () => {
     const videoElement = getLatestMockPlyrConstructor()[0] as HTMLElement;
 
     expect(videoElement.getAttribute('poster')).toEqual(
-      video.playback.links.thumbnail.getTemplatedLink({
+      video.playback.links.thumbnail?.getTemplatedLink({
         thumbnailWidth: 700,
       }),
     );
@@ -151,14 +177,29 @@ describe('YouTube Playback', () => {
 });
 
 describe('Playback restriction', () => {
-  let mockStreamingTechnique: MaybeMocked<StreamingTechnique> = null;
+  let mockStreamingTechnique: MockedShallow<StreamingTechnique>;
   const setupMockPlayer = () => {
     mockedPlyr.mockClear();
-    mockStreamingTechnique = mocked(StreamingTechniqueFactory.get(mockPlayer));
+    const streamingTechniqueFactory = StreamingTechniqueFactory.get(mockPlayer);
+
+    if (streamingTechniqueFactory) {
+      mockStreamingTechnique = mocked<StreamingTechnique>(
+        streamingTechniqueFactory,
+      );
+    }
     mockPlayer = mocked(
-      new BoclipsPlayer(container, { interface: { controls: [] } }),
+      new BoclipsPlayer(plyrContainer, { interface: { controls: [] } }),
     );
-    mediaPlayer = new PlyrWrapper(mockPlayer);
+
+    const analytics = new Analytics(mockPlayer);
+    jest.spyOn(mockPlayer, 'getAnalytics').mockReturnValue(analytics);
+
+    jest.spyOn(analytics, 'handlePause');
+    jest.spyOn(analytics, 'handlePlay');
+    jest.spyOn(analytics, 'handleTimeUpdate');
+    jest.spyOn(analytics, 'handleInteraction');
+
+    mediaPlayer = mockPlayer.getMediaPlayer();
 
     mockPlyr = getLatestMockPlyrInstance();
   };
@@ -247,7 +288,7 @@ describe('Playback restriction', () => {
       setupMockPlayer();
       mediaPlayer.configureWithVideo(youtubeVideo, segment);
 
-      mockPlyr = getLatestMockPlyrInstance();
+      mockPlyr = getLatestMockPlyrInstance() as MockedPlyr;
       const plyrPauseFn = jest.fn();
       mockPlyr.pause = plyrPauseFn;
       expect(mockPlyr.currentTime).toEqual(30);
@@ -388,25 +429,25 @@ describe('Playback restriction', () => {
 
   describe('Addons', () => {
     it('initialises the addon when it can be enabled', () => {
-      const MockAddon = mocked(Addons[0]);
+      const mockAddon = mocked(Addons[0]);
 
-      MockAddon.mockClear();
+      mockAddon.mockClear();
 
       mediaPlayer.configureWithVideo(video);
 
-      expect(MockAddon).toHaveBeenCalled();
+      expect(mockAddon).toHaveBeenCalled();
     });
 
     it('does not initialise the addon when it cannot be enabled', () => {
-      const MockAddon = mocked(Addons[0]);
+      const mockAddon = mocked(Addons[0]);
 
-      MockAddon.mockClear();
+      mockAddon.mockClear();
 
-      MockAddon.isEnabled.mockReturnValueOnce(false);
+      mockAddon.isEnabled.mockReturnValueOnce(false);
 
       mediaPlayer.configureWithVideo(video);
 
-      expect(MockAddon).not.toHaveBeenCalled();
+      expect(mockAddon).not.toHaveBeenCalled();
     });
 
     it('destroys any enabled addons too', () => {
@@ -439,33 +480,21 @@ describe('Playback restriction', () => {
   describe('Playback Tracking', () => {
     it('will add an on playing event listener that delegates to the Analytics', () => {
       mockPlyr.currentTime = 10;
-      mockPlyr.__callEventCallback('playing', {
-        detail: {
-          plyr: mockPlyr,
-        },
-      });
+      mockPlyr.__callEventCallback('playing');
 
       expect(mockPlayer.getAnalytics().handlePlay).toHaveBeenCalledWith(10);
     });
 
     it('will add an on pause event listener that delegates to the Analytics', () => {
       mockPlyr.currentTime = 15;
-      mockPlyr.__callEventCallback('pause', {
-        detail: {
-          plyr: mockPlyr,
-        },
-      });
+      mockPlyr.__callEventCallback('pause');
 
       expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(15);
     });
 
     it('will add an on timeupdate event listener that delegates to the Analytics', () => {
       mockPlyr.currentTime = 15;
-      mockPlyr.__callEventCallback('timeupdate', {
-        detail: {
-          plyr: mockPlyr,
-        },
-      });
+      mockPlyr.__callEventCallback('timeupdate');
 
       expect(mockPlayer.getAnalytics().handleTimeUpdate).toHaveBeenCalledWith(
         15,
@@ -567,6 +596,7 @@ describe('Playback restriction', () => {
 
     it('sends interaction event for progress', () => {
       setupMockPlayer();
+      // TODO: Assigning to a read-only property?
       mockPlyr.buffered = 0.5;
       mediaPlayer.configureWithVideo(video);
 
@@ -581,24 +611,25 @@ describe('Playback restriction', () => {
 
   describe('Fullscreen', () => {
     it('adds a --fullscreen class to the container on enterfullscreen', () => {
-      expect(container.classList).not.toContain('plyr--fullscreen');
+      expect(plyrContainer.classList).not.toContain('plyr--fullscreen');
 
       mockPlyr.__callEventCallback('enterfullscreen');
 
-      expect(container.classList).toContain('plyr--fullscreen');
+      expect(plyrContainer.classList).toContain('plyr--fullscreen');
     });
 
     it('removes a --fullscreen class to the container on exitfullscreen', () => {
-      container.classList.add('plyr--fullscreen');
+      plyrContainer.classList.add('plyr--fullscreen');
 
       mockPlyr.__callEventCallback('exitfullscreen');
 
-      expect(container.classList).not.toContain('plyr--fullscreen');
+      expect(plyrContainer.classList).not.toContain('plyr--fullscreen');
     });
   });
 
   describe('Error Handling', () => {
     it('does nothing when the media has no error', () => {
+      // TODO: Deleting a read-only property?
       delete mockPlyr.media.error;
       expect(() => {
         mockPlyr.__callEventCallback('error');
@@ -606,6 +637,7 @@ describe('Playback restriction', () => {
     });
 
     it('passes the media error to the ErrorHandler', () => {
+      // TODO: Assigning to a read-only property?
       mockPlyr.media.error = {
         code: 44444,
         message: 'Four Four Four Four Four',
@@ -626,9 +658,14 @@ describe('Playback restriction', () => {
 
   describe('Destruction', () => {
     beforeEach(() => {
-      mockStreamingTechnique = mocked(
-        StreamingTechniqueFactory.get(mockPlayer),
-      );
+      const streamingTechniqueFactory =
+        StreamingTechniqueFactory.get(mockPlayer);
+
+      if (streamingTechniqueFactory) {
+        mockStreamingTechnique = mocked<StreamingTechnique>(
+          streamingTechniqueFactory,
+        );
+      }
     });
 
     it('destroys the Plyr instance', () => {
@@ -735,14 +772,14 @@ describe('Playback restriction', () => {
     });
 
     it('calls the function passed into onEnd', () => {
-      const mockOnPlay = jest.fn();
+      const mockOnPlay = jest.fn<() => (endOverlay: HTMLDivElement) => void>();
       mediaPlayer.onEnd(mockOnPlay());
       plyr.__callEventCallback('ended');
       expect(mockOnPlay).toHaveBeenCalledTimes(1);
     });
 
     it('onEnd calls createIfNotExists to check if overlay exists', () => {
-      const mockOnPlay = jest.fn();
+      const mockOnPlay = jest.fn<() => (endOverlay: HTMLDivElement) => void>();
       mediaPlayer.onEnd(mockOnPlay());
       plyr.__callEventCallback('ended');
       eventually(() => {

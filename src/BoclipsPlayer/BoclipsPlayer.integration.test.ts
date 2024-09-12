@@ -2,6 +2,8 @@ import { BoclipsAPIError } from './../ErrorHandler/BoclipsPlayerError';
 import MockFetchVerify from '../test-support/MockFetchVerify';
 import { VideoResourceFactory } from '../test-support/TestFactories';
 import { BoclipsPlayer } from './BoclipsPlayer';
+import {  expect, beforeEach, it, jest } from '@jest/globals';
+
 
 jest.unmock('plyr');
 

@@ -1,4 +1,6 @@
 import { EndOverlay } from './SharedFeatures';
+import { describe, expect, beforeEach, it } from '@jest/globals';
+
 
 describe('creating EndOfVideoOverlay', () => {
   let container: HTMLDivElement;

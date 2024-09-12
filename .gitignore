@@ -6,3 +6,4 @@ esm
 .idea
 .DS_Store
 coverage
+launch.json

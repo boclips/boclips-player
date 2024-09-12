@@ -11,23 +11,25 @@ import {
 } from './SeekPreview';
 import { PlaybackSegment } from '../../../MediaPlayer';
 
-let container;
+import { describe, expect, beforeEach, it, jest } from '@jest/globals';
+
+let container: HTMLDivElement;
 let plyr: MockedPlyr;
 
 beforeEach(() => {
-  container = document.createElement('div') as any;
+  container = document.createElement('div');
 
-  const plyrContainer = document.createElement('div') as any;
-  plyrContainer.__jsdomMockClientWidth = 700;
+  const plyrContainer = document.createElement('div');
+  jest
+    .spyOn(plyrContainer, 'getBoundingClientRect')
+    .mockReturnValue(testDOMRect(50, 500, 700, 100));
   container.appendChild(plyrContainer);
 
-  const progress = document.createElement('div') as any;
+  const progress = document.createElement('div');
   progress.classList.add('progress');
-  (progress as any).setBoundingClientRect({
-    top: 500,
-    left: 50,
-    width: 100,
-  } as ClientRect);
+  jest
+    .spyOn(progress, 'getBoundingClientRect')
+    .mockReturnValue(testDOMRect(50, 500, 100, 100));
   plyrContainer.appendChild(progress);
 
   plyr = new Plyr(plyrContainer) as MockedPlyr;
@@ -172,7 +174,7 @@ describe('Options', () => {
   testData.forEach(({ message, input, expected }) => {
     it(`is set to ${message}`, () => {
       const addon = new SeekPreview(plyr, PlaybackFactory.streamSample(), {
-        controls: null,
+        controls: [],
         addons: {
           seekPreview: input,
         },
@@ -210,7 +212,10 @@ describe('Usage', () => {
       } as InterfaceOptions,
     );
 
-    seekPreview.updateSegment(segment);
+    if (segment) {
+      seekPreview.updateSegment(segment);
+    }
+
     return seekPreview;
   };
 
@@ -269,11 +274,13 @@ describe('Usage', () => {
       plyr.elements.container.querySelector('.seek-thumbnail');
     expect(previewContainer).toBeTruthy();
 
-    const img: HTMLImageElement = previewContainer.querySelector('img');
+    const img = previewContainer.querySelector('img');
 
     expect(img).toBeTruthy();
 
-    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/15/width/175');
+    expect(img?.src).toEqual(
+      'http://path/to/thumbnail/api/slices/15/width/175',
+    );
   });
 
   it('Accepts a different slice count via options', () => {
@@ -291,11 +298,13 @@ describe('Usage', () => {
       plyr.elements.container.querySelector('.seek-thumbnail');
     expect(previewContainer).toBeTruthy();
 
-    const img: HTMLImageElement = previewContainer.querySelector('img');
+    const img = previewContainer.querySelector('img');
 
     expect(img).toBeTruthy();
 
-    expect(img.src).toEqual('http://path/to/thumbnail/api/slices/18/width/175');
+    expect(img?.src).toEqual(
+      'http://path/to/thumbnail/api/slices/18/width/175',
+    );
   });
 
   describe('Image position and Time label', () => {
@@ -483,3 +492,16 @@ describe('Usage', () => {
     });
   });
 });
+
+const testDOMRect = (x: number, y: number, width: number, height: number) => {
+  return {
+    x,
+    y,
+    width,
+    height,
+    left: x,
+    top: y,
+    right: x + width,
+    bottom: y + height,
+  } as DOMRect;
+};

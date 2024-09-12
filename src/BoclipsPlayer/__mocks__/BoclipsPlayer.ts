@@ -6,11 +6,13 @@ import { VideoFactory } from '../../test-support/TestFactories';
 import { PrivatePlayer } from '../BoclipsPlayer';
 import { defaultOptions } from '../PlayerOptions';
 import { NullLogger } from '../../NullLogger';
+import { jest } from '@jest/globals';
+
 
 // noinspection JSUnusedGlobalSymbols
 export const BoclipsPlayer = jest
   .fn()
-  .mockImplementation((container = null, options = defaultOptions) => {
+  .mockImplementation(async (container = null, options = defaultOptions) => {
     const player = {
       destroy: jest.fn(),
       loadVideo: jest.fn(),
