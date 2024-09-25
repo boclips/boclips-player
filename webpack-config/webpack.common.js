@@ -38,10 +38,15 @@ module.exports = {
         test: /\.(sa|sc|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          "css-loader",
-          "sass-loader",
+          'css-loader',
+          {
+            loader: 'sass-loader',
+            options: {
+              api: 'legacy',
+            },
+          },
         ],
-        sideEffects: true
+        sideEffects: true,
       },
       {
         test: /.svg$/i,
