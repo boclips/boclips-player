@@ -45,7 +45,7 @@
     "sass-loader": "^16.0.2",
     "svg-inline-loader": "^0.8.2",
     "url-template": "^2.0.8",
-    "uuid": "^8.3.2",
+    "uuid": "^10.0.0",
     "webpack-bundle-analyzer": "^4.10.2"
   },
   "devDependencies": {
