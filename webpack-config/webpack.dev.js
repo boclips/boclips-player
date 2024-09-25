@@ -1,11 +1,17 @@
-const { merge } = require('webpack-merge');
-const path = require('path');
+import { merge } from 'webpack-merge'
 
-const common = require('./webpack.common.js');
+import * as common from './webpack.common.js';
+
+import path from 'path';
+
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
+const __dirname = path.dirname(__filename); // get the name of the directory
 
 const distPath = path.resolve(__dirname, '../dist');
 
-module.exports = merge(common, {
+export default merge(common.default, {
   mode: 'development',
   devServer: {
     port: 8081,

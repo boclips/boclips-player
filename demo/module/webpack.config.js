@@ -1,11 +1,15 @@
-const { merge } = require('webpack-merge');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+import { merge } from 'webpack-merge'
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 
-const common = require('../../webpack-config/webpack.dev.js');
+import * as common from '../../webpack-config/webpack.dev.js';
 
-const path = require('path');
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-module.exports = merge(common, {
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+export default merge(common.default, {
   entry: {
     demo: path.resolve(__dirname, 'App.ts'),
   },

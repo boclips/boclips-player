@@ -1,1 +1,1 @@
-module.exports = require('./webpack-config/webpack.prod.js');
+export * from "./webpack-config/webpack.prod.js";
