@@ -56,4 +56,4 @@ export interface MockedPlyr extends EnrichedPlyr {
   elements: any;
 }
 
-module.exports = Plyr;
+export default Plyr;

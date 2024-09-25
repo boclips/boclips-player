@@ -33,4 +33,4 @@ Hls.ErrorTypes = RealHls.ErrorTypes;
 Hls.ErrorDetails = RealHls.ErrorDetails;
 Hls.isSupported = jest.fn().mockReturnValue(true);
 
-module.exports = Hls;
+export default Hls;
