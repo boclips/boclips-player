@@ -1,4 +1,4 @@
-import { parseTemplate } from 'url-template';
+import URLTemplate from 'url-template';
 
 export class Link {
   private link: RawLink;
@@ -14,7 +14,7 @@ export class Link {
   public getTemplatedLink(paramKeysValues: {
     [paramName: string]: any;
   }): string {
-    return parseTemplate(this.link.href).expand(paramKeysValues);
+    return URLTemplate.parse(this.link.href).expand(paramKeysValues);
   }
 
   public isTemplated(): boolean {

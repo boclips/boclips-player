@@ -48,8 +48,8 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
       url-template:
-        specifier: ^3.1.1
-        version: 3.1.1
+        specifier: ^2.0.8
+        version: 2.0.8
       uuid:
         specifier: ^10.0.0
         version: 10.0.0
@@ -60,9 +60,6 @@ importers:
       '@jest/globals':
         specifier: ^29.7.0
         version: 29.7.0
-      '@types/uuid':
-        specifier: ^10.0.0
-        version: 10.0.0
       '@webpack-cli/serve':
         specifier: ^2.0.5
         version: 2.0.5(webpack-cli@5.1.4(webpack-bundle-analyzer@4.10.2)(webpack-dev-server@5.1.0)(webpack@5.95.0))(webpack-dev-server@5.1.0(webpack-cli@5.1.4)(webpack@5.95.0))(webpack@5.95.0(webpack-cli@5.1.4))
@@ -601,9 +598,6 @@ packages:
 
   '@types/url-template@2.0.31':
     resolution: {integrity: sha512-mXzP2L5FkK9b+MYqlKYSJG/1RTMFWZT1oBuQ6KPzSY3m1hwKks7PrHg+Yd3QkoedBUJO749JXvK3FgCgGGIx6Q==}
-
-  '@types/uuid@10.0.0':
-    resolution: {integrity: sha512-7gqG38EyHgyP1S+7+xomFtL+ZNHcKv6DwNaCZmJmo1vgMugyF3TCnXVg4t1uk89mLNwnLtnY3TpOpCOyp1/xHQ==}
 
   '@types/ws@8.5.12':
     resolution: {integrity: sha512-3tPRkv1EtkDpzlgyKyI8pGsGZAGPEaXeu0DOj5DI25Ja91bdAYddYHbADRYVrZMRbfW+1l5YwXVDKohDJNQxkQ==}
@@ -3048,9 +3042,8 @@ packages:
   url-polyfill@1.1.12:
     resolution: {integrity: sha512-mYFmBHCapZjtcNHW0MDq9967t+z4Dmg5CJ0KqysK3+ZbyoNOWQHksGCTWwDhxGXllkWlOc10Xfko6v4a3ucM6A==}
 
-  url-template@3.1.1:
-    resolution: {integrity: sha512-4oszoaEKE/mQOtAmdMWqIRHmkxWkUZMnXFnjQ5i01CuRSK3uluxcH1MRVVVWmhlnzT1SCDfKxxficm2G37qzCA==}
-    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
+  url-template@2.0.8:
+    resolution: {integrity: sha512-XdVKMF4SJ0nP/O7XIPB0JwAEuT9lDIYnNsK8yGVe43y0AWoKeJNdv3ZNWh7ksJ6KqQFjOO6ox/VEitLnaVNufw==}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -3888,8 +3881,6 @@ snapshots:
   '@types/tough-cookie@4.0.5': {}
 
   '@types/url-template@2.0.31': {}
-
-  '@types/uuid@10.0.0': {}
 
   '@types/ws@8.5.12':
     dependencies:
@@ -6548,7 +6539,7 @@ snapshots:
 
   url-polyfill@1.1.12: {}
 
-  url-template@3.1.1: {}
+  url-template@2.0.8: {}
 
   util-deprecate@1.0.2: {}
 
