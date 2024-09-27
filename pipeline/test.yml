@@ -2,17 +2,17 @@
 platform: linux
 
 image_resource:
-  type: docker-image
+  type: registry-image
   source:
     repository: node
-    tag: '16.16-slim'
+    tag: '20.17-slim'
 
 inputs:
-- name: source
+  - name: source
 
 run:
   path: source/pipeline/test.sh
 
 caches:
   - path: ../../../root/.cache
-  - path: ../../../root/.npm
+  - path: ../../../root/.pnpm-store

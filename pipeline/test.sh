@@ -4,9 +4,13 @@ set -x -e
 
 app=source
 (
+corepack enable
+corepack prepare pnpm@latest-9 --activate
+pnpm config set store-dir ../../../root/.pnpm-store
+
 cd ${app}
 
-npm ci
-npm run build
-npm run test
+pnpm install --frozen-lockfile
+pnpm run build
+pnpm run test
 )

@@ -2,22 +2,22 @@
 platform: linux
 
 image_resource:
-  type: docker-image
+  type: registry-image
   source:
     repository: node
-    tag: '16.16-slim'
+    tag: '20.17-slim'
 
 inputs:
-- name: source
-- name: version
+  - name: source
+  - name: version
 
 outputs:
-- name: dist
-- name: release
+  - name: dist
+  - name: release
 
 run:
   path: source/pipeline/release.sh
 
 caches:
-- path: ../../../root/.cache
-- path: ../../../root/.npm
+  - path: ../../../root/.cache
+  - path: ../../../root/.pnpm-store
