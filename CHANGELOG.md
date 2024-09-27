@@ -5,6 +5,50 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.15.0] - 2024-09-27
+
+- Update dependencies:
+  - Bump axios to 1.1.7
+  - Bump hls.js to 1.5.15
+  - Bump iso8601-duration to 2.1.2
+  - Bump sass to 1.79.3
+  - Bump sass-loader to 16.0.2
+  - Bump uuid to 8.3.2
+  - Bump webpack-bundle-analyzer to 4.10.2
+- Update dev dependencies:
+  - Bump webpack-cli/serve to 2.0.5
+  - Bump audit-ci to 7.1.0
+  - Bump axios-mock-adapter to 2.0.0
+  - Bump boclips-js-security to 13.0.1
+  - Bump copy-webpack-plugin to 12.0.2
+  - Bump css-loader to 7.1.2
+  - Bump html-webpack-plugin to 5.6.0
+  - Bump jest to 29.7.0
+  - Bump mini-css-extract-plugin to 2.9.1
+  - Bump prettier to 3.3.3
+  - Bump prettier-package-json to 2.8.0
+  - Bump source-map-loader to 5.0.0
+  - Bump ts-jest to 29.2.5
+  - Bump typescript to 5.6.2
+  - Bump typescript-tslint-plugin to 1.0.2
+  - Bump webpack to 5.95.0
+  - Bump webpack-cli to 5.1.4
+  - Bump webpack-dev-server to 5.1.0
+  - Bump webpack-merge to 6.0.1
+- Adding dependencies:
+  - Added jest-mock 29.7.0
+- Adding dev dependencies:
+  - Added jest/globals 29.7.0
+- Remove unused dependencies:
+  - Removed boclips-ui/styles
+  - Removed normalize.css
+- Remove unused dev dependencies:
+  - Removed chai
+  - Removed less
+  - Removed less-loader
+  - Removed @types/chai
+  - Removed @types/jest
+
 ## [7.14.1] - 2024-04-08
 
 - Update vulnerable dependencies:
@@ -92,7 +136,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.4.1] - 2022-07-22
 
 - Update axios package to use `>=0.21.1 < 1.0.0`
- 
+
 ## [7.4.0] - 2022-07-21
 
 - Update axios package to use `>=0.21.1`
@@ -132,21 +176,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [7.0.6] - 2022-03-10
 
 - Change spacing between progress bar and buttons
- 
+
 ## [7.0.5] - 2022-03-10
 
 - Bug fix for volume control
- 
+
 ## [7.0.4] - 2022-03-10
 
 - Move video progress slider above buttons
 - Change video and volume slider background
- 
+
 ## [7.0.3] - 2022-03-09
 
 - update styling of volume
 - update docs
- 
+
 ## [7.0.2] - 2022-03-09
 
 - Split css from js bundle
