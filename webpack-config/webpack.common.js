@@ -45,9 +45,6 @@ export default {
           'css-loader',
           {
             loader: 'sass-loader',
-            options: {
-              api: 'legacy',
-            },
           },
         ],
         sideEffects: true,
