@@ -70,8 +70,8 @@ importers:
         specifier: ^2.8.1
         version: 2.8.1
       axios-mock-adapter:
-        specifier: ^2.0.0
-        version: 2.0.0(axios@1.7.7)
+        specifier: ^2.1.0
+        version: 2.1.0(axios@1.7.7)
       boclips-js-security:
         specifier: ^13.0.1
         version: 13.0.1(axios@1.7.7)
@@ -801,8 +801,8 @@ packages:
   axios-logger@2.8.1:
     resolution: {integrity: sha512-Bbl7XRR/Rkxg2Owv/kRgAZ/0qf8kMPLc08LtiUcGCWV5RmoI7vHr+eee6SUc8jRi2nE5KWShziCVh35C1SBEaw==}
 
-  axios-mock-adapter@2.0.0:
-    resolution: {integrity: sha512-D/K0J5Zm6KvaMTnsWrBQZWLzKN9GxUFZEa0mx2qeEHXDeTugCoplWehy8y36dj5vuSjhe1u/Dol8cZ8lzzmDew==}
+  axios-mock-adapter@2.1.0:
+    resolution: {integrity: sha512-AZUe4OjECGCNNssH8SOdtneiQELsqTsat3SQQCWLPjN436/H+L9AjWfV7bF+Zg/YL9cgbhrz5671hoh+Tbn98w==}
     peerDependencies:
       axios: '>= 0.17.0'
 
@@ -4105,7 +4105,7 @@ snapshots:
       chalk: 4.1.2
       dateformat: 3.0.3
 
-  axios-mock-adapter@2.0.0(axios@1.7.7):
+  axios-mock-adapter@2.1.0(axios@1.7.7):
     dependencies:
       axios: 1.7.7
       fast-deep-equal: 3.1.3
