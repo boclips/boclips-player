@@ -26,6 +26,7 @@ export default class PlyrWrapper implements MediaPlayer {
   private onEndCallback?: (endOverlay: HTMLDivElement) => void = null;
   private onReadyCallback?: (result: OnReadyResult) => void = null;
   private segment: PlaybackSegment = null;
+  private hasPlaybackStarted: boolean = false;
 
   constructor(
     private readonly player: PrivatePlayer,
@@ -183,13 +184,11 @@ export default class PlyrWrapper implements MediaPlayer {
     });
 
     this.plyr.on('pause', (event) => {
-      this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
-    });
-
-    this.plyr.on('seeking', (event) => {
       this.player
         .getAnalytics()
-        .handleInteraction(event.detail.plyr.currentTime, 'seeking', {});
+        .handleInteraction(event.detail.plyr.currentTime, 'pause', {});
+
+      this.player.getAnalytics().handlePause(event.detail.plyr.currentTime);
     });
 
     this.plyr.on('seeked', (event) => {
@@ -198,19 +197,62 @@ export default class PlyrWrapper implements MediaPlayer {
         .handleInteraction(event.detail.plyr.currentTime, 'seeked', {});
     });
 
-    this.plyr.on('progress', (event) => {
-      this.player
-        .getAnalytics()
-        .handleInteraction(event.detail.plyr.buffered, 'progress', {});
-    });
-
     this.plyr.on('timeupdate', (event) => {
       this.player
         .getAnalytics()
         .handleTimeUpdate(event.detail.plyr.currentTime);
     });
 
-    this.plyr.on('play', () => {
+    this.plyr.on('captionsenabled', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(event.detail.plyr.currentTime, 'captionsEnabled', {
+          kind: this.plyr.captions.currentTrackNode.kind,
+          label: this.plyr.captions.currentTrackNode.label,
+          language: this.plyr.captions.currentTrackNode.language,
+        });
+    });
+
+    this.plyr.on('captionsdisabled', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'captionsDisabled',
+          {},
+        );
+    });
+
+    this.plyr.on('languagechange', (event) => {
+      this.player
+        .getAnalytics()
+        .handleInteraction(
+          event.detail.plyr.currentTime,
+          'captionsLanguageChanged',
+          {
+            kind: this.plyr.captions.currentTrackNode.kind,
+            label: this.plyr.captions.currentTrackNode.label,
+            language: this.plyr.captions.currentTrackNode.language,
+          },
+        );
+    });
+
+    this.plyr.on('play', (event) => {
+      if (!this.hasPlaybackStarted) {
+        this.hasPlaybackStarted = true;
+        this.player
+          .getAnalytics()
+          .handleInteraction(
+            event.detail.plyr.currentTime,
+            'playbackStarted',
+            {},
+          );
+      } else {
+        this.player
+          .getAnalytics()
+          .handleInteraction(event.detail.plyr.currentTime, 'play', {});
+      }
+
       EndOverlay.destroyIfExists(this.getPlyrDivContainer());
     });
 

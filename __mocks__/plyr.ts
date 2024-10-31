@@ -50,6 +50,7 @@ Plyr.prototype.elements = {
     clientWidth: 700,
   },
 };
+Plyr.prototype.captions = { currentTrackNode: jest.fn() };
 
 export interface MockedPlyr extends EnrichedPlyr {
   __callEventCallback: (event: string) => void;

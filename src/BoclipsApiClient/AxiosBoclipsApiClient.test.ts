@@ -195,7 +195,6 @@ describe('Creating a player interaction event ', () => {
       currentTime: 30,
       subtype: 'captionsEnabled',
       payload: {
-        id: 'caption-id',
         kind: 'caption-kind',
         label: 'caption-label',
         language: 'caption-language',
@@ -204,7 +203,6 @@ describe('Creating a player interaction event ', () => {
 
     return boclipsClient
       .emitPlayerInteractionEvent(30, 'captionsEnabled', {
-        id: 'caption-id',
         kind: 'caption-kind',
         label: 'caption-label',
         language: 'caption-language',
