@@ -30,6 +30,7 @@ let plyrContainer: HTMLElement & HasClientDimensions;
 let mockPlayer: MockedShallow<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer;
 let mockPlyr;
+let handleInteractionMock;
 
 const mockedPlyr = mocked(Plyr);
 
@@ -63,6 +64,11 @@ beforeEach(() => {
   mockPlyr = getLatestMockPlyrInstance() as MockedPlyr;
   mockPlyr.elements.container = plyrContainer;
   mockPlyr.elements.progress = progress;
+  mockPlyr.captions.currentTrackNode = {
+    kind: 'subtitles',
+    label: 'test_label',
+    language: 'test_language',
+  };
 
   const analytics = new Analytics(mockPlayer);
   jest.spyOn(mockPlayer, 'getAnalytics').mockReturnValue(analytics);
@@ -70,7 +76,7 @@ beforeEach(() => {
   jest.spyOn(analytics, 'handlePause');
   jest.spyOn(analytics, 'handlePlay');
   jest.spyOn(analytics, 'handleTimeUpdate');
-  jest.spyOn(analytics, 'handleInteraction');
+  handleInteractionMock = jest.spyOn(analytics, 'handleInteraction');
 
   const errorHandler = mockPlayer.getErrorHandler();
   jest.spyOn(errorHandler, 'handleError');
@@ -701,6 +707,26 @@ describe('Playback restriction', () => {
       );
     });
 
+    it('sends a playbackStarted interaction event only once', () => {
+      mockPlyr.currentTime = 50;
+
+      mockPlyr.__callEventCallback('play');
+      mockPlyr.__callEventCallback('pause');
+      mockPlyr.currentTime = 60;
+
+      mockPlyr.__callEventCallback('play');
+      mockPlyr.__callEventCallback('pause');
+      mockPlyr.currentTime = 70;
+
+      mockPlyr.__callEventCallback('play');
+
+      const callsWithPlaybackStarted = handleInteractionMock.mock.calls.filter(
+        (call) => call[1] === 'playbackStarted',
+      );
+
+      expect(callsWithPlaybackStarted).toHaveLength(1);
+    });
+
     it('sends a play interaction event from second play', () => {
       mockPlyr.currentTime = 50;
 
@@ -737,7 +763,7 @@ describe('Playback restriction', () => {
       expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         80,
         'captionsEnabled',
-        {},
+        { kind: 'subtitles', label: 'test_label', language: 'test_language' },
       );
     });
 
@@ -750,6 +776,22 @@ describe('Playback restriction', () => {
         80,
         'captionsDisabled',
         {},
+      );
+    });
+
+    it('sends a captionsLanguageChanged interaction event', () => {
+      mockPlyr.currentTime = 80;
+
+      mockPlyr.__callEventCallback('languagechange');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        80,
+        'captionsLanguageChanged',
+        {
+          kind: 'subtitles',
+          label: 'test_label',
+          language: 'test_language',
+        },
       );
     });
 
