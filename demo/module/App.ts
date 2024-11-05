@@ -55,7 +55,7 @@ function renderPlayer() {
 
   player
     .loadVideo(
-      'https://api.staging-boclips.com/v1/videos/5ebedd6878711254e234d81e',
+      'https://api.staging-boclips.com/v1/videos/636248fbcb42106895ebf78f',
       {
         start: 30,
         end: 120,

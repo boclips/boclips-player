@@ -19,13 +19,11 @@ export interface PlayerInteractedWithEvent<
 
 export interface InteractionEventPayload {
   captionsEnabled: {
-    id: string;
     kind: string;
     language: string;
     label: string;
   };
-  captionsChanged: {
-    id: string;
+  captionsLanguageChanged: {
     kind: string;
     language: string;
     label: string;
@@ -43,6 +41,9 @@ export interface InteractionEventPayload {
   jumpedBackward: EmptyObject;
   muted: EmptyObject;
   unmuted: EmptyObject;
+  play: EmptyObject;
+  pause: EmptyObject;
+  playbackStarted: EmptyObject;
 }
 
 interface EmptyObject {

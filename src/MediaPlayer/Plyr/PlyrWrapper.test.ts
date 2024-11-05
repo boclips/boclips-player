@@ -30,6 +30,7 @@ let plyrContainer: HTMLElement & HasClientDimensions;
 let mockPlayer: MockedShallow<PrivatePlayer> | PrivatePlayer;
 let mediaPlayer: MediaPlayer;
 let mockPlyr;
+let handleInteractionMock;
 
 const mockedPlyr = mocked(Plyr);
 
@@ -63,6 +64,11 @@ beforeEach(() => {
   mockPlyr = getLatestMockPlyrInstance() as MockedPlyr;
   mockPlyr.elements.container = plyrContainer;
   mockPlyr.elements.progress = progress;
+  mockPlyr.captions.currentTrackNode = {
+    kind: 'subtitles',
+    label: 'test_label',
+    language: 'test_language',
+  };
 
   const analytics = new Analytics(mockPlayer);
   jest.spyOn(mockPlayer, 'getAnalytics').mockReturnValue(analytics);
@@ -70,7 +76,7 @@ beforeEach(() => {
   jest.spyOn(analytics, 'handlePause');
   jest.spyOn(analytics, 'handlePlay');
   jest.spyOn(analytics, 'handleTimeUpdate');
-  jest.spyOn(analytics, 'handleInteraction');
+  handleInteractionMock = jest.spyOn(analytics, 'handleInteraction');
 
   const errorHandler = mockPlayer.getErrorHandler();
   jest.spyOn(errorHandler, 'handleError');
@@ -568,19 +574,6 @@ describe('Playback restriction', () => {
       expect(mockStreamingTechnique.changeCaptions).toHaveBeenCalledWith(0);
     });
 
-    it('sends interaction event for seeking', () => {
-      setupMockPlayer();
-      mockPlyr.currentTime = 125;
-      mediaPlayer.configureWithVideo(video);
-
-      mockPlyr.__callEventCallback('seeking');
-      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        125,
-        'seeking',
-        {},
-      );
-    });
-
     it('sends interaction event for seeked', () => {
       setupMockPlayer();
       mockPlyr.currentTime = 125;
@@ -590,20 +583,6 @@ describe('Playback restriction', () => {
       expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
         125,
         'seeked',
-        {},
-      );
-    });
-
-    it('sends interaction event for progress', () => {
-      setupMockPlayer();
-      // TODO: Assigning to a read-only property?
-      mockPlyr.buffered = 0.5;
-      mediaPlayer.configureWithVideo(video);
-
-      mockPlyr.__callEventCallback('progress');
-      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
-        0.5,
-        'progress',
         {},
       );
     });
@@ -714,6 +693,106 @@ describe('Playback restriction', () => {
       mediaPlayer.destroy();
 
       expect(mockPlayer.getAnalytics().handlePause).toHaveBeenCalledWith(50);
+    });
+
+    it('sends a playbackStarted interaction event on first play', () => {
+      mockPlyr.currentTime = 50;
+
+      mockPlyr.__callEventCallback('play');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        50,
+        'playbackStarted',
+        {},
+      );
+    });
+
+    it('sends a playbackStarted interaction event only once', () => {
+      mockPlyr.currentTime = 50;
+
+      mockPlyr.__callEventCallback('play');
+      mockPlyr.__callEventCallback('pause');
+      mockPlyr.currentTime = 60;
+
+      mockPlyr.__callEventCallback('play');
+      mockPlyr.__callEventCallback('pause');
+      mockPlyr.currentTime = 70;
+
+      mockPlyr.__callEventCallback('play');
+
+      const callsWithPlaybackStarted = handleInteractionMock.mock.calls.filter(
+        (call) => call[1] === 'playbackStarted',
+      );
+
+      expect(callsWithPlaybackStarted).toHaveLength(1);
+    });
+
+    it('sends a play interaction event from second play', () => {
+      mockPlyr.currentTime = 50;
+
+      mockPlyr.__callEventCallback('play');
+
+      mockPlyr.currentTime = 70;
+
+      mockPlyr.__callEventCallback('play');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        70,
+        'play',
+        {},
+      );
+    });
+
+    it('sends a pause interaction event', () => {
+      mockPlyr.currentTime = 80;
+
+      mockPlyr.__callEventCallback('pause');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        80,
+        'pause',
+        {},
+      );
+    });
+
+    it('sends a captionsEnabled interaction event', () => {
+      mockPlyr.currentTime = 80;
+
+      mockPlyr.__callEventCallback('captionsenabled');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        80,
+        'captionsEnabled',
+        { kind: 'subtitles', label: 'test_label', language: 'test_language' },
+      );
+    });
+
+    it('sends a captionsDisbled interaction event', () => {
+      mockPlyr.currentTime = 80;
+
+      mockPlyr.__callEventCallback('captionsdisabled');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        80,
+        'captionsDisabled',
+        {},
+      );
+    });
+
+    it('sends a captionsLanguageChanged interaction event', () => {
+      mockPlyr.currentTime = 80;
+
+      mockPlyr.__callEventCallback('languagechange');
+
+      expect(mockPlayer.getAnalytics().handleInteraction).toHaveBeenCalledWith(
+        80,
+        'captionsLanguageChanged',
+        {
+          kind: 'subtitles',
+          label: 'test_label',
+          language: 'test_language',
+        },
+      );
     });
 
     it('does not configure video once the Plyr has been destroyed', () => {
