@@ -28,13 +28,12 @@ $embed-padding: (math.div(100, 16) * 9);
 
 .plyr__video-embed,
 .plyr__video-wrapper--fixed-ratio {
+  aspect-ratio: 16 / 9;
   @supports not (aspect-ratio: 16 / 9) {
     height: 0;
     padding-bottom: to-percentage($embed-padding);
     position: relative;
   }
-
-  aspect-ratio: 16 / 9;
 }
 
 .plyr__video-embed iframe,
@@ -50,7 +49,9 @@ $embed-padding: (math.div(100, 16) * 9);
 // For Vimeo, if the full custom UI is supported
 .plyr--full-ui .plyr__video-embed > .plyr__video-embed__container {
   $height: 240;
-  $offset: to-percentage(math.div($height - $embed-padding, math.div($height, 50)));
+  $offset: to-percentage(
+    math.div($height - $embed-padding, math.div($height, 50))
+  );
 
   padding-bottom: to-percentage($height);
   position: relative;
@@ -68,9 +69,10 @@ $embed-padding: (math.div(100, 16) * 9);
   padding: calc(#{$plyr-control-spacing} / 2);
   position: absolute;
   right: 0;
-  transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
+  transition:
+    opacity 0.4s ease-in-out,
+    transform 0.4s ease-in-out;
   z-index: 3;
-
 
   @media (min-width: $plyr-bp-sm) {
     padding: $plyr-control-spacing;
@@ -109,7 +111,7 @@ $embed-padding: (math.div(100, 16) * 9);
   transform: translate(-50%, -50%);
   transition: 0.3s;
   z-index: 2;
-  width: 60px!important;
+  width: 60px !important;
   height: 60px;
 
   // Offset icon to make the play button look right
@@ -117,17 +119,17 @@ $embed-padding: (math.div(100, 16) * 9);
     left: 2px;
     position: relative;
     filter: drop-shadow(3px 2px 3px rgb(0 0 0 / 0.4));
-    color: #0E69FF;
+    color: #0e69ff;
   }
 
   &:hover,
   &:focus {
     opacity: 1;
-    background: white!important;
+    background: white !important;
     border-radius: 100%;
-    outline-color: #193DA1!important;
-    svg{
-      color: #193DA1;
+    outline-color: #193da1 !important;
+    svg {
+      color: #193da1;
     }
   }
 }
@@ -161,15 +163,21 @@ $embed-padding: (math.div(100, 16) * 9);
   // Pressed styles
   &:active {
     &::-webkit-slider-thumb {
-      @include plyr-range-thumb-active($plyr-video-range-thumb-active-shadow-color);
+      @include plyr-range-thumb-active(
+        $plyr-video-range-thumb-active-shadow-color
+      );
     }
 
     &::-moz-range-thumb {
-      @include plyr-range-thumb-active($plyr-video-range-thumb-active-shadow-color);
+      @include plyr-range-thumb-active(
+        $plyr-video-range-thumb-active-shadow-color
+      );
     }
 
     &::-ms-thumb {
-      @include plyr-range-thumb-active($plyr-video-range-thumb-active-shadow-color);
+      @include plyr-range-thumb-active(
+        $plyr-video-range-thumb-active-shadow-color
+      );
     }
   }
 }

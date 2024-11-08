@@ -8,8 +8,6 @@
 
 // Fallback for unsupported browsers
 .plyr--fullscreen-fallback {
-  @include plyr-fullscreen-active;
-
   bottom: 0;
   display: block;
   left: 0;
@@ -17,4 +15,5 @@
   right: 0;
   top: 0;
   z-index: 10000000;
+  @include plyr-fullscreen-active;
 }
