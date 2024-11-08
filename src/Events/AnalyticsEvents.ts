@@ -7,6 +7,7 @@ export interface PlaybackEvent extends PlayerEvent {
   segmentStartSeconds: number;
   segmentEndSeconds: number;
   videoIndex?: number;
+  playerId: string;
 }
 
 export interface PlayerInteractedWithEvent<
@@ -14,6 +15,7 @@ export interface PlayerInteractedWithEvent<
 > extends PlayerEvent {
   currentTime: number;
   subtype: T;
+  playerId: string;
   payload: InteractionEventPayload[T];
 }
 

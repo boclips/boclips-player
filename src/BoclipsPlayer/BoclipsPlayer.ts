@@ -136,6 +136,7 @@ export class BoclipsPlayer implements PrivatePlayer {
           if (error.response.status === 404) {
             this.errorHandler.handleError({
               fatal: true,
+              playerId: this.playerId,
               type: 'API_ERROR',
               payload: {
                 statusCode: 404,
@@ -144,6 +145,7 @@ export class BoclipsPlayer implements PrivatePlayer {
           } else {
             this.errorHandler.handleError({
               fatal: true,
+              playerId: this.playerId,
               type: 'API_ERROR',
               payload: {
                 statusCode: error.response.status,
@@ -153,6 +155,7 @@ export class BoclipsPlayer implements PrivatePlayer {
         } else {
           this.errorHandler.handleError({
             fatal: true,
+            playerId: this.playerId,
             type: 'UNKNOWN_ERROR',
             payload: error,
           });

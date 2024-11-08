@@ -626,6 +626,7 @@ describe('Playback restriction', () => {
 
       expect(mockPlayer.getErrorHandler().handleError).toHaveBeenCalledWith({
         fatal: true,
+        playerId: mockPlayer.getPlayerId(),
         type: 'PLAYBACK_ERROR',
         payload: {
           code: 44444,

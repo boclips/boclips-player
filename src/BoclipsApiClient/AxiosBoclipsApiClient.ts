@@ -50,6 +50,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
       videoDurationSeconds: video.playback.duration,
       segmentStartSeconds,
       segmentEndSeconds,
+      playerId: this.player.getPlayerId(),
     };
 
     return this.axios
@@ -82,6 +83,7 @@ export class AxiosBoclipsApiClient implements BoclipsApiClient {
       videoDurationSeconds: video.playback.duration,
       currentTime,
       subtype: type,
+      playerId: this.player.getPlayerId(),
       payload,
     };
 

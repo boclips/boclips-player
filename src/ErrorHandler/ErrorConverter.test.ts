@@ -3,12 +3,12 @@ import { APIError, HLSError, PlaybackError } from './InternalError';
 import { ErrorConverter } from './ErrorConverter';
 import { describe, expect, it } from '@jest/globals';
 
-
 describe('ErrorConverter', () => {
   it('converts api errors to something more meaningful', () => {
     const apiError: APIError = {
       type: 'API_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: {
         statusCode: 403,
       },
@@ -24,6 +24,7 @@ describe('ErrorConverter', () => {
     const originalError: HLSError = {
       type: 'MEDIA_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: 'the player had a mux error',
     };
 
@@ -38,6 +39,7 @@ describe('ErrorConverter', () => {
     const originalError: HLSError = {
       type: 'NETWORK_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: 'the player had a mux error',
     };
 
@@ -52,6 +54,7 @@ describe('ErrorConverter', () => {
     const originalError: HLSError = {
       type: 'MUX_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: 'the player had a mux error',
     };
 
@@ -64,6 +67,7 @@ describe('ErrorConverter', () => {
     const otherHLSError: HLSError = {
       type: 'OTHER_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: 'the player had an other hls error',
     };
 
@@ -76,6 +80,7 @@ describe('ErrorConverter', () => {
     const otherHLSError: PlaybackError = {
       type: 'PLAYBACK_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: {
         message: 'bad playback error',
         code: 789015,

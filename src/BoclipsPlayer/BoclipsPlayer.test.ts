@@ -221,6 +221,7 @@ describe('BoclipsPlayer', () => {
 
     expect(player.getErrorHandler().handleError).toHaveBeenCalledWith({
       fatal: true,
+      playerId: player.getPlayerId(),
       payload: { statusCode: 404 },
       type: 'API_ERROR',
     });
@@ -233,6 +234,7 @@ describe('BoclipsPlayer', () => {
 
     expect(player.getErrorHandler().handleError).toHaveBeenCalledWith({
       fatal: true,
+      playerId: player.getPlayerId(),
       payload: { statusCode: 404 },
       type: 'API_ERROR',
     });

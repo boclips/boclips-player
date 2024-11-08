@@ -273,6 +273,7 @@ export default class PlyrWrapper implements MediaPlayer {
       if (mediaError && mediaError.code && mediaError.message) {
         this.player.getErrorHandler().handleError({
           fatal: true,
+          playerId: this.player.getPlayerId(),
           type: 'PLAYBACK_ERROR',
           payload: {
             code: mediaError.code,

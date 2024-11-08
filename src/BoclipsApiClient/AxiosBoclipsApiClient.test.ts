@@ -102,6 +102,7 @@ describe('Creating a playback event', () => {
       segmentStartSeconds: 15,
       segmentEndSeconds: 30,
       videoDurationSeconds: 60,
+      playerId: player.getPlayerId(),
     };
 
     return boclipsClient.emitPlaybackEvent(15, 30).then(() => {
@@ -194,6 +195,7 @@ describe('Creating a player interaction event ', () => {
       videoDurationSeconds: 60,
       currentTime: 30,
       subtype: 'captionsEnabled',
+      playerId: player.getPlayerId(),
       payload: {
         kind: 'caption-kind',
         label: 'caption-label',
@@ -222,6 +224,7 @@ describe('Creating a player interaction event ', () => {
       videoDurationSeconds: 60,
       currentTime: 30,
       subtype: 'fullscreenEnabled',
+      playerId: player.getPlayerId(),
       payload: {},
     };
 

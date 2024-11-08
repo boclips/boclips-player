@@ -27,6 +27,7 @@ describe('error message handling', () => {
       error: {
         type: 'API_ERROR',
         fatal: true,
+        playerId: 'player-id',
         payload: {
           statusCode: 404,
         },
@@ -39,6 +40,7 @@ describe('error message handling', () => {
       error: {
         type: 'API_ERROR',
         fatal: true,
+        playerId: 'player-id',
         payload: {
           statusCode: 500,
         },
@@ -51,6 +53,7 @@ describe('error message handling', () => {
       error: {
         type: 'NETWORK_ERROR',
         fatal: true,
+        playerId: 'player-id',
         payload: {},
       },
     },
@@ -61,6 +64,7 @@ describe('error message handling', () => {
       error: {
         type: 'PLAYBACK_ERROR',
         fatal: true,
+        playerId: 'player-id',
         payload: {
           code: 150,
           message: 'blah',
@@ -81,6 +85,7 @@ describe('error message handling', () => {
     errorHandler.handleError({
       type: 'API_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: {
         statusCode: 404,
       },
@@ -96,6 +101,7 @@ describe('error message handling', () => {
     const error: APIError = {
       type: 'API_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: {
         statusCode: 404,
       },
@@ -116,6 +122,7 @@ describe('error message handling', () => {
     const error: APIError = {
       type: 'API_ERROR',
       fatal: true,
+      playerId: 'player-id',
       payload: {
         statusCode: 404,
       },

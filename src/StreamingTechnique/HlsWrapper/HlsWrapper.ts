@@ -159,6 +159,7 @@ export class HlsWrapper implements StreamingTechnique {
 
     this.player.getErrorHandler().handleError({
       fatal: error.fatal,
+      playerId: this.player.getPlayerId(),
       type: error.type,
       payload: error,
     });
