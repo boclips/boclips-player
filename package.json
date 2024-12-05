@@ -55,7 +55,7 @@
     "audit-ci": "^7.1.0",
     "axios-logger": "^2.8.1",
     "axios-mock-adapter": "^2.0.0",
-    "boclips-js-security": "^13.0.1",
+    "boclips-js-security": "^14.0.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^12.0.2",
     "css-loader": "^7.1.2",
