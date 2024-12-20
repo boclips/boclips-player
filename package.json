@@ -51,7 +51,7 @@
   },
   "devDependencies": {
     "@jest/globals": "^29.7.0",
-    "@webpack-cli/serve": "^2.0.5",
+    "@webpack-cli/serve": "^3.0.0",
     "audit-ci": "^7.1.0",
     "axios-logger": "^2.8.1",
     "axios-mock-adapter": "^2.0.0",
