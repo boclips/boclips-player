@@ -1,33 +1,22 @@
 import Hls from 'hls.js';
-import {
-  BoclipsPlayer,
-  PrivatePlayer,
-} from '../../BoclipsPlayer/BoclipsPlayer';
-import {
-  PlaybackFactory,
-  VideoFactory,
-} from '../../test-support/TestFactories';
+import { BoclipsPlayer } from '../../BoclipsPlayer/BoclipsPlayer';
+import { PlaybackFactory } from '../../test-support/TestFactories';
 import { StreamingTechnique } from '../StreamingTechnique';
 import { HlsWrapper } from './HlsWrapper';
-import { describe, expect, beforeEach, it, jest } from '@jest/globals';
-import { ErrorHandlerProps } from '../../ErrorHandler/__mocks__/ErrorHandler';
 
-jest.mock('../../ErrorHandler/ErrorHandler', () => ({
-  ErrorHandler: jest.fn().mockImplementation(() => ErrorHandlerProps),
-}));
+jest.mock('../../BoclipsPlayer/BoclipsPlayer');
+jest.mock('../../ErrorHandler/ErrorHandler');
+jest.mock('hls.js');
 
 const streamPlayback = PlaybackFactory.streamSample();
 
-let player: PrivatePlayer;
-let hlsTechnique: StreamingTechnique;
+let player = null;
+let hlsTechnique: StreamingTechnique = null;
 
 beforeEach(() => {
   const container = document.createElement('div');
   player = new BoclipsPlayer(container);
   hlsTechnique = new HlsWrapper(player);
-
-  const video = VideoFactory.sample();
-  jest.spyOn(player, 'getVideo').mockReturnValue(video);
 });
 
 describe('initialisation', () => {
@@ -85,7 +74,7 @@ describe('initialisation', () => {
     hlsMockInstance.__callEventCallback(Hls.Events.MEDIA_ATTACHED);
 
     expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
-      streamPlayback.links.hlsStream?.getOriginalLink(),
+      streamPlayback.links.hlsStream.getOriginalLink(),
     );
   });
 
@@ -202,7 +191,7 @@ describe('initialisation', () => {
 
           expect(hlsMockInstance.loadSource).toHaveBeenCalledTimes(1);
           expect(hlsMockInstance.loadSource).toHaveBeenCalledWith(
-            streamPlayback.links.hlsStream?.getOriginalLink(),
+            streamPlayback.links.hlsStream.getOriginalLink(),
           );
         });
 

@@ -2,8 +2,6 @@ import axios from 'axios';
 import * as AxiosLogger from 'axios-logger';
 import MockFetchVerify from './MockFetchVerify';
 import { HasEventListeners } from './types';
-import { beforeEach } from '@jest/globals';
-
 
 beforeEach(() => {
   (axios.interceptors.request as any).handlers = [];

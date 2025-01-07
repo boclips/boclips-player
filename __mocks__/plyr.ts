@@ -1,8 +1,7 @@
 import { EnrichedPlyr } from '../src/types/plyr';
 import { noop } from '../src/utils';
-import { jest } from '@jest/globals';
 
-const Plyr: any = jest.createMockFromModule('plyr');
+const Plyr: any = jest.genMockFromModule('plyr');
 
 function __callEventCallback(event) {
   if (!this.callbacksMap) {
@@ -10,7 +9,7 @@ function __callEventCallback(event) {
   }
 
   const callbacks = this.callbacksMap[event] || [];
-  callbacks.forEach((callback) =>
+  callbacks.forEach(callback =>
     callback({
       detail: { plyr: this },
     }),
@@ -30,7 +29,7 @@ function on(event, callback) {
 
 function off(event, callback) {
   this.callbacksMap[event] = this.callbacksMap[event].filter(
-    (item) => item !== callback,
+    item => item !== callback,
   );
 }
 
@@ -42,9 +41,9 @@ Plyr.prototype.on = jest.fn(on);
 Plyr.prototype.off = jest.fn(off);
 Plyr.prototype.__callEventCallback = __callEventCallback;
 Plyr.prototype.media = media;
-Plyr.prototype.pause = jest.fn();
+Plyr.prototype.pause = jest.fn()
 Plyr.prototype.play = jest.fn().mockReturnValue(new Promise(noop));
-Plyr.prototype.destroy = jest.fn();
+Plyr.prototype.destroy = jest.fn()
 Plyr.prototype.elements = {
   container: {
     clientWidth: 700,
@@ -57,4 +56,4 @@ export interface MockedPlyr extends EnrichedPlyr {
   elements: any;
 }
 
-export default Plyr;
+module.exports = Plyr;

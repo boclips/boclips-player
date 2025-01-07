@@ -1,5 +1,4 @@
-import { jest } from '@jest/globals';
-import { AddonInterface } from '../Addons';
+import { Addon, AddonInterface } from '../Addons';
 
 const mockAddon = jest.fn(
   () =>
@@ -8,7 +7,7 @@ const mockAddon = jest.fn(
       destroy: jest.fn(),
       updateSegment: jest.fn(),
     } as AddonInterface),
-) as any;
+) as any as Addon;
 
 mockAddon.isEnabled = jest.fn().mockReturnValue(true);
 

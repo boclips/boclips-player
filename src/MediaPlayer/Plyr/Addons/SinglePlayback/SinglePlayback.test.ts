@@ -1,11 +1,9 @@
 import Plyr from 'plyr';
-import { mocked, MockedShallow } from 'jest-mock';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
+import { mocked } from 'ts-jest/utils';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { EventBus } from '../../../../Events/EventBus';
 import { SinglePlayback } from './SinglePlayback';
-
-import { describe, expect, beforeEach, it, jest } from '@jest/globals';
-
 
 jest.mock('eventemitter3');
 
@@ -87,11 +85,11 @@ describe('Functionality', () => {
 });
 
 describe('Destruction', () => {
-  let plyr: MockedShallow<MockedPlyr>;
+  let plyr: MaybeMocked<MockedPlyr>;
   let addon: SinglePlayback;
 
   beforeEach(() => {
-    plyr = new Plyr(document.createElement('div')) as MockedShallow<MockedPlyr>;
+    plyr = new Plyr(document.createElement('div')) as MaybeMocked<MockedPlyr>;
 
     addon = new SinglePlayback(plyr, null, null);
   });

@@ -1,137 +1,137 @@
 ---
 groups:
-  - name: all
-    jobs:
-      - test
-      - pre-release
-      - major
-      - minor
-      - release
-  - name: develop
-    jobs:
-      - test
-      - pre-release
-  - name: release
-    jobs:
-      - major
-      - minor
-      - release
+- name: all
+  jobs:
+  - test
+  - pre-release
+  - major
+  - minor
+  - release
+- name: develop
+  jobs:
+  - test
+  - pre-release
+- name: release
+  jobs:
+  - major
+  - minor
+  - release
 
 jobs:
-  - name: test
-    plan:
-      - get: once-per-weekday
-        trigger: true
-      - get: source
-        trigger: true
-      - task: test
-        file: source/pipeline/test.yml
+- name: test
+  plan:
+  - get: once-per-weekday
+    trigger: true
+  - get: source
+    trigger: true
+  - task: test
+    file: source/pipeline/test.yml
 
-  - name: pre-release
-    plan:
-      - get: source
-        passed: [test]
-        trigger: true
-      - put: version
-        params:
-          pre: dev
-      - task: release
-        file: source/pipeline/release.yml
-      - put: npm-registry
-        params:
-          version: version/version
-          path: dist
-          tag: dev
-      - put: version
-        params:
-          file: version/version
+- name: pre-release
+  plan:
+  - get: source
+    passed: [test]
+    trigger: true
+  - put: version
+    params:
+      pre: dev
+  - task: release
+    file: source/pipeline/release.yml
+  - put: npm-registry
+    params:
+      version: version/version
+      path: dist
+      tag: dev
+  - put: version
+    params:
+      file: version/version
 
-  - name: major
-    plan:
-      - put: version
-        params:
-          bump: major
+- name: major
+  plan:
+  - put: version
+    params:
+      bump: major
 
-  - name: minor
-    plan:
-      - put: version
-        params:
-          bump: minor
+- name: minor
+  plan:
+  - put: version
+    params:
+      bump: minor
 
-  - name: release
-    plan:
-      - get: source
-        passed: [pre-release]
-      - get: version
-        params:
-          bump: final
-      - task: release
-        file: source/pipeline/release.yml
-      - put: npm-registry
-        params:
-          version: version/version
-          path: dist
-      - in_parallel:
-          - put: github-release
-            params:
-              name: release/name
-              tag: release/name
-              body: release/notes
-              commitish: source/.git/ref
-          - put: version
-            params:
-              bump: patch
+- name: release
+  plan:
+  - get: source
+    passed: [pre-release]
+  - get: version
+    params:
+      bump: final
+  - task: release
+    file: source/pipeline/release.yml
+  - put: npm-registry
+    params:
+      version: version/version
+      path: dist
+  - in_parallel:
+    - put: github-release
+      params:
+        name: release/name
+        tag: release/name
+        body: release/notes
+        commitish: source/.git/ref
+    - put: version
+      params:
+        bump: patch
 
 resources:
-  - name: source
-    type: git
-    source:
-      branch: main
-      private_key: ((boclips-player.repo-key))
-      uri: git@github.com:boclips/boclips-player.git
+- name: source
+  type: git
+  source:
+    branch: main
+    private_key: ((boclips-player.repo-key))
+    uri: git@github.com:boclips/boclips-player.git
 
-  - name: version
-    type: semver
-    source:
-      initial_version: '0.1.0'
-      driver: git
-      uri: git@github.com:boclips/versions.git
-      branch: main
-      file: boclips-player
-      private_key: |
-        ((versions.repo-key))
+- name: version
+  type: semver
+  source:
+    initial_version: "0.1.0"
+    driver: git
+    uri: git@github.com:boclips/versions.git
+    branch: main
+    file: boclips-player
+    private_key: |
+      ((versions.repo-key))
 
-  - name: npm-registry
-    type: npm-resource
-    source:
-      package: boclips-player
-      registry:
-        token: ((npm.automation-token))
+- name: npm-registry
+  type: npm-resource
+  source:
+    package: boclips-player
+    registry:
+      token: ((npm.automation-token))
 
-  - name: once-per-weekday
-    type: time
-    source:
-      start: 09:30 AM
-      stop: 06:30 PM
-      days: [Monday, Tuesday, Wednesday, Thursday, Friday]
-      location: Europe/London
+- name: once-per-weekday
+  type: time
+  source:
+    start: 09:30 AM
+    stop: 06:30 PM
+    days: [Monday, Tuesday, Wednesday, Thursday, Friday]
+    location: Europe/London
 
-  - name: github-release
-    type: github-release
-    source:
-      owner: boclips
-      repository: boclips-player
-      access_token: ((boclips-player.github-access-token))
+- name: github-release
+  type: github-release
+  source:
+    owner: boclips
+    repository: boclips-player
+    access_token: ((boclips-player.github-access-token))
 
 resource_types:
-  - name: npm-resource
-    type: registry-image
-    source:
-      repository: boclipsconcourse/npm-resource
-      tag: 0.7.0
+- name: npm-resource
+  type: docker-image
+  source:
+    repository: boclipsconcourse/npm-resource
+    tag: 0.6.0
 
-  - name: github-release
-    type: registry-image
-    source:
-      repository: concourse/github-release-resource
-      tag: '1.6.4-ubuntu-20210922'
+- name: github-release
+  type: registry-image
+  source:
+    repository: concourse/github-release-resource
+    tag: "1.6.4-ubuntu-20210922"

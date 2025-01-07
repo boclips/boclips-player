@@ -1,4 +1,9 @@
 .hover-preview {
+  .plyr--fullscreen &,
+  &--hidden,
+  &--loading {
+    display: none;
+  }
   position: absolute;
   top: 0;
   left: 0;
@@ -8,12 +13,6 @@
   height: 100%;
 
   background-color: #000000;
-
-  .plyr--fullscreen &,
-  &--hidden,
-  &--loading {
-    display: none;
-  }
 
   .hover-preview__window {
     position: absolute;

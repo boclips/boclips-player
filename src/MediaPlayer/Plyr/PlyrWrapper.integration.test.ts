@@ -3,9 +3,6 @@ import {
   PrivatePlayer,
 } from '../../BoclipsPlayer/BoclipsPlayer';
 
-import { describe, expect, it, jest } from '@jest/globals';
-
-
 jest.mock('../../Events/Analytics');
 jest.unmock('plyr');
 

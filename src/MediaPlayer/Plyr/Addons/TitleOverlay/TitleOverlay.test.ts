@@ -2,8 +2,6 @@ import { TitleOverlay } from './TitleOverlay';
 import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import Plyr from 'plyr';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
-import { describe, expect, it, jest } from '@jest/globals';
-
 
 describe('Feature Enabling', () => {
   it('can be enabled when the option is true and title is set', () => {

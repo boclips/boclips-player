@@ -4,8 +4,6 @@ import { PlaybackFactory } from '../../../../test-support/TestFactories';
 import { HasClientDimensions } from '../../../../test-support/types';
 import { InterfaceOptions } from '../../../InterfaceOptions';
 import { defaultHoverPreviewOptions, HoverPreview } from './HoverPreview';
-import { describe, expect, beforeEach, it } from '@jest/globals';
-
 
 let plyr: MockedPlyr;
 

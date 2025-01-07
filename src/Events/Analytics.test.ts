@@ -1,27 +1,22 @@
-import { mocked } from 'jest-mock';
+import { MaybeMocked } from 'ts-jest/dist/utils/testing';
+import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { VideoFactory } from '../test-support/TestFactories';
 import { noop } from '../utils';
 import { Analytics } from './Analytics';
-import { describe, expect, beforeEach, it, jest } from '@jest/globals';
-import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
+
+jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient');
+jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
 let analytics: Analytics;
 const video = VideoFactory.sample();
 
-let boclipsPlayer: BoclipsPlayer;
-let boclipsClient: AxiosBoclipsApiClient;
+let boclipsPlayer: MaybeMocked<BoclipsPlayer>;
 
 beforeEach(() => {
-  const element = document.createElement('div');
-  boclipsPlayer = new BoclipsPlayer(element);
-  jest.spyOn(boclipsPlayer, 'getVideo').mockReturnValue(video);
+  boclipsPlayer = mocked(new BoclipsPlayer(null));
+  boclipsPlayer.getVideo.mockReturnValue(video);
   analytics = new Analytics(boclipsPlayer);
-
-  boclipsClient = new AxiosBoclipsApiClient(boclipsPlayer);
-
-  jest.spyOn(boclipsPlayer, 'getClient').mockReturnValue(boclipsClient);
-  jest.spyOn(boclipsClient, 'emitPlaybackEvent').mockResolvedValue();
 });
 
 it('can handle play events', () => {
@@ -54,12 +49,14 @@ describe('will emit a playback event on pause after a play event', () => {
       someId: 'abc',
     };
 
-    jest.spyOn(boclipsPlayer, 'getOptions').mockReturnValue({
+    boclipsPlayer.getOptions.mockReturnValue({
       analytics: {
         metadata,
         handleOnSegmentPlayback: noop,
       },
     } as any);
+
+    analytics = new Analytics(boclipsPlayer);
 
     analytics.handlePlay(10);
     analytics.handlePause(25);
@@ -76,7 +73,7 @@ describe('handleOnSegmentPlayback', () => {
   it('does emit an event to the callback', () => {
     const spy = jest.fn();
 
-    jest.spyOn(boclipsPlayer, 'getOptions').mockReturnValue({
+    boclipsPlayer.getOptions.mockReturnValue({
       analytics: {
         handleOnSegmentPlayback: spy,
       },

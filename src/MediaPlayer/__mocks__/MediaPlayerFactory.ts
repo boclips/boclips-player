@@ -1,19 +1,17 @@
 import { noop } from '../../utils';
-import { MediaPlayer, PlaybackSegment } from '../MediaPlayer';
-import { mocked } from 'jest-mock';
+import { MediaPlayer } from '../MediaPlayer';
+import { mocked } from 'ts-jest/utils';
 import Plyr from 'plyr';
-import { jest } from '@jest/globals';
 
-
-export const MockMediaPlayer = jest.fn().mockImplementation(
+export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
   (): MediaPlayer => ({
     configureWithVideo: jest.fn(),
-    play: jest.fn<() => Promise<void>>().mockReturnValue(new Promise(noop)),
+    play: jest.fn().mockReturnValue(new Promise(noop)),
     pause: jest.fn(),
     destroy: jest.fn(),
-    getSegment: jest.fn<() => PlaybackSegment>(),
-    getCurrentTime: jest.fn<() => number>(),
-    getVideoContainer: jest.fn<() => HTMLMediaElement>(),
+    getSegment: jest.fn(),
+    getCurrentTime: jest.fn(),
+    getVideoContainer: jest.fn(),
     onEnd: jest.fn(),
     onReady: jest.fn().mockReturnValue(mocked(Plyr)),
   }),

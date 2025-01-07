@@ -1,7 +1,6 @@
 import { BoclipsAPIError } from './BoclipsPlayerError';
 import { APIError, HLSError, PlaybackError } from './InternalError';
 import { ErrorConverter } from './ErrorConverter';
-import { describe, expect, it } from '@jest/globals';
 
 describe('ErrorConverter', () => {
   it('converts api errors to something more meaningful', () => {

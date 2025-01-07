@@ -1,14 +1,11 @@
-import { jest } from '@jest/globals';
 import { ErrorHandlerInstance } from '../ErrorHandler';
 
 // noinspection JSUnusedGlobalSymbols
 export const ErrorHandler = jest.fn().mockImplementation(() => {
-  return ErrorHandlerProps;
+  return {
+    clearError: jest.fn(),
+    handleError: jest.fn(),
+    isDefinedError: jest.fn().mockReturnValue(false),
+    onError: jest.fn(),
+  } as ErrorHandlerInstance;
 });
-
-export const ErrorHandlerProps = {
-  clearError: jest.fn(),
-  handleError: jest.fn(),
-  isDefinedError: jest.fn().mockReturnValue(false),
-  onError: jest.fn(),
-} as ErrorHandlerInstance;

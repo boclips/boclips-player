@@ -1,9 +1,6 @@
-import { jest } from '@jest/globals';
+const RealHls = jest.requireActual('hls.js');
 
-
-const RealHls: any = jest.requireActual('hls.js');
-
-const Hls: any = jest.createMockFromModule('hls.js');
+const Hls: any = jest.genMockFromModule('hls.js');
 
 function __callEventCallback(event, payload) {
   if (!this.callbacksMap) {
@@ -33,4 +30,4 @@ Hls.ErrorTypes = RealHls.ErrorTypes;
 Hls.ErrorDetails = RealHls.ErrorDetails;
 Hls.isSupported = jest.fn().mockReturnValue(true);
 
-export default Hls;
+module.exports = Hls;

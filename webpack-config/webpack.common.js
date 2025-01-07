@@ -1,16 +1,11 @@
-import { CleanWebpackPlugin } from 'clean-webpack-plugin';
-import path from 'path';
-import MiniCssExtractPlugin from 'mini-css-extract-plugin';
-
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url); // get the resolved path to the file
-const __dirname = path.dirname(__filename); // get the name of the directory
+const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const path = require('path');
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const srcPath = path.resolve(__dirname, '../src');
 const distPath = path.resolve(__dirname, '../dist');
 
-export default {
+module.exports = {
   entry: path.resolve(srcPath, 'index.ts'),
   output: {
     filename: 'index.js',
@@ -21,6 +16,7 @@ export default {
     libraryTarget: 'umd',
   },
   resolve: {
+    fallback: { querystring: require.resolve('querystring-es3') },
     alias: {
       src: srcPath,
     },
@@ -42,12 +38,10 @@ export default {
         test: /\.(sa|sc|c)ss$/,
         use: [
           MiniCssExtractPlugin.loader,
-          'css-loader',
-          {
-            loader: 'sass-loader',
-          },
+          "css-loader",
+          "sass-loader",
         ],
-        sideEffects: true,
+        sideEffects: true
       },
       {
         test: /.svg$/i,
