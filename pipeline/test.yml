@@ -6,6 +6,8 @@ image_resource:
   source:
     repository: node
     tag: '22.13.1-slim'
+    username: ((docker-hub.username))
+    password: ((docker-hub.password))
 
 inputs:
 - name: source
