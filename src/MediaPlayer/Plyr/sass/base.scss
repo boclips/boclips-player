@@ -21,6 +21,7 @@
   transition: box-shadow 0.3s ease;
   z-index: 0; // Force any border radius
   cursor: pointer;
+  max-height: inherit;
 
   &.plyr--stopped .plyr__controls {
     display: none;
@@ -39,6 +40,7 @@
     display: block;
     height: 100%;
     width: 100%;
+    max-height: inherit;
   }
 
   button {
