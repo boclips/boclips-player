@@ -51,14 +51,14 @@
     "webpack-bundle-analyzer": "^4.10.1"
   },
   "devDependencies": {
-    "@types/chai": "^4.2.22",
+    "@types/chai": "^5.2.2",
     "@types/jest": "^27.0.2",
     "@webpack-cli/serve": "^1.6.0",
     "audit-ci": "^6.6.1",
     "axios-logger": "^2.8.1",
     "axios-mock-adapter": "^1.22.0",
     "boclips-js-security": "^12",
-    "chai": "^4.3.4",
+    "chai": "^5.2.0",
     "clean-webpack-plugin": "^4.0.0",
     "copy-webpack-plugin": "^11.0.0",
     "css-loader": "^6.6.0",
