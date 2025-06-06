@@ -1,9 +1,9 @@
 import Plyr from 'plyr';
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import { MockedPlyr } from '../../../../../__mocks__/plyr';
 import { EventBus } from '../../../../Events/EventBus';
 import { SinglePlayback } from './SinglePlayback';
+import MaybeMocked = jest.MaybeMocked;
+import mocked = jest.mocked;
 
 jest.mock('eventemitter3');
 

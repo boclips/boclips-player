@@ -1,7 +1,7 @@
 import { noop } from '../../utils';
 import { MediaPlayer } from '../MediaPlayer';
-import { mocked } from 'ts-jest/utils';
 import Plyr from 'plyr';
+import mocked = jest.mocked;
 
 export const MockMediaPlayer = jest.fn<MediaPlayer, any>().mockImplementation(
   (): MediaPlayer => ({
