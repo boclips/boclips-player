@@ -47,7 +47,7 @@
     "style-loader": "^3.3.1",
     "svg-inline-loader": "^0.8.2",
     "url-template": "^2.0.8",
-    "uuid": "^8.3.2",
+    "uuid": "^11.1.0",
     "webpack-bundle-analyzer": "^4.10.2"
   },
   "devDependencies": {
