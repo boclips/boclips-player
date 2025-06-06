@@ -32,7 +32,6 @@
   "typings": "./dist/index.d.ts",
   "dependencies": {
     "@boclips-ui/styles": "^5.0.2",
-    "@types/url-template": "^2.0.28",
     "axios": ">=0.21.1 <1.0.0",
     "deepmerge": "^4.3.1",
     "hls.js": "^1.2.9",
@@ -46,7 +45,7 @@
     "sass-loader": "^12.6.0",
     "style-loader": "^3.3.1",
     "svg-inline-loader": "^0.8.2",
-    "url-template": "^2.0.8",
+    "url-template": "^3.1.1",
     "uuid": "^8.3.2",
     "webpack-bundle-analyzer": "^4.10.2"
   },
