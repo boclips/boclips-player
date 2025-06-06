@@ -17,6 +17,7 @@ updates:
     jest:
       applies-to: version-updates
       patterns:
-      - "jest"
       - "@types/jest"
+      - "jest"
+      - "jest-environment-jsdom"
       - "ts-jest"
