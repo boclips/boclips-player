@@ -1,9 +1,9 @@
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { VideoFactory } from '../test-support/TestFactories';
 import { noop } from '../utils';
 import { Analytics } from './Analytics';
+import MaybeMocked = jest.MaybeMocked;
+import mocked = jest.mocked;
 
 jest.mock('../BoclipsApiClient/AxiosBoclipsApiClient');
 jest.mock('../BoclipsPlayer/BoclipsPlayer');
