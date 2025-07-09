@@ -1,6 +1,4 @@
 import { addListener } from 'resize-detector';
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import { AxiosBoclipsApiClient } from '../BoclipsApiClient/AxiosBoclipsApiClient';
 import { BoclipsApiClient } from '../BoclipsApiClient/BoclipsApiClient';
 import { ErrorHandler } from '../ErrorHandler/ErrorHandler';
@@ -11,6 +9,8 @@ import { DeepPartial } from '../types/Utils';
 import { Video } from '../types/Video';
 import { BoclipsPlayer } from './BoclipsPlayer';
 import { PlayerOptions } from './PlayerOptions';
+import MaybeMocked = jest.MaybeMocked;
+import mocked = jest.mocked;
 
 jest.mock('resize-detector');
 jest.mock('../Events/Analytics');

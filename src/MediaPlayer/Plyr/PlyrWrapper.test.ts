@@ -1,6 +1,4 @@
 import Plyr from 'plyr';
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import {
   BoclipsPlayer,
   PrivatePlayer,
@@ -19,6 +17,8 @@ import { MockedPlyr } from '../../../__mocks__/plyr';
 import eventually from '../../test-support/eventually';
 import { Video } from '../../types/Video';
 import { Analytics } from '../../Events/Analytics';
+import MaybeMocked = jest.MaybeMocked;
+import mocked = jest.mocked;
 
 jest.mock('../../BoclipsPlayer/BoclipsPlayer');
 jest.mock('../../Events/Analytics');

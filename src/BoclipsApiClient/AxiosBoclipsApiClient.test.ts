@@ -1,5 +1,3 @@
-import { MaybeMocked } from 'ts-jest/dist/utils/testing';
-import { mocked } from 'ts-jest/utils';
 import { BoclipsPlayer, PrivatePlayer } from '../BoclipsPlayer/BoclipsPlayer';
 import { PlayerOptions } from '../BoclipsPlayer/PlayerOptions';
 import {
@@ -14,6 +12,8 @@ import {
 import { Link } from '../types/Link';
 import { Video } from '../types/Video';
 import { AxiosBoclipsApiClient } from './AxiosBoclipsApiClient';
+import MaybeMocked = jest.MaybeMocked;
+import mocked = jest.mocked;
 
 jest.mock('../BoclipsPlayer/BoclipsPlayer');
 
