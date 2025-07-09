@@ -22,4 +22,4 @@ run:
 
 caches:
 - path: ../../../root/.cache
-- path: ../../../root/.npm
+- path: ../../../root/.pnpm-store

@@ -7,7 +7,7 @@ Here we have several demos that point to our API to playback videos. These demos
 Each demo is defined in the package.json file as a script that can be executed on its own. Simply choose the demo you wish to run and append the folder name to the command:
 
 ```
-$ npm run demo:$FOLDER_NAME # for example demo:module-authorized
+$ pnpm demo:$FOLDER_NAME # for example demo:module-authorized
 ```
 
 ## `module`

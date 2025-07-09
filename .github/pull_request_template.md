@@ -7,7 +7,7 @@ Please tick the following to ensure you've followed our contribution guidelines.
 The following are true:
 - [ ] I have read CONTRIBUTING.md
 - [ ] I have provided a comprehensive set of tests of this pull request
-- [ ] My code passes `npm run lint`
+- [ ] My code passes `pnpm lint`
 - [ ] My code is self documenting
 
 ### What problem does this PR solve?

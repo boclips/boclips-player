@@ -27,7 +27,7 @@ TDD is important to us as a way of ensuring that we're producing high quality st
 
 We use linting to achieve a standard tone across our codebases, we appreciate you adhering to the rules that we've put in place.
 Our linting tools are installed as dev dependencies on this project, so once you're happy with the code you've written you can
-go ahead and run the linting `npm run lint`. Most lint failures can be fixed automatically: `npm run lint:fix`.
+go ahead and run the linting `pnpm lint`. Most lint failures can be fixed automatically: `pnpm lint:fix`.
 
 ## Development
 
@@ -47,11 +47,11 @@ $ npm install
 
 ### Running the demos
 
-There are several demos that can be run via `npm run`. See `./demo/` for a list of the available demos.
+There are several demos that can be run via `pnpm`. See `./demo/` for a list of the available demos.
 
 For example:
 ```
-$ npm run demo:static
+$ pnpm demo:static
 ```
 
 ### Making changes
