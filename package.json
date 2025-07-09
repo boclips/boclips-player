@@ -61,7 +61,7 @@
     "boclips-js-security": "^15.0.1",
     "chai": "^5.2.0",
     "clean-webpack-plugin": "^4.0.0",
-    "copy-webpack-plugin": "^11.0.0",
+    "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^6.6.0",
     "eventemitter3": "^4.0.7",
     "file-loader": "^6.2.0",
