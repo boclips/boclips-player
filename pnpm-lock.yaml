@@ -54,8 +54,8 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
       url-template:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.1
+        version: 3.1.1
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -3385,8 +3385,9 @@ packages:
   url-polyfill@1.1.12:
     resolution: {integrity: sha512-mYFmBHCapZjtcNHW0MDq9967t+z4Dmg5CJ0KqysK3+ZbyoNOWQHksGCTWwDhxGXllkWlOc10Xfko6v4a3ucM6A==}
 
-  url-template@2.0.8:
-    resolution: {integrity: sha512-XdVKMF4SJ0nP/O7XIPB0JwAEuT9lDIYnNsK8yGVe43y0AWoKeJNdv3ZNWh7ksJ6KqQFjOO6ox/VEitLnaVNufw==}
+  url-template@3.1.1:
+    resolution: {integrity: sha512-4oszoaEKE/mQOtAmdMWqIRHmkxWkUZMnXFnjQ5i01CuRSK3uluxcH1MRVVVWmhlnzT1SCDfKxxficm2G37qzCA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -7264,7 +7265,7 @@ snapshots:
 
   url-polyfill@1.1.12: {}
 
-  url-template@2.0.8: {}
+  url-template@3.1.1: {}
 
   util-deprecate@1.0.2: {}
 
