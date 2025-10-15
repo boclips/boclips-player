@@ -85,8 +85,8 @@ importers:
         specifier: ^2.1.0
         version: 2.1.0(axios@1.11.0)
       boclips-js-security:
-        specifier: ^15.0.1
-        version: 15.0.1(axios@1.11.0)
+        specifier: ^16.0.0
+        version: 16.0.0(axios@1.11.0)
       chai:
         specifier: ^5.2.0
         version: 5.2.0
@@ -950,9 +950,6 @@ packages:
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
 
-  base64-js@1.5.1:
-    resolution: {integrity: sha512-AKpaYlHn8t4SVbOHCy+b5+KKgvR4vrsD8vbvrbiQJps7fKDTkjkDry6ji0rUJjC0kzbNePLwzxq8iypo41qeWA==}
-
   batch@0.6.1:
     resolution: {integrity: sha512-x+VAiMRL6UPkx+kudNvxTl6hB2XNNCG2r+7wixVfIYwu/2HKRXimwQyaumLjMveWvT2Hkd/cAJw+QBMfJ/EKVw==}
 
@@ -963,8 +960,8 @@ packages:
     resolution: {integrity: sha512-jDctJ/IVQbZoJykoeHbhXpOlNBqGNcwXJKJog42E5HDPUwQTSdjCHdihjj0DlnheQ7blbT6dHOafNAiS8ooQKA==}
     engines: {node: '>=8'}
 
-  boclips-js-security@15.0.1:
-    resolution: {integrity: sha512-RZ7QO9ifhvjhvkWBlOq9YpKXNzv03uem1/yt6IwJ7fHmgjGPehf3xt1ivvKw2C9zNXo0hvkEGsj7meDbioxszg==}
+  boclips-js-security@16.0.0:
+    resolution: {integrity: sha512-u0PrnvSmRJ39Xka1kkal6hY5Ij4faZc4MDtvKzwY6CU0eSCB0z+DZsAFQ+tPPHji4Kj6S+xd5X6qQM7o+AkQgw==}
     peerDependencies:
       axios: '>=1.7.7 <2.0.0'
 
@@ -2245,8 +2242,8 @@ packages:
   jju@1.4.0:
     resolution: {integrity: sha512-8wb9Yw966OSxApiCt0K3yNJL8pnNeIv+OEq2YMidz4FKP6nonSRoOXc80iXY4JaN2FC11B9qsNmDsm+ZOfMROA==}
 
-  js-sha256@0.9.0:
-    resolution: {integrity: sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==}
+  js-sha256@0.11.1:
+    resolution: {integrity: sha512-o6WSo/LUvY2uC4j7mO50a2ms7E/EAdbP0swigLV+nzHKTTaYnaLIWJ02VdXrsJX0vGedDESQnLsOekr94ryfjg==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -2294,8 +2291,12 @@ packages:
     resolution: {integrity: sha512-POQXvpdL69+CluYsillJ7SUhKvytYjW9vG/GKpnf+xP8UWgYEM/RaMzHHofbALDiKbbP1W8UEYmgGl39WkPZsg==}
     engines: {'0': node >= 0.2.0}
 
-  keycloak-js@18.0.1:
-    resolution: {integrity: sha512-IRXToYpbIrkyfLeNNJly2OjUCf11ncx2Sdsg257NVDwjOYE923osu47w8pfxEVWpTaS14/Y2QjbTHciuBK0RBQ==}
+  jwt-decode@4.0.0:
+    resolution: {integrity: sha512-+KJGIyHgkGuIq3IEBNftfhW/LfWhXUIY6OmyVWjliu5KH1y0fw7VQ8YndE2O4qZdMSd9SqbnC8GOcZEy0Om7sA==}
+    engines: {node: '>=18'}
+
+  keycloak-js@24.0.5:
+    resolution: {integrity: sha512-VQOSn3j13DPB6OuavKAq+sRjDERhIKrXgBzekoHRstifPuyULILguugX6yxRUYFSpn3OMYUXmSX++tkdCupOjA==}
 
   kind-of@6.0.3:
     resolution: {integrity: sha512-dcS1ul+9tmeD95T+x28/ehLgd9mENa3LsvDTtzm3vyBEO7RPptvAD+t44WVXaUjTBRcrpFeFlC8WCruUR456hw==}
@@ -4588,20 +4589,18 @@ snapshots:
 
   balanced-match@1.0.2: {}
 
-  base64-js@1.5.1: {}
-
   batch@0.6.1: {}
 
   big.js@5.2.2: {}
 
   binary-extensions@2.2.0: {}
 
-  boclips-js-security@15.0.1(axios@1.11.0):
+  boclips-js-security@16.0.0(axios@1.11.0):
     dependencies:
       axios: 1.11.0
       jest-environment-jsdom: 29.7.0
       jest-mock: 29.7.0
-      keycloak-js: 18.0.1
+      keycloak-js: 24.0.5
     transitivePeerDependencies:
       - bufferutil
       - canvas
@@ -6135,7 +6134,7 @@ snapshots:
 
   jju@1.4.0: {}
 
-  js-sha256@0.9.0: {}
+  js-sha256@0.11.1: {}
 
   js-tokens@4.0.0: {}
 
@@ -6199,10 +6198,12 @@ snapshots:
 
   jsonparse@1.3.1: {}
 
-  keycloak-js@18.0.1:
+  jwt-decode@4.0.0: {}
+
+  keycloak-js@24.0.5:
     dependencies:
-      base64-js: 1.5.1
-      js-sha256: 0.9.0
+      js-sha256: 0.11.1
+      jwt-decode: 4.0.0
 
   kind-of@6.0.3: {}
 
