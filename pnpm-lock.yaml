@@ -12,8 +12,8 @@ importers:
         specifier: ^5.0.2
         version: 5.0.2
       '@types/url-template':
-        specifier: ^2.0.28
-        version: 2.0.28
+        specifier: ^3.0.0
+        version: 3.0.0
       axios:
         specifier: ^1.11.0
         version: 1.11.0
@@ -54,8 +54,8 @@ importers:
         specifier: ^0.8.2
         version: 0.8.2
       url-template:
-        specifier: ^2.0.8
-        version: 2.0.8
+        specifier: ^3.1.1
+        version: 3.1.1
       uuid:
         specifier: ^11.1.0
         version: 11.1.0
@@ -691,8 +691,9 @@ packages:
   '@types/uglify-js@3.17.1':
     resolution: {integrity: sha512-GkewRA4i5oXacU/n4MA9+bLgt5/L3F1mKrYvFGm7r2ouLXhRKjuWwo9XHNnbx6WF3vlGW21S3fCvgqxvxXXc5g==}
 
-  '@types/url-template@2.0.28':
-    resolution: {integrity: sha512-1i/YtOhvlWDbMDTWhCfvhyUwBS9vNFs78sJOyahoruJCcDbwaSH73AlnuCp7luKPm6qqdCg4VKq/IHUncl6gZA==}
+  '@types/url-template@3.0.0':
+    resolution: {integrity: sha512-r0mKEGF47fej7eAEe10GVhzC7H6LhCux9DgNTqOk1QCMMdmyhUGYjjQG4zbWUAtRJc9FbDq9Yxsct33xC+O2mA==}
+    deprecated: This is a stub types definition. url-template provides its own type definitions, so you do not need this installed.
 
   '@types/webpack-sources@3.2.0':
     resolution: {integrity: sha512-Ft7YH3lEVRQ6ls8k4Ff1oB4jN6oy/XmU6tQISKdhfh+1mR+viZFphS6WL0IrtDOzvefmJg5a0s7ZQoRXwqTEFg==}
@@ -3385,8 +3386,9 @@ packages:
   url-polyfill@1.1.12:
     resolution: {integrity: sha512-mYFmBHCapZjtcNHW0MDq9967t+z4Dmg5CJ0KqysK3+ZbyoNOWQHksGCTWwDhxGXllkWlOc10Xfko6v4a3ucM6A==}
 
-  url-template@2.0.8:
-    resolution: {integrity: sha512-XdVKMF4SJ0nP/O7XIPB0JwAEuT9lDIYnNsK8yGVe43y0AWoKeJNdv3ZNWh7ksJ6KqQFjOO6ox/VEitLnaVNufw==}
+  url-template@3.1.1:
+    resolution: {integrity: sha512-4oszoaEKE/mQOtAmdMWqIRHmkxWkUZMnXFnjQ5i01CuRSK3uluxcH1MRVVVWmhlnzT1SCDfKxxficm2G37qzCA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   util-deprecate@1.0.2:
     resolution: {integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==}
@@ -4269,7 +4271,9 @@ snapshots:
     dependencies:
       source-map: 0.6.1
 
-  '@types/url-template@2.0.28': {}
+  '@types/url-template@3.0.0':
+    dependencies:
+      url-template: 3.1.1
 
   '@types/webpack-sources@3.2.0':
     dependencies:
@@ -7268,7 +7272,7 @@ snapshots:
 
   url-polyfill@1.1.12: {}
 
-  url-template@2.0.8: {}
+  url-template@3.1.1: {}
 
   util-deprecate@1.0.2: {}
 
